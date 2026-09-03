@@ -13,7 +13,12 @@ _EFFICIENCY_SCALE = 4.0e6
 def compute_metrics(agent, task_scores, shifted_scores=None):
     capability = sum(task_scores) / max(1, len(task_scores))
 
-    n_params = agent.num_parameters() if agent is not None else _EFFICIENCY_SCALE
+    if agent is None:
+        n_params = _EFFICIENCY_SCALE
+    elif hasattr(agent, "effective_parameters"):
+        n_params = agent.effective_parameters()
+    else:
+        n_params = agent.num_parameters()
     efficiency = 1.0 / (1.0 + n_params / _EFFICIENCY_SCALE)
 
     if shifted_scores:

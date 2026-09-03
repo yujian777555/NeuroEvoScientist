@@ -25,8 +25,11 @@ class ArchitectureGenome:
         return asdict(self)
 
     _DISPLAY_NAMES = {"mamba": "Mamba", "attention": "Attention",
+                      "retrieval": "Retrieval", "hybrid": "Hybrid",
                       "direct": "Direct", "verify": "Verify",
-                      "none": "None", "lora": "LoRA"}
+                      "planner": "Planner", "cot": "CoT",
+                      "none": "None", "lora": "LoRA", "qlora": "QLoRA",
+                      "int8": "INT8"}
 
     def describe(self) -> str:
         """Human-readable architecture name, e.g. 'Mamba + Verify + LoRA'."""

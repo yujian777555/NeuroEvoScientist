@@ -27,14 +27,17 @@ class MockEvaluator:
     results are reproducible.
     """
 
-    # Capability priors: verify reasons better, mamba remembers better.
+    # Capability priors over the Phase-13 64-architecture space.
     CAPABILITY_PRIOR = {
-        "memory": {"mamba": 0.08, "attention": 0.05},
-        "reasoning": {"verify": 0.12, "direct": 0.0},
+        "memory": {"mamba": 0.08, "attention": 0.05, "retrieval": 0.06,
+                   "hybrid": 0.10},
+        "reasoning": {"verify": 0.12, "direct": 0.0, "planner": 0.10,
+                      "cot": 0.09},
     }
     # Adaptability prior: compression helps transfer under shift.
     ADAPTABILITY_PRIOR = {
-        "compression": {"lora": 0.10, "none": 0.0},
+        "compression": {"lora": 0.10, "none": 0.0, "qlora": 0.09,
+                        "int8": 0.04},
     }
 
     def __init__(self, n_tasks=8):
@@ -74,10 +77,16 @@ def _not_implemented(name):
     return _Placeholder
 
 
+def _gsm8k_factory():
+    """Lazy import so the registry has no hard dependency on gsm8k module."""
+    from .gsm8k import GSM8KEvaluator
+    return GSM8KEvaluator
+
+
 BENCHMARKS = {
     "mock": MockEvaluator,
+    "gsm8k": _gsm8k_factory(),
     # Future real benchmarks — reserved names, same interface.
-    "gsm8k": _not_implemented("gsm8k"),
     "agentbench": _not_implemented("agentbench"),
     "pubmedqa": _not_implemented("pubmedqa"),
 }

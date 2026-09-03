@@ -1,16 +1,22 @@
 memory:
-  - mamba
   - attention
+  - mamba
+  - retrieval
+  - hybrid
 
 reasoning:
   - direct
   - verify
+  - planner
+  - cot
 
 compression:
   - none
   - lora
+  - qlora
+  - int8
 
-population: 20
+population: 16
 generations: 10
 
 objectives:

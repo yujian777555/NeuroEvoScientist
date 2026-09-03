@@ -25,9 +25,9 @@ DEFAULT_CONFIG = os.path.join(
 
 # Fallback matching configs/search_space.yaml when PyYAML is unavailable.
 _FALLBACK = {
-    "memory": ["mamba", "attention"],
-    "reasoning": ["direct", "verify"],
-    "compression": ["none", "lora"],
+    "memory": ["attention", "mamba", "retrieval", "hybrid"],
+    "reasoning": ["direct", "verify", "planner", "cot"],
+    "compression": ["none", "lora", "qlora", "int8"],
     "population": 16,
     "generations": 10,
     "objectives": {"capability": 0.5, "efficiency": 0.3, "adaptability": 0.2},
