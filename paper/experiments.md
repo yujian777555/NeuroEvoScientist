@@ -1,75 +1,109 @@
-# Experiment Design
+# Experimental Protocol
 
-## 1. Research Questions
+## Goal
 
-RQ1: Can evolutionary search discover better agent architectures than manual design?
+The experiments verify whether Evolutionary Neural Substrate Search (ENSS) can discover adaptive agent architectures that outperform manually designed and conventional search-based systems.
 
-RQ2: Does adaptive memory architecture improve long-context scientific tasks?
+## Research Questions
 
-RQ3: Can Pareto evolution achieve better capability-efficiency tradeoffs?
+RQ1: Can evolutionary search discover better agent cognitive architectures than fixed design?
 
-## 2. Baselines
+RQ2: Does Pareto-based multi-objective evolution improve the capability-efficiency tradeoff?
 
-### Agent Baselines
+RQ3: Does adaptive Mamba-based memory improve long-horizon scientific reasoning?
 
-- ReAct-style agents
-- Fixed memory agents
-- Fixed Mamba agents
-- Fixed Transformer agents
+## Baselines
+
+### Fixed Agent Baselines
+
+- ReAct-style Agent
+- Fixed Transformer Agent
+- Fixed Mamba-memory Agent
+- Retrieval-Augmented Agent
 
 ### Search Baselines
 
-- Random search
-- Grid search
-- Traditional NAS
+- Random Search
+- Grid Search
+- Traditional NAS-style search
 - Evolution without Pareto optimization
+- Evolution without weight inheritance
 
-## 3. Backbone Models
+## Backbone Models
 
-Initial experiments:
+Small-scale validation:
 
 - Qwen2.5-1.5B
 - Mamba-based language models
 
-Large scale experiments:
+Large-scale experiments:
 
 - Qwen2.5-7B
 - Llama-family models
 
-## 4. Benchmarks
+## Benchmarks
 
-Reasoning:
+### Reasoning
 
 - GSM8K
 - MATH subset
 
-Agent:
+### Agent Evaluation
 
-- AgentBench
+- AgentBench subset
 
-Scientific:
+### Scientific Discovery
 
 - PubMedQA
 - SciQ
 
-## 5. Ablation Studies
+## Metrics
 
-Remove each component:
+### Capability
 
-1. Without evolution
-2. Without Mamba memory
-3. Without crossover
-4. Without weight inheritance
-5. Without multi-objective optimization
+- Accuracy
+- Task success rate
 
-## 6. Hardware Plan
+### Efficiency
+
+- Inference latency
+- GPU memory usage
+- Computational cost
+
+### Adaptability
+
+Performance improvement after task distribution changes.
+
+## Ablation Studies
+
+### Remove Evolution
+
+Compare ENSS against fixed architectures.
+
+### Remove Mamba Memory
+
+Replace adaptive state memory with standard attention memory.
+
+### Remove Pareto Optimization
+
+Optimize only task accuracy.
+
+### Remove Weight Inheritance
+
+Measure search efficiency and convergence degradation.
+
+### Remove Crossover
+
+Evaluate the contribution of architecture recombination.
+
+## Hardware Plan
 
 Target platform:
 
 - 4+ NVIDIA A800 80GB GPUs
 
-Distributed evaluation is used for large population evolution.
+Distributed workers evaluate candidate architectures in parallel.
 
-## 7. Expected Result
+## Expected Result
 
-The evolved agents should achieve better Pareto tradeoffs between capability, memory consumption, and latency compared with fixed architectures.
+ENSS should discover agent architectures with better Pareto tradeoffs among capability, efficiency, and adaptability compared with fixed and random search baselines.
