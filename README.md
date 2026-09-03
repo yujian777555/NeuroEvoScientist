@@ -1,56 +1,76 @@
-# EvoMamba-Agent
+# NeuroEvoScientist
 
-AlphaEvolve-inspired Evolutionary Neural Architecture Search for Lightweight Mamba-based LLM Agents.
+Evolutionary Discovery of Adaptive Neural Substrates for Scientific Agents.
 
-## Research Goal
+## Research Vision
 
-This project studies a self-evolving framework for discovering efficient large language model architectures.
+NeuroEvoScientist explores whether AI agents can automatically discover and evolve their own cognitive architectures instead of relying on manually designed structures.
 
-Core technologies:
+Inspired by AlphaEvolve, evolutionary computation, Mamba/SSM models, and autonomous AI scientists, this project studies **Evolutionary Neural Substrate Search (ENSS)**.
 
-- Mamba / State Space Models (SSM)
-- Evolutionary computation
-- NSGA-II multi-objective optimization
-- LLM-driven architecture proposal
-- AI4Science autonomous agents
+## Core Research Question
 
-## Core Hypothesis
+Can an AI agent evolve its own:
 
-Future lightweight foundation models should not only be compressed manually. They should be automatically discovered by evolutionary AI researchers.
+- memory substrate
+- reasoning mechanism
+- tool-use strategy
+- model compression strategy
 
-The proposed pipeline:
+according to different tasks and resource constraints?
+
+## Proposed Framework
 
 ```
-Research Agent
-      |
-      v
-Architecture Genome Generator
-      |
-      v
+Task
+ |
+v
+Architecture Genome
+ |
+v
 Evolution Controller
-      |
-      v
-Mamba / Attention / MoE Candidate Models
-      |
-      v
-Multi-objective Evaluation
-      |
-      v
-Pareto Optimal Lightweight LLM
+ |
+v
+Agent Population
+ |
+v
+Distributed Evaluation
+ |
+v
+NSGA-based Pareto Selection
+ |
+v
+Evolved Scientific Agent
 ```
 
-## Expected Contributions
+## Key Components
 
-1. AlphaEvolve-inspired evolutionary neural architecture search for LLMs.
-2. Hybrid Mamba-Attention architecture discovery.
-3. Accuracy-memory-latency Pareto optimization.
-4. Self-improving AI scientist agent for model engineering.
+- Neural architecture genome representation
+- Mamba-based adaptive long-term memory
+- Attention / MoE / verifier reasoning modules
+- Evolutionary mutation and crossover operators
+- Multi-objective optimization (capability, latency, memory)
+- AI4Science autonomous agent applications
 
-## Structure
+## Research Contributions
+
+1. Evolutionary Neural Substrate Search (ENSS) for adaptive foundation agents.
+2. AlphaEvolve-inspired search over agent cognitive architectures.
+3. Mamba-enhanced evolutionary memory mechanisms.
+4. Resource-aware lightweight scientific agents.
+
+## Repository Structure
 
 ```
-docs/          Paper design and literature review
-src/           Implementation
-experiments/   Evaluation protocols
+docs/          Research design and literature review
+src/           Core implementation
+experiments/   Evaluation framework
 paper/         Manuscript materials
 ```
+
+## Target Applications
+
+- Lightweight LLM agents
+- Self-evolving AI systems
+- AI for Science discovery
+- Adaptive foundation models
