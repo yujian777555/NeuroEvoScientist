@@ -1,0 +1,19 @@
+memory:
+  - mamba
+  - attention
+
+reasoning:
+  - direct
+  - verify
+
+compression:
+  - none
+  - lora
+
+population: 20
+generations: 10
+
+objectives:
+  capability: 0.5
+  efficiency: 0.3
+  adaptability: 0.2
