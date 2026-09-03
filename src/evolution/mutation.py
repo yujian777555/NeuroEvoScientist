@@ -1,25 +1,23 @@
 """
 Mutation operators for Neural Substrate Evolution.
+
+Phase-12: mutations stay inside the configured search space
+(memory / reasoning / compression as defined in configs/search_space.yaml).
 """
 
 import random
 from copy import deepcopy
 
 
-MEMORY = ["mamba", "attention", "retrieval", "hybrid"]
-REASONING = ["attention", "moe", "tree_search", "verifier"]
-COMPRESSION = ["none", "int8", "lora"]
-
-
-def mutate(genome):
+def mutate(genome, search_space, rng=None):
+    """Return a mutated copy of ``genome`` within the search space."""
+    rng = rng or random
     child = deepcopy(genome)
-    target = random.choice(genome.mutate_target())
+    target = rng.choice(["memory", "reasoning", "compression"])
 
-    if target == "memory":
-        child.memory = random.choice(MEMORY)
-    elif target == "reasoning":
-        child.reasoning = random.choice(REASONING)
-    elif target == "compression":
-        child.compression = random.choice(COMPRESSION)
+    options = search_space.options_for(target)
+    alternatives = [v for v in options if v != getattr(genome, target)]
+    if alternatives:
+        setattr(child, target, rng.choice(alternatives))
 
     return child

@@ -5,16 +5,17 @@ Objectives:
 - capability
 - efficiency
 - adaptability
+
+Scalarized with configurable weights (defaults from configs/search_space.yaml).
 """
 
+DEFAULT_WEIGHTS = {"capability": 0.5, "efficiency": 0.3, "adaptability": 0.2}
 
-def calculate_fitness(result):
-    capability = result.get("capability", 0)
-    efficiency = result.get("efficiency", 0)
-    adaptability = result.get("adaptability", 0)
 
+def calculate_fitness(result, weights=None):
+    weights = weights or DEFAULT_WEIGHTS
     return (
-        0.5 * capability
-        + 0.3 * efficiency
-        + 0.2 * adaptability
+        weights.get("capability", 0.5) * result.get("capability", 0)
+        + weights.get("efficiency", 0.3) * result.get("efficiency", 0)
+        + weights.get("adaptability", 0.2) * result.get("adaptability", 0)
     )

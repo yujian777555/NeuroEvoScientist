@@ -1,0 +1,7 @@
+{
+  "project": "NeuroEvoScientist",
+  "phase": "Phase-12 MVP Experiment System",
+  "completed": "MVP evolution loop end-to-end: genome -> builder -> candidate agent -> mock evaluation -> fitness -> NSGA3/tournament selection -> mutation/crossover -> next generation. `python src/scripts/run_enss.py` runs 10 generations x 16 population on CPU, converges to Mamba + Verify + LoRA (fitness 0.60, mean 0.56->0.58). Deterministic under fixed seed. Benchmark registry reserves gsm8k/agentbench/pubmedqa interfaces.",
+  "next": "Phase-13: wire a real benchmark (GSM8K first) behind evaluator/benchmark.py; replace mock capability signal; report to Planner for experiment strategy review.",
+  "issues": "Mock evaluator gives Mamba+Verify+LoRA a dominant prior, so the 8-architecture space converges immediately; fine for loop validation, but real-benchmark signal is needed before any architectural claim. See issues/research_questions.md."
+}
