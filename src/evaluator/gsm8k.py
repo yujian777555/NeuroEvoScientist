@@ -163,23 +163,7 @@ class GSM8KEvaluator:
                                shifted_scores=long_scores or None)
 
 
-class HFTransformersBackend:
-    """Lazy Hugging Face text-generation backend (real inference)."""
-
-    def __init__(self, model_name, max_new_tokens=256, device=-1):
-        self.model_name = model_name
-        self.max_new_tokens = max_new_tokens
-        self.device = device
-        self._pipe = None
-
-    def _load(self):
-        from transformers import pipeline
-        self._pipe = pipeline("text-generation", model=self.model_name,
-                              device=self.device)
-
-    def __call__(self, prompt, genome):
-        if self._pipe is None:
-            self._load()
-        out = self._pipe(prompt, max_new_tokens=self.max_new_tokens,
-                         do_sample=False)
-        return out[0]["generated_text"][len(prompt):]
+# Backends live in evaluator/backends.py (Phase-14); re-exported here so
+# existing imports (`from evaluator.gsm8k import HFTransformersBackend`)
+# keep working.
+from .backends import HFTransformersBackend, QwenBackend  # noqa: E402,F401

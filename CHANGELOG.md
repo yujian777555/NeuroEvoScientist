@@ -1,5 +1,26 @@
 # Changelog
 
+## [Phase-14] Real experiment infrastructure - 2026-09-15
+
+### Added
+- `src/evaluator/backends.py` — 真实 LLM 推理后端：`QwenBackend`（默认 Qwen/Qwen2.5-1.5B-Instruct，自动 chat template + device_map="auto"）与通用 `HFTransformersBackend`（惰性加载、bf16/fp16 自动 dtype）；gsm8k.py 保留兼容 re-export
+- `src/evolution/random_search.py` — 随机搜索基线（"w/o Evolution"），同等评估预算
+- `src/evaluator/experiment_logger.py` — 实验日志：每代 `history.jsonl`（best/mean fitness、Pareto 前沿、架构分布 = Figure 1/2/3 数据）+ `results.json`（Table 1/2 数据）
+- `src/scripts/run_experiment.py` — Phase-14 实验入口：6 种方法（3 固定架构基线 + random + no_pareto + enss）+ 消融（no_inherit / no_mamba）+ `--matrix` 一键矩阵 + CSV 结果表
+- `requirements-a800.txt`、`docs/phase14_a800_runbook.md` — A800 环境与复现手册
+- `tests/test_experiment.py` — 4 项测试（随机基线、no_pareto 消融、no_mamba 排除、日志器输出）
+
+### Changed
+- `src/evolution/controller.py` — 新增 `use_pareto` 开关：False 时退化为标量 fitness 锦标赛 + 截断选择（"w/o NSGA Pareto" 消融）
+- `src/genome/search_space.py` — 支持 `exclude` 消融过滤（如排除 mamba）
+- `src/evaluator/gsm8k.py` — HFTransformersBackend 迁移至 backends.py，本地保留 re-export
+
+### Test Results
+- `python -m pytest tests/` — 21 passed
+- mock 基线矩阵（pop=8, gen=5, CPU）端到端跑通：enss 0.670 > no_pareto 0.662 > random 0.661 > fixed_mamba 0.545 > fixed_attention 0.467 > fixed_hybrid 0.457（仅管线验证，非论文结果）
+- `run_enss.py` 回归正常；日志文件结构经测试校验
+- 注：真实 LLM 后端未在真实模型上运行过（本机无 GPU），待 A800 首跑验证
+
 ## [Phase-13] ENSS Upgrade - 2026-09-03
 
 ### Added

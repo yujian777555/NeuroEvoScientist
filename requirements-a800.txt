@@ -1,0 +1,6 @@
+# A800 environment for Phase-14 real experiments
+torch>=2.1
+transformers>=4.40
+accelerate>=0.27
+PyYAML>=5.4
+pytest>=7.0

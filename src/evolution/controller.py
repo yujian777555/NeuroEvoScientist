@@ -55,7 +55,7 @@ class EvaluatedAgent:
 class EvolutionController:
     def __init__(self, search_space, evaluator, population_size=None,
                  generations=None, seed=0, elite_size=2, mutation_rate=0.3,
-                 use_inheritance=True):
+                 use_inheritance=True, use_pareto=True):
         self.search_space = search_space
         self.evaluator = evaluator
         self.population_size = population_size or search_space.population
@@ -63,6 +63,9 @@ class EvolutionController:
         self.elite_size = elite_size
         self.mutation_rate = mutation_rate
         self.use_inheritance = use_inheritance
+        # use_pareto=False is the "evolution w/o Pareto" ablation/baseline:
+        # selection falls back to scalar-fitness tournament + truncation.
+        self.use_pareto = use_pareto
         self.rng = random.Random(seed)
         self.selector = NSGA3Selector(self.population_size)
         self.weights = search_space.objective_weights
@@ -109,14 +112,24 @@ class EvolutionController:
         return [self.evaluate_genome(g) for g in self.population]
 
     def step(self, evaluated):
-        """One NSGA-style generation: mate -> inherit -> evaluate -> select."""
+        """One generation: mate -> inherit -> evaluate -> select.
+
+        With ``use_pareto`` selection is NSGA multi-objective (fronts +
+        crowding); otherwise it is scalar-fitness truncation (ablation).
+        """
         individuals = [e.as_individual() for e in evaluated]
         self.selector.select(individuals)  # assigns rank + crowding
 
+        def mate():
+            if self.use_pareto:
+                return self._tournament(individuals)
+            a, b = self.rng.sample(evaluated, k=min(2, len(evaluated)))
+            return a if a.fitness >= b.fitness else b
+
         offspring = []
         while len(offspring) < self.population_size - self.elite_size:
-            parent_a = self._tournament(individuals)
-            parent_b = self._tournament(individuals)
+            parent_a = mate()
+            parent_b = mate()
             child = crossover(parent_a.genome, parent_b.genome, self.rng)
             if self.rng.random() < self.mutation_rate:
                 child = mutate(child, self.search_space, self.rng)
@@ -127,12 +140,16 @@ class EvolutionController:
             for child, parent in offspring
         ]
 
-        combined = [e.as_individual() for e in evaluated + evaluated_offspring]
-        survivors = self.selector.select(combined, self.population_size)
-        next_evaluated = [s.payload for s in survivors]
+        if self.use_pareto:
+            combined = [e.as_individual()
+                        for e in evaluated + evaluated_offspring]
+            survivors = self.selector.select(combined, self.population_size)
+            next_evaluated = [s.payload for s in survivors]
+        else:
+            combined = evaluated + evaluated_offspring
+            combined.sort(key=lambda e: e.fitness, reverse=True)
+            next_evaluated = combined[: self.population_size]
 
-        # Elites: best scalar fitness survives unchanged at the front of the
-        # next population (they are already in survivors via Pareto selection).
         next_evaluated.sort(key=lambda e: e.fitness, reverse=True)
         self.population = [e.genome for e in next_evaluated]
         self.history.append(next_evaluated)

@@ -1,13 +1,8 @@
-"""Search space definition for ENSS (Phase-12 MVP).
+"""Search space definition for ENSS.
 
 Loads ``configs/search_space.yaml`` and exposes the combinatorial space of
-agent cognitive architectures. Phase-12 keeps the space intentionally small:
-
-- memory:      attention | mamba
-- reasoning:   direct    | verify
-- compression: none      | lora
-
-=> 8 distinct architectures.
+agent cognitive architectures (Phase-13: 4 x 4 x 4 = 64 architectures).
+Supports ablation subsets via ``exclude`` (e.g. "w/o Mamba memory").
 """
 
 import itertools
@@ -37,18 +32,34 @@ MODULE_FIELDS = ["memory", "reasoning", "compression"]
 
 
 class SearchSpace:
-    """Combinatorial architecture search space."""
+    """Combinatorial architecture search space.
 
-    def __init__(self, config_path=None):
+    Args:
+        config_path: override path to a search-space YAML.
+        exclude:     optional {field: [values]} ablation filter, e.g.
+                     ``{"memory": ["mamba"]}`` for the w/o-Mamba ablation.
+    """
+
+    def __init__(self, config_path=None, exclude=None):
         config = self._load_config(config_path or DEFAULT_CONFIG)
-        self.memory = list(config["memory"])
-        self.reasoning = list(config["reasoning"])
-        self.compression = list(config["compression"])
+        exclude = exclude or {}
+        self.memory = self._filter(config["memory"], exclude, "memory")
+        self.reasoning = self._filter(config["reasoning"], exclude, "reasoning")
+        self.compression = self._filter(config["compression"], exclude,
+                                        "compression")
         self.population = int(config.get("population", 16))
         self.generations = int(config.get("generations", 10))
         self.objective_weights = dict(
             config.get("objectives", _FALLBACK["objectives"])
         )
+
+    @staticmethod
+    def _filter(values, exclude, field):
+        kept = [v for v in values if v not in exclude.get(field, [])]
+        if not kept:
+            raise ValueError("exclusion emptied search-space field: %s"
+                             % field)
+        return kept
 
     @staticmethod
     def _load_config(config_path):
@@ -62,7 +73,7 @@ class SearchSpace:
         return list(getattr(self, field))
 
     def enumerate_architectures(self):
-        """Return all valid module combinations (8 in Phase-12)."""
+        """Return all valid module combinations (64 in Phase-13)."""
         combos = itertools.product(self.memory, self.reasoning, self.compression)
         return [
             dict(zip(MODULE_FIELDS, combo))

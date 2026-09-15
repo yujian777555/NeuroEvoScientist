@@ -1,30 +1,34 @@
-# Phase 13 — Current Sprint Plan (Completed, awaiting Planner review)
+# Phase 14 — Current Sprint Plan (Infra complete, GPU run blocked)
 
-依据 `plans/phase13_plan.md` 执行。
+依据 `plans/phase14_plan.md` 执行。
 
 ## Goal
 
-将 ENSS 从演示级进化循环升级为研究级进化架构搜索框架。
+将 ENSS 从框架验证升级为论文级实验验证。
 
 ## Tasks
 
-- [x] Task 1: 真实 benchmark 接口 — `src/evaluator/gsm8k.py`（数据集加载、prompt 条件化、答案抽取、真实打分管线；MockEvaluator 保留为 CI-only）
-- [x] Task 2: 权重继承 — `src/evolution/inheritance.py`，接口 Parent Genome + Parent State -> Child Genome + Inherited State，已接入 controller
-- [x] Task 3: 搜索空间升级 — 8 → 64 架构（memory×4, reasoning×4, compression×4），模型模块全部实现
-- [x] Task 4: NSGA-III 检查 — 非支配排序、Pareto 前沿、拥挤度多样性、多目标环境选择，单标量 fitness 仅用于日志
+- [x] Task 1: 真实 LLM 后端 — `src/evaluator/backends.py`（QwenBackend: Qwen2.5-1.5B-Instruct，chat template 自动识别）
+- [x] Task 2: A800 实验配置 — `requirements-a800.txt` + `docs/phase14_a800_runbook.md`（pop=32, gen=20，先冒烟再正式）
+- [x] Task 3: 基线矩阵 — `src/scripts/run_experiment.py --matrix`：3 固定架构 + random + no_pareto + enss
+- [x] Task 4: GSM8K benchmark — 真实评测管线已接 `--benchmark gsm8k`（数据自动下载）
+- [x] Task 5: 消融 — no_pareto / no_inherit / no_mamba / random(w/o evolution) 全部实现
 
 ## Verify
 
-- [x] `python -m pytest tests/` — 17 passed
-- [x] `python src/scripts/run_enss.py` — 64 空间 10 代跑通，fitness 0.65→0.67，确定性复现
-- [x] 真实 benchmark 可替换 MockEvaluator 而不改动 controller（同一 `evaluate(genome, agent)` 接口）
-- [x] 进化支持子代状态继承（冒烟运行转移 486 张量）
+- [x] `pytest tests/` — 21 passed
+- [x] mock 基线矩阵端到端：enss > no_pareto > random > fixed（管线验证）
+- [x] 日志产物：history.jsonl（图 1/2/3 数据）、results.json、矩阵 CSV（表 1/2 数据）
+- [ ] **真实 GSM8K 进化实验 —— 阻塞：需 A800 GPU 环境**（本机 CPU-only，torch 1.10 无法加载 Qwen2.5）
 
-## Success Criteria
+## Success Criteria 对照（phase14_plan.md）
 
-- [x] 四项任务全部落地，测试与冒烟运行通过
-- [ ] GSM8K 真实 LLM 后端首跑 —— 需 GPU 环境（A800），移交下一阶段
+1. Real LLM backend runs — 代码完成，待 A800 首跑
+2. GSM8K real evaluation works — 管线完成（脚本化后端测试通过），待真实运行
+3. ENSS completes multiple generations — mock 已验证，真实待跑
+4. Baselines implemented — 完成
+5. First paper-quality result table — 表格生成器就绪，待真实数据填充
 
 ## Next
 
-等待 Planner 审核 Phase-13，决策 Phase-14（真实 GSM8K 进化实验 / 种群与代际参数调优）。
+移交 A800 环境执行 runbook；或等待 Planner 指示 Phase-15。
