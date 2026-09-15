@@ -1,5 +1,19 @@
 # Changelog
 
+## [Phase-14] Real GSM8K matrix results - 2026-09-15
+
+### Added
+- `docs/phase14_results.md` — 首份真实实验结果：Table 1 基线矩阵、Table 2 消融、Figure 1 进化曲线数据、关键发现与诚实声明
+- `experiments/*_gsm8k_seed0/` — 原始日志（gitignored）：history.jsonl / results.json / 评估缓存
+
+### Results（真实 A800 + Qwen2.5-1.5B-Instruct，GSM8K limit=100, pop=16, gen=10, seed=0）
+- ENSS 最优：Mamba + CoT + INT8，fitness 0.5205（capability 0.39 / efficiency 0.88 / adaptability 0.30）
+- 固定基线 capability 仅 0.11（Direct）vs 搜索架构 0.39–0.41（CoT/Planner）——最核心信号
+- ENSS 第 2 代找到全局最优，第 5 代种群完全收敛（mean=best=0.520）
+- ENSS = random = no_pareto 最优 fitness 相同（64 空间太小，进化优势未显现）
+- w/o Mamba → Retrieval+Planner+INT8（capability 0.41 更高、总 fitness 更低，多目标权衡生效）
+- 详细分析与局限声明见 docs/phase14_results.md 与 issues/research_questions.md（Q3/Q4）
+
 ## [Phase-14] Real GSM8K GPU experiment launched - 2026-09-15
 
 ### Added
