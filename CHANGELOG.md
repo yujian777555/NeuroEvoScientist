@@ -1,5 +1,29 @@
 # Changelog
 
+## [Phase-14] Real GSM8K GPU experiment launched - 2026-09-15
+
+### Added
+- `src/evaluator/backends.py` — 批处理生成 `batch_generate`（left-padding，吞吐 ~20-40×）；transformers>=5 `dtype` 参数兼容；`batch_size` 可配
+- `src/evaluator/gsm8k.py` — 原子评估缓存（tmp+fsync+os.replace，按 genome+model+limit 键控），崩溃可断点续跑
+- `scripts_vm/smoke.sh`、`scripts_vm/run_method.sh`、`scripts_vm/queue_30522.sh` — VM 运行脚本（HF mirror、单卡钉扎、绝对路径）
+- `tests/test_gsm8k.py::test_eval_cache_hit_skips_backend` — 缓存命中跳过后端
+
+### Changed
+- `src/scripts/run_experiment.py` — `--device` / `--batch-size` 参数；评估缓存按 method+seed 分文件（矩阵并行防竞争）
+- `data/gsm8k/test.jsonl` — GSM8K 官方测试集 1319 题（本地缓存，已同步 VM）
+
+### Experiment Results (real GPU, A800)
+- 冒烟（30939 cuda:1, Qwen2.5-1.5B-Instruct, limit=20, pop=8, gen=3）：端到端跑通，
+  best = Retrieval + CoT + INT8，真实 capability = 0.45（20 题子集）
+- 基线矩阵（limit=100, pop=16, gen=10, batch=32）已在 5 张空闲 A800 上并行启动：
+  random@30939:1 / no_pareto@30939:3 / enss@30108:1 / no_inherit@30108:2 /
+  fixed×3+no_mamba@30522:3（遵守 1 worker/物理卡纪律，启动前 nvidia-smi 实测）
+- 发现并记录研究问题 Q3：真实链路中仅 reasoning 影响 LLM 输出（见 issues/）
+
+### Environment
+- VM: 10.10.24.107 容器群，共享 GPFS `/202532803004`，python=`conda_envs/amber`
+  （torch 2.5.1+cu121, transformers 5.7.0），模型经 hf-mirror 缓存 2.9G
+
 ## [Phase-14] Real experiment infrastructure - 2026-09-15
 
 ### Added

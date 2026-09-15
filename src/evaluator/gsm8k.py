@@ -20,9 +20,11 @@ Data loading order:
     4. download from the official GitHub mirror into the cache
 """
 
+import hashlib
 import json
 import os
 import re
+import tempfile
 import urllib.request
 
 from .metrics import compute_metrics
@@ -83,12 +85,47 @@ class GSM8KEvaluator:
     """
 
     def __init__(self, backend=None, split="test", limit=None,
-                 data_path=None):
+                 data_path=None, cache_path=None):
         self.backend = backend
         self.split = split
         self.limit = limit
         self.data_path = data_path
+        self.cache_path = cache_path
         self._samples = None
+        self._cache = None
+
+    # -- evaluation cache (atomic; crash-safe resume for long GPU runs) -------
+
+    def _cache_key(self, genome):
+        model = getattr(self.backend, "model_name", "unknown")
+        payload = json.dumps({
+            "genome": genome.to_dict(), "split": self.split,
+            "limit": self.limit, "model": str(model),
+        }, sort_keys=True)
+        return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+    def _load_cache(self):
+        if self._cache is None:
+            self._cache = {}
+            if self.cache_path and os.path.exists(self.cache_path):
+                with open(self.cache_path, "r", encoding="utf-8") as f:
+                    self._cache = json.load(f)
+        return self._cache
+
+    def _store_cache(self, key, metrics):
+        if not self.cache_path:
+            return
+        cache = self._load_cache()
+        cache[key] = metrics
+        os.makedirs(os.path.dirname(os.path.abspath(self.cache_path)),
+                    exist_ok=True)
+        fd, tmp = tempfile.mkstemp(
+            dir=os.path.dirname(os.path.abspath(self.cache_path)))
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            json.dump(cache, f)
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(tmp, self.cache_path)
 
     # -- data ---------------------------------------------------------------
 
@@ -146,12 +183,22 @@ class GSM8KEvaluator:
                 "Refusing to fabricate scores; use benchmark='mock' for CI."
             )
 
+        key = self._cache_key(genome)
+        cached = self._load_cache().get(key)
+        if cached is not None:
+            return cached
+
         samples = self.load_samples()
+        prompts = [self.build_prompt(s, genome) for s in samples]
+
+        if hasattr(self.backend, "batch_generate"):
+            outputs = self.backend.batch_generate(prompts, genome)
+        else:
+            outputs = [self.backend(p, genome) for p in prompts]
+
         task_scores = []
         long_scores = []  # multi-step problems: adaptability proxy
-        for sample in samples:
-            prompt = self.build_prompt(sample, genome)
-            output = self.backend(prompt, genome)
+        for sample, output in zip(samples, outputs):
             pred = extract_gsm8k_answer(output)
             gold = extract_gsm8k_answer(sample["answer"])
             correct = 1.0 if answers_match(pred, gold) else 0.0
@@ -159,8 +206,10 @@ class GSM8KEvaluator:
             if sample["answer"].count("\n") >= 3:
                 long_scores.append(correct)
 
-        return compute_metrics(agent, task_scores,
-                               shifted_scores=long_scores or None)
+        metrics = compute_metrics(agent, task_scores,
+                                  shifted_scores=long_scores or None)
+        self._store_cache(key, metrics)
+        return metrics
 
 
 # Backends live in evaluator/backends.py (Phase-14); re-exported here so

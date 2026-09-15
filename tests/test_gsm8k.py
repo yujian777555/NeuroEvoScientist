@@ -53,3 +53,26 @@ def test_no_backend_refuses_to_score():
     ev = GSM8KEvaluator(backend=None, data_path=FIXTURE)
     with pytest.raises(RuntimeError, match="backend"):
         ev.evaluate(ArchitectureGenome(), agent=None)
+
+
+def test_eval_cache_hit_skips_backend(tmp_path):
+    cache = str(tmp_path / "eval_cache.json")
+    calls = []
+
+    def backend(prompt, genome):
+        calls.append(prompt)
+        return "#### 7"
+
+    genome = ArchitectureGenome()
+    ev = GSM8KEvaluator(backend=backend, data_path=FIXTURE,
+                        cache_path=cache)
+    first = ev.evaluate(genome, agent=None)
+    assert calls, "first evaluation must call the backend"
+
+    # New evaluator instance, same cache: no backend calls at all.
+    ev2 = GSM8KEvaluator(backend=backend, data_path=FIXTURE,
+                         cache_path=cache)
+    calls.clear()
+    second = ev2.evaluate(genome, agent=None)
+    assert calls == []
+    assert second == first

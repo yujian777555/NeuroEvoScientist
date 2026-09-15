@@ -29,10 +29,11 @@ class HFTransformersBackend:
     """
 
     def __init__(self, model_name, max_new_tokens=256, device=-1,
-                 use_chat_template=None):
+                 use_chat_template=None, batch_size=16):
         self.model_name = model_name
         self.max_new_tokens = max_new_tokens
         self.device = device
+        self.batch_size = batch_size
         if use_chat_template is None:
             name = os.path.basename(str(model_name)).lower()
             use_chat_template = any(h in name for h in _CHAT_MODEL_HINTS)
@@ -45,13 +46,20 @@ class HFTransformersBackend:
         from transformers import AutoModelForCausalLM, AutoTokenizer
 
         self._tokenizer = AutoTokenizer.from_pretrained(self.model_name)
-        dtype = torch.float16 if torch.cuda.is_available() else torch.float32
-        device_map = "auto" if self.device == "auto" else None
-        model = AutoModelForCausalLM.from_pretrained(
-            self.model_name, torch_dtype=dtype, device_map=device_map)
-        if device_map is None and isinstance(self.device, int) \
-                and self.device >= 0 and torch.cuda.is_available():
-            model = model.to("cuda:%d" % self.device)
+        use_cuda = torch.cuda.is_available() and self.device != -1
+        dtype = torch.float16 if use_cuda else torch.float32
+        device_map = "auto" if (use_cuda and str(self.device) == "auto") else None
+        # transformers>=5 renamed torch_dtype -> dtype; stay compatible.
+        try:
+            model = AutoModelForCausalLM.from_pretrained(
+                self.model_name, dtype=dtype, device_map=device_map)
+        except TypeError:
+            model = AutoModelForCausalLM.from_pretrained(
+                self.model_name, torch_dtype=dtype, device_map=device_map)
+        if device_map is None and use_cuda:
+            target = "cuda:0" if str(self.device) == "auto" \
+                else "cuda:%d" % int(self.device)
+            model = model.to(target)
         self._pipe = model
 
     def _format_prompt(self, prompt):
@@ -63,24 +71,51 @@ class HFTransformersBackend:
         return prompt
 
     def __call__(self, prompt, genome):
+        return self.batch_generate([prompt], genome)[0]
+
+    def batch_generate(self, prompts, genome, batch_size=None):
+        """Batched real inference (left-padded). ~20-40x faster than
+        per-prompt generation for benchmark evaluation."""
         if self._pipe is None:
             self._load()
-        text = self._format_prompt(prompt)
-        inputs = self._tokenizer(text, return_tensors="pt").to(
-            self._pipe.device)
-        out = self._pipe.generate(
-            **inputs,
-            max_new_tokens=self.max_new_tokens,
-            do_sample=False,
-            pad_token_id=self._tokenizer.eos_token_id,
-        )
-        generated = out[0][inputs["input_ids"].shape[1]:]
-        return self._tokenizer.decode(generated, skip_special_tokens=True)
+        batch_size = batch_size or self.batch_size
+        tok = self._tokenizer
+        if tok.pad_token_id is None:
+            tok.pad_token = tok.eos_token
+        old_padding_side = tok.padding_side
+        tok.padding_side = "left"
+
+        outputs = []
+        try:
+            for i in range(0, len(prompts), batch_size):
+                chunk = [self._format_prompt(p)
+                         for p in prompts[i:i + batch_size]]
+                inputs = tok(chunk, return_tensors="pt", padding=True).to(
+                    self._pipe.device)
+                out = self._pipe.generate(
+                    **inputs,
+                    max_new_tokens=self.max_new_tokens,
+                    do_sample=False,
+                    pad_token_id=tok.pad_token_id,
+                )
+                generated = out[:, inputs["input_ids"].shape[1]:]
+                outputs.extend(
+                    tok.decode(row, skip_special_tokens=True)
+                    for row in generated
+                )
+        finally:
+            tok.padding_side = old_padding_side
+        return outputs
 
 
 class QwenBackend(HFTransformersBackend):
-    """Qwen2.5 backend preset (A800 default)."""
+    """Qwen2.5 backend preset.
+
+    Defaults to a single visible GPU (device=0): on shared multi-GPU boxes,
+    pin the card with CUDA_VISIBLE_DEVICES instead of device_map="auto",
+    which would spread onto busy neighbors.
+    """
 
     def __init__(self, model_name="Qwen/Qwen2.5-1.5B-Instruct", **kwargs):
-        kwargs.setdefault("device", "auto")
+        kwargs.setdefault("device", 0)
         super().__init__(model_name, **kwargs)

@@ -47,7 +47,7 @@ MATRIX_METHODS = ["fixed_attention", "fixed_mamba", "fixed_hybrid",
                   "random", "no_pareto", "enss"]
 
 
-def build_evaluator(args):
+def build_evaluator(args, method):
     if args.benchmark == "gsm8k":
         from evaluator.gsm8k import GSM8KEvaluator
         from evaluator.backends import QwenBackend, HFTransformersBackend
@@ -56,12 +56,21 @@ def build_evaluator(args):
                 "--benchmark gsm8k requires --model <hf-model-name> "
                 "(real inference backend; refusing to fabricate scores)."
             )
+        kwargs = {"device": args.device, "batch_size": args.batch_size}
         if "qwen" in args.model.lower():
-            backend = QwenBackend(args.model)
+            backend = QwenBackend(args.model, **kwargs)
         else:
-            backend = HFTransformersBackend(args.model, device="auto")
+            backend = HFTransformersBackend(args.model, **kwargs)
+        model_tag = os.path.basename(str(args.model))
+        # Per-method cache file: matrix methods run as separate processes
+        # (often on different GPUs), a shared JSON would race.
+        cache_path = os.path.join(
+            "experiments",
+            "eval_cache_gsm8k_%s_%s_limit%s_seed%d.json"
+            % (model_tag, method, args.limit, args.seed))
         return GSM8KEvaluator(backend=backend, limit=args.limit,
-                              data_path=args.data_path)
+                              data_path=args.data_path,
+                              cache_path=cache_path)
     from evaluator.benchmark import get_evaluator
     return get_evaluator(args.benchmark)
 
@@ -144,15 +153,22 @@ def main():
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--data-path", type=str, default=None)
     parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument("--device", type=int, default=0,
+                        help="GPU index within CUDA_VISIBLE_DEVICES "
+                             "(pin the physical card via the env var)")
+    parser.add_argument("--batch-size", type=int, default=16,
+                        help="batched inference size for real backends")
     args = parser.parse_args()
 
-    evaluator = build_evaluator(args)
+    evaluator = build_evaluator(args, args.method)
     weights = SearchSpace().objective_weights
 
     methods = MATRIX_METHODS if args.matrix else [args.method]
     rows = []
     for method in methods:
         print(">>> method=%s benchmark=%s" % (method, args.benchmark))
+        if args.matrix:
+            evaluator = build_evaluator(args, method)
         best = run_method(method, args, evaluator, weights)
         print("    best: %s | fitness=%.4f\n"
               % (best.genome.describe(), best.fitness))
