@@ -1,0 +1,3 @@
+{"question": "Is drug X effective for condition Y?\nContext: A randomized trial of 200 patients showed significant improvement with drug X compared to placebo.", "answer": "yes"}
+{"question": "Does treatment Z reduce mortality?\nContext: In a cohort study, treatment Z showed no significant difference in mortality rates.", "answer": "no"}
+{"question": "Can biomarker W predict disease progression?\nContext: Preliminary data suggest a possible association, but evidence remains limited.", "answer": "maybe"}

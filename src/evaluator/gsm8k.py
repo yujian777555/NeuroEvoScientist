@@ -1,10 +1,16 @@
-"""GSM8K benchmark adapter for ENSS (Phase-13, Task 1).
+"""GSM8K benchmark adapter for ENSS (Phase-13/15).
 
 Real task scoring pipeline:
 
-    dataset (JSONL)  ->  prompt (conditioned on genome reasoning module)
+    dataset (JSONL)  ->  episodic memory recall (memory gene)
+                     ->  prompt (reasoning gene template + compression
+                         gene exemplar budget)
                      ->  backend (pluggable LLM inference)
                      ->  answer extraction  ->  accuracy metrics
+
+Since Phase-15 every gene affects real inference: memory selects which
+past experiences enter the prompt, compression controls their verbosity
+(hence real token cost), reasoning sets the instruction template.
 
 The evaluator NEVER fabricates scores: without a configured inference
 backend it raises. MockEvaluator remains available for CI smoke tests
@@ -27,6 +33,7 @@ import re
 import tempfile
 import urllib.request
 
+from .memory import build_memory_controller, format_exemplar
 from .metrics import compute_metrics
 
 GSM8K_URL = ("https://raw.githubusercontent.com/openai/grade-school-math/"
@@ -85,12 +92,13 @@ class GSM8KEvaluator:
     """
 
     def __init__(self, backend=None, split="test", limit=None,
-                 data_path=None, cache_path=None):
+                 data_path=None, cache_path=None, memory_k=3):
         self.backend = backend
         self.split = split
         self.limit = limit
         self.data_path = data_path
         self.cache_path = cache_path
+        self.memory_k = memory_k
         self._samples = None
         self._cache = None
 
@@ -101,6 +109,7 @@ class GSM8KEvaluator:
         payload = json.dumps({
             "genome": genome.to_dict(), "split": self.split,
             "limit": self.limit, "model": str(model),
+            "pipeline": "substrate-activated-v2",
         }, sort_keys=True)
         return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
@@ -170,10 +179,29 @@ class GSM8KEvaluator:
 
     # -- pipeline -------------------------------------------------------------
 
-    def build_prompt(self, sample, genome):
+    def build_prompt(self, sample, genome, exemplars=None):
+        """Prompt = (memory exemplars) + reasoning-conditioned question.
+
+        The memory gene controls WHICH past experiences appear; the
+        compression gene controls HOW verbosely they are rendered; the
+        reasoning gene controls the instruction template.
+        """
+        blocks = []
+        if exemplars:
+            blocks.extend(format_exemplar(e, genome.compression)
+                          for e in exemplars)
         template = PROMPT_TEMPLATES.get(genome.reasoning,
                                         PROMPT_TEMPLATES["direct"])
-        return template.format(q=sample["question"])
+        blocks.append(template.format(q=sample["question"]))
+        return "\n\n".join(blocks)
+
+    def _count_tokens(self, prompts):
+        """Real token count when the backend tokenizer is loaded,
+        else a word-count proxy."""
+        tok = getattr(self.backend, "_tokenizer", None)
+        if tok is not None:
+            return sum(len(tok(p)["input_ids"]) for p in prompts)
+        return sum(len(p.split()) for p in prompts)
 
     def evaluate(self, genome, agent):
         if self.backend is None:
@@ -189,12 +217,24 @@ class GSM8KEvaluator:
             return cached
 
         samples = self.load_samples()
-        prompts = [self.build_prompt(s, genome) for s in samples]
+
+        # Episodic memory: history accumulates GOLD experience as the episode
+        # proceeds, so prompts are determined upfront and batched generation
+        # stays valid.
+        memory = build_memory_controller(genome)
+        prompts = []
+        for sample in samples:
+            exemplars = memory.recall(sample["question"],
+                                      k=self.memory_k)
+            prompts.append(self.build_prompt(sample, genome, exemplars))
+            memory.store(sample["question"], sample["answer"])
 
         if hasattr(self.backend, "batch_generate"):
             outputs = self.backend.batch_generate(prompts, genome)
         else:
             outputs = [self.backend(p, genome) for p in prompts]
+
+        prompt_tokens = self._count_tokens(prompts)
 
         task_scores = []
         long_scores = []  # multi-step problems: adaptability proxy
@@ -207,7 +247,9 @@ class GSM8KEvaluator:
                 long_scores.append(correct)
 
         metrics = compute_metrics(agent, task_scores,
-                                  shifted_scores=long_scores or None)
+                                  shifted_scores=long_scores or None,
+                                  prompt_tokens=prompt_tokens,
+                                  n_prompts=len(prompts))
         self._store_cache(key, metrics)
         return metrics
 

@@ -1,34 +1,31 @@
-# Phase 14 — Current Sprint Plan (Infra complete, GPU run blocked)
+# Phase 15 — Current Sprint Plan (Matrix running, awaiting results)
 
-依据 `plans/phase14_plan.md` 执行。
+依据 `plans/phase15_plan.md` 执行。
 
 ## Goal
 
-将 ENSS 从框架验证升级为论文级实验验证。
+把 ENSS 从 prompt 模板级进化升级为真实神经基底进化（回答 Q3）。
 
 ## Tasks
 
-- [x] Task 1: 真实 LLM 后端 — `src/evaluator/backends.py`（QwenBackend: Qwen2.5-1.5B-Instruct，chat template 自动识别）
-- [x] Task 2: A800 实验配置 — `requirements-a800.txt` + `docs/phase14_a800_runbook.md`（pop=32, gen=20，先冒烟再正式）
-- [x] Task 3: 基线矩阵 — `src/scripts/run_experiment.py --matrix`：3 固定架构 + random + no_pareto + enss
-- [x] Task 4: GSM8K benchmark — 真实评测管线已接 `--benchmark gsm8k`（数据自动下载）
-- [x] Task 5: 消融 — no_pareto / no_inherit / no_mamba / random(w/o evolution) 全部实现
+- [x] Task 1: 真实记忆基底 — `src/evaluator/memory.py`（attention/retrieval/mamba/hybrid 四种 episode 记忆控制器）
+- [x] Task 2: 基因组激活 — 每个基因真实影响推理：memory 决定注入哪些经验、compression 决定上下文预算（真实 token 成本）、reasoning 决定指令模板；测试证明不同 memory 基因产生不同 prompt
+- [x] Task 3: 科学基准 — `src/evaluator/pubmedqa.py`（pqa_labeled 1000 题），已注册并入 run_experiment
+- [ ] Task 4: 重跑进化 — 6 方法 × 2 基准矩阵运行中（5 卡并行，cron 监控）
 
 ## Verify
 
-- [x] `pytest tests/` — 21 passed
-- [x] mock 基线矩阵端到端：enss > no_pareto > random > fixed（管线验证）
-- [x] 日志产物：history.jsonl（图 1/2/3 数据）、results.json、矩阵 CSV（表 1/2 数据）
-- [ ] **真实 GSM8K 进化实验 —— 阻塞：需 A800 GPU 环境**（本机 CPU-only，torch 1.10 无法加载 Qwen2.5）
+- [x] `pytest tests/` — 34 passed（含基因组激活真实性测试）
+- [x] GPU 冒烟通过，最优架构与 Phase-14 不同（基因真正影响结果）
+- [ ] 矩阵完成后：GSM8K 与 PubMedQA 是否进化出不同架构（成功判据 1）
 
-## Success Criteria 对照（phase14_plan.md）
+## Success Criteria 对照（phase15_plan.md）
 
-1. Real LLM backend runs — 代码完成，待 A800 首跑
-2. GSM8K real evaluation works — 管线完成（脚本化后端测试通过），待真实运行
-3. ENSS completes multiple generations — mock 已验证，真实待跑
-4. Baselines implemented — 完成
-5. First paper-quality result table — 表格生成器就绪，待真实数据填充
+1. 不同任务产生不同进化架构 — 待矩阵结果
+2. memory 基因影响真实计算 — 已实现并有测试证据
+3. ENSS 优势不只来自 prompt 模板 — 待矩阵结果
+4. 结果支撑 neural substrate evolution claim — 待矩阵结果
 
 ## Next
 
-移交 A800 环境执行 runbook；或等待 Planner 指示 Phase-15。
+矩阵完成（cron 自动检测）→ 汇总 → docs/phase15_results.md → 汇报 Planner。

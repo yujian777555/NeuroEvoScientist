@@ -48,13 +48,15 @@ MATRIX_METHODS = ["fixed_attention", "fixed_mamba", "fixed_hybrid",
 
 
 def build_evaluator(args, method):
-    if args.benchmark == "gsm8k":
+    if args.benchmark in ("gsm8k", "pubmedqa"):
         from evaluator.gsm8k import GSM8KEvaluator
+        from evaluator.pubmedqa import PubMedQAEvaluator
         from evaluator.backends import QwenBackend, HFTransformersBackend
         if not args.model:
             raise SystemExit(
-                "--benchmark gsm8k requires --model <hf-model-name> "
+                "--benchmark %s requires --model <hf-model-name> "
                 "(real inference backend; refusing to fabricate scores)."
+                % args.benchmark
             )
         kwargs = {"device": args.device, "batch_size": args.batch_size}
         if "qwen" in args.model.lower():
@@ -66,11 +68,12 @@ def build_evaluator(args, method):
         # (often on different GPUs), a shared JSON would race.
         cache_path = os.path.join(
             "experiments",
-            "eval_cache_gsm8k_%s_%s_limit%s_seed%d.json"
-            % (model_tag, method, args.limit, args.seed))
-        return GSM8KEvaluator(backend=backend, limit=args.limit,
-                              data_path=args.data_path,
-                              cache_path=cache_path)
+            "eval_cache_%s_%s_%s_limit%s_seed%d.json"
+            % (args.benchmark, model_tag, method, args.limit, args.seed))
+        cls = GSM8KEvaluator if args.benchmark == "gsm8k" \
+            else PubMedQAEvaluator
+        return cls(backend=backend, limit=args.limit,
+                   data_path=args.data_path, cache_path=cache_path)
     from evaluator.benchmark import get_evaluator
     return get_evaluator(args.benchmark)
 

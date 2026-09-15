@@ -83,12 +83,17 @@ def _gsm8k_factory():
     return GSM8KEvaluator
 
 
+def _pubmedqa_factory():
+    from .pubmedqa import PubMedQAEvaluator
+    return PubMedQAEvaluator
+
+
 BENCHMARKS = {
     "mock": MockEvaluator,
     "gsm8k": _gsm8k_factory(),
+    "pubmedqa": _pubmedqa_factory(),
     # Future real benchmarks — reserved names, same interface.
     "agentbench": _not_implemented("agentbench"),
-    "pubmedqa": _not_implemented("pubmedqa"),
 }
 
 

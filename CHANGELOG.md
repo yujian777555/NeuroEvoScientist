@@ -1,5 +1,24 @@
 # Changelog
 
+## [Phase-15] Neural substrate activation - 2026-09-15
+
+### Added
+- `src/evaluator/memory.py` — 真实情景记忆基底：attention=近因窗口、retrieval=TF-IDF 相似度 top-k、mamba=SSM 门控召回（MambaMemory 模块维护循环状态）、hybrid=检索+近因；compression 基因控制 exemplar 上下文预算（none 全文 / lora 截断 / qlora·int8 仅答案）
+- `src/evaluator/pubmedqa.py` — PubMedQA（pqa_labeled 1000 题，yes/no/maybe）评估器：同样的激活基底管线 + 原子缓存
+- `tests/test_memory.py`、`tests/test_pubmedqa.py`、`tests/fixtures/` 新夹具 — 含关键测试 `test_memory_gene_changes_prompt_content`：不同 memory 基因必须产生不同 prompt（基因组激活的真实性证明）
+- `scripts_vm/queue_method.sh`、`queue_fixed.sh` — 双基准队列脚本
+
+### Changed
+- `src/evaluator/gsm8k.py` — 接入情景记忆（gold 历史前瞻构建，保持批处理有效）；prompt = memory exemplars + reasoning 模板；真实 token 成本计量；缓存键升级 `substrate-activated-v2`（Phase-14 缓存作废，prompt 语义已变）
+- `src/evaluator/metrics.py` — efficiency 融合参数量代理 + 实测 prompt token 成本（压缩/记忆基因因此影响真实推理成本）
+- `src/scripts/run_experiment.py` — 支持 `--benchmark pubmedqa`
+- `scripts_vm/run_method.sh` — 增加 benchmark 参数
+
+### Test Results
+- `python -m pytest tests/` — 34 passed（本地与 VM 一致）
+- GPU 冒烟（30939:1, Qwen2.5-1.5B, gsm8k limit=20）：Retrieval + CoT + None 0.4892 —— 与 Phase-14 最优不同，证明基因激活生效
+- 固定基线已完成（真实推理）：gsm8k attention 0.3199 / mamba 0.3724 / hybrid 0.2568；pubmedqa 0.3801 / 0.4151 / 0.3662
+
 ## [Phase-14] Real GSM8K matrix results - 2026-09-15
 
 ### Added
