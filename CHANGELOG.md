@@ -1,5 +1,22 @@
 # Changelog
 
+## [Phase-15] Substrate-activated dual-benchmark results - 2026-09-15
+
+### Added
+- `docs/phase15_results.md` — 双基准真实结果：Table 1/2（GSM8K + PubMedQA 全矩阵）、
+  进化曲线、四条成功判据逐项对照、三个新问题（P1/P2/P3）移交 Planner
+- `experiments/*_{gsm8k,pubmedqa}_seed0/` — 原始日志（gitignored），评估缓存支持断点续跑
+
+### Results（真实 A800 × 5，Qwen2.5-1.5B-Instruct，limit=100, pop=16, gen=10, seed=0）
+- 成功判据 1（任务依赖架构）：成立——GSM8K 进化出 Mamba+Verify+LoRA，
+  PubMedQA 进化出 Mamba+Planner+QLoRA
+- 成功判据 2（memory 基因影响真实计算）：成立（情景记忆注入 + 测试证据）
+- 成功判据 3（进化优势超越 prompt 模板）：未成立——no_inherit 在 GSM8K 反超 ENSS
+  （0.6488 vs 0.6039），random 在 PubMedQA 反超（0.5025 vs 0.4719）
+- 成功判据 4（支撑 substrate evolution claim）：部分——搜索 vs 固定设计 capability
+  差距 2.5×（0.60-0.64 vs 0.18-0.25），但进化 vs 随机无稳定优势
+- 中途事件：另一租户抢占 30939:0，enss 迁移 30108:2 缓存续跑无损失
+
 ## [Phase-15] Neural substrate activation - 2026-09-15
 
 ### Added
