@@ -1,22 +1,23 @@
-"""Phase-14 experiment runner: baseline matrix + ablations.
+"""Phase-14/15/16 experiment runner: baseline matrix + ablations.
 
 Methods:
-    fixed        fixed hand-designed architectures (attention/mamba/hybrid
+    fixed_*      fixed hand-designed architectures (attention/mamba/hybrid
                  memory, direct reasoning, no compression)
     random       random search ("w/o Evolution" baseline)
-    enss         full ENSS (Pareto selection + weight inheritance)
+    enss         full ENSS (Pareto selection + weight inheritance + memory)
     no_pareto    evolution with scalar-fitness selection ("w/o NSGA Pareto")
-    no_inherit   ENSS without weight inheritance
+    no_inherit   ENSS without weight inheritance ("w/o Inheritance")
+    no_memory    ENSS without the episodic memory substrate ("w/o Memory")
     no_mamba     ENSS with mamba removed from the search space
 
 Examples:
     # single run
     python src/scripts/run_experiment.py --method enss --benchmark gsm8k \
-        --model Qwen/Qwen2.5-1.5B-Instruct --population 32 --generations 20
+        --model Qwen/Qwen2.5-1.5B-Instruct --population 16 --generations 10
 
-    # full baseline matrix (A800 paper run)
+    # full baseline matrix
     python src/scripts/run_experiment.py --matrix --benchmark gsm8k \
-        --model Qwen/Qwen2.5-1.5B-Instruct --population 32 --generations 20
+        --model Qwen/Qwen2.5-1.5B-Instruct
 
 Every run logs to experiments/<run_name>/{history.jsonl, results.json}.
 """
@@ -44,7 +45,7 @@ FIXED_BASELINES = {
 }
 
 MATRIX_METHODS = ["fixed_attention", "fixed_mamba", "fixed_hybrid",
-                  "random", "no_pareto", "enss"]
+                  "random", "no_pareto", "enss", "no_memory", "no_inherit"]
 
 
 def build_evaluator(args, method):
@@ -64,16 +65,18 @@ def build_evaluator(args, method):
         else:
             backend = HFTransformersBackend(args.model, **kwargs)
         model_tag = os.path.basename(str(args.model))
-        # Per-method cache file: matrix methods run as separate processes
-        # (often on different GPUs), a shared JSON would race.
+        # Per-method cache file shared ACROSS SEEDS: genome evaluation is
+        # deterministic (greedy decoding), and seeds of one method run
+        # sequentially in the card queue, so no write race occurs.
         cache_path = os.path.join(
             "experiments",
-            "eval_cache_%s_%s_%s_limit%s_seed%d.json"
-            % (args.benchmark, model_tag, method, args.limit, args.seed))
+            "eval_cache_%s_%s_%s_limit%s.json"
+            % (args.benchmark, model_tag, method, args.limit))
         cls = GSM8KEvaluator if args.benchmark == "gsm8k" \
             else PubMedQAEvaluator
         return cls(backend=backend, limit=args.limit,
-                   data_path=args.data_path, cache_path=cache_path)
+                   data_path=args.data_path, cache_path=cache_path,
+                   disable_memory=(method == "no_memory"))
     from evaluator.benchmark import get_evaluator
     return get_evaluator(args.benchmark)
 
@@ -145,7 +148,7 @@ def main():
         description="ENSS Phase-14 experiment runner")
     parser.add_argument("--method", type=str, default="enss",
                         choices=["fixed", "random", "enss", "no_pareto",
-                                 "no_inherit", "no_mamba"]
+                                 "no_inherit", "no_mamba", "no_memory"]
                         + sorted(FIXED_BASELINES))
     parser.add_argument("--matrix", action="store_true",
                         help="run the full Phase-14 baseline matrix")

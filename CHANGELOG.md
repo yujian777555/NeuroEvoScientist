@@ -1,5 +1,22 @@
 # Changelog
 
+## [Phase-16] Task-conditioned validation infrastructure - 2026-09-15
+
+### Added
+- `src/scripts/validate_mamba.py` — Task 4 验证：mamba 记忆状态更新可追踪、四种记忆基因计算路径确实不同，产物 `results/mamba_trace.json`
+- `src/scripts/aggregate_phase16.py` — 聚合 experiments/ 日志生成论文产物：`results/phase16_matrix.csv`（跨 seed 均值±方差）、`evolution_history.json`、`best_architectures.json`，附 ENSS-vs-Random 判定
+- `tests/test_phase16.py` — no_memory 消融、延迟/token 记录、缓存键隔离
+- `scripts_vm/p16_*.sh` — 5 卡多 seed 队列脚本
+
+### Changed
+- `src/evaluator/gsm8k.py` / `pubmedqa.py` — `disable_memory` 消融开关（w/o Memory Substrate）；每次评估记录 `latency_sec` 与 `prompt_tokens_total`；缓存键纳入消融标志
+- `src/scripts/run_experiment.py` — 新增 `no_memory` 方法；矩阵扩至 8 方法；评估缓存改为按 method+benchmark 共享（跨 seed 复用，队列内串行无竞争）
+
+### Test Results
+- `pytest tests/` — 38 passed
+- `validate_mamba.py` — MAMBA_VALIDATION_OK（state 逐步更新可追踪，四基因召回路径互不相同）
+- 22 个 GPU 运行已在 5 卡启动（seeds 1-2 × 4 方法 × 2 基准 + no_memory 全 seed）
+
 ## [Phase-15] Substrate-activated dual-benchmark results - 2026-09-15
 
 ### Added

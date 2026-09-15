@@ -23,6 +23,7 @@ import json
 import os
 import re
 import tempfile
+import time
 import urllib.request
 
 from .memory import build_memory_controller, format_exemplar
@@ -61,13 +62,15 @@ class PubMedQAEvaluator:
     """Real PubMedQA evaluator; same interface as GSM8KEvaluator."""
 
     def __init__(self, backend=None, split="test", limit=None,
-                 data_path=None, cache_path=None, memory_k=3):
+                 data_path=None, cache_path=None, memory_k=3,
+                 disable_memory=False):
         self.backend = backend
         self.split = split
         self.limit = limit
         self.data_path = data_path
         self.cache_path = cache_path
         self.memory_k = memory_k
+        self.disable_memory = disable_memory
         self._samples = None
         self._cache = None
 
@@ -79,6 +82,7 @@ class PubMedQAEvaluator:
             "genome": genome.to_dict(), "benchmark": "pubmedqa",
             "limit": self.limit, "model": str(model),
             "pipeline": "substrate-activated-v2",
+            "disable_memory": self.disable_memory,
         }, sort_keys=True)
         return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
@@ -190,17 +194,21 @@ class PubMedQAEvaluator:
 
         samples = self.load_samples()
 
-        memory = build_memory_controller(genome)
+        memory = None if self.disable_memory else build_memory_controller(genome)
         prompts = []
         for sample in samples:
-            exemplars = memory.recall(sample["question"], k=self.memory_k)
+            exemplars = None if memory is None else memory.recall(
+                sample["question"], k=self.memory_k)
             prompts.append(self.build_prompt(sample, genome, exemplars))
-            memory.store(sample["question"], sample["answer"])
+            if memory is not None:
+                memory.store(sample["question"], sample["answer"])
 
+        start = time.time()
         if hasattr(self.backend, "batch_generate"):
             outputs = self.backend.batch_generate(prompts, genome)
         else:
             outputs = [self.backend(p, genome) for p in prompts]
+        latency_sec = time.time() - start
 
         prompt_tokens = self._count_tokens(prompts)
 
@@ -218,5 +226,8 @@ class PubMedQAEvaluator:
                                   shifted_scores=hard_scores or None,
                                   prompt_tokens=prompt_tokens,
                                   n_prompts=len(prompts))
+        metrics["latency_sec"] = latency_sec
+        metrics["prompt_tokens_total"] = prompt_tokens
+        metrics["memory_enabled"] = not self.disable_memory
         self._store_cache(key, metrics)
         return metrics

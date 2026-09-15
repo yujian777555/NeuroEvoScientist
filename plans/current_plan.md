@@ -1,31 +1,31 @@
-# Phase 15 — Current Sprint Plan (Matrix running, awaiting results)
+# Phase 16 — Current Sprint Plan (Multi-seed matrix running)
 
-依据 `plans/phase15_plan.md` 执行。
+依据 `plans/phase16_plan.md` 执行。
 
 ## Goal
 
-把 ENSS 从 prompt 模板级进化升级为真实神经基底进化（回答 Q3）。
+产生论文核心证据：ENSS vs 固定/随机、任务依赖架构、memory 基底真实贡献。
 
 ## Tasks
 
-- [x] Task 1: 真实记忆基底 — `src/evaluator/memory.py`（attention/retrieval/mamba/hybrid 四种 episode 记忆控制器）
-- [x] Task 2: 基因组激活 — 每个基因真实影响推理：memory 决定注入哪些经验、compression 决定上下文预算（真实 token 成本）、reasoning 决定指令模板；测试证明不同 memory 基因产生不同 prompt
-- [x] Task 3: 科学基准 — `src/evaluator/pubmedqa.py`（pqa_labeled 1000 题），已注册并入 run_experiment
-- [ ] Task 4: 重跑进化 — 6 方法 × 2 基准矩阵运行中（5 卡并行，cron 监控）
+- [x] Task 1 基础设施：延迟与 token 成本实测记录；跨 seed 评估缓存复用；多 seed 队列（22 个 GPU 运行已启动）
+- [ ] Task 1 实验：矩阵跑完并聚合 `results/{phase16_matrix.csv, evolution_history.json, best_architectures.json}`
+- [ ] Task 2 架构适应分析：GSM8K vs PubMedQA 最优架构的基因分布对比（写入 phase16_results.md）
+- [x] Task 3 消融：no_memory 已实现（disable_memory）；w/o Evolution=fixed、w/o Pareto=no_pareto、w/o Inheritance=no_inherit 沿用
+- [x] Task 4 Mamba 验证：validate_mamba.py 本地通过（状态可追踪 + 计算路径差异），产物 results/mamba_trace.json
 
 ## Verify
 
-- [x] `pytest tests/` — 34 passed（含基因组激活真实性测试）
-- [x] GPU 冒烟通过，最优架构与 Phase-14 不同（基因真正影响结果）
-- [ ] 矩阵完成后：GSM8K 与 PubMedQA 是否进化出不同架构（成功判据 1）
+- [x] 38 pytest 全过
+- [ ] 4 条成功判据在 3 seed × 2 基准上检验
 
-## Success Criteria 对照（phase15_plan.md）
+## Success Criteria（phase16_plan.md）
 
-1. 不同任务产生不同进化架构 — 待矩阵结果
-2. memory 基因影响真实计算 — 已实现并有测试证据
-3. ENSS 优势不只来自 prompt 模板 — 待矩阵结果
-4. 结果支撑 neural substrate evolution claim — 待矩阵结果
+1. ENSS > Random Search — 待多 seed 数据
+2. ENSS > fixed baselines — Phase-15 已大幅成立，待复核
+3. GSM8K 与 PubMedQA 产生不同架构 — Phase-15 弱成立，待复核
+4. memory gene 真实影响性能与成本 — enss vs no_memory 对比，待数据
 
 ## Next
 
-矩阵完成（cron 自动检测）→ 汇总 → docs/phase15_results.md → 汇报 Planner。
+cron 监控 → 汇总 → docs/phase16_results.md → commit+push → 汇报。

@@ -1,0 +1,55 @@
+{
+  "state_trace": [
+    {
+      "stored": "Apples cost 2 dollars each. How much do ",
+      "state_norm": 0.8013507127761841,
+      "state_changed": true
+    },
+    {
+      "stored": "A train moves 60 km in one hour. What is",
+      "state_norm": 1.2520949840545654,
+      "state_changed": true
+    },
+    {
+      "stored": "Sara has 3 boxes with 4 pens each. How m",
+      "state_norm": 1.7476680278778076,
+      "state_changed": true
+    },
+    {
+      "stored": "A book has 100 pages. Tom reads 20 pages",
+      "state_norm": 2.116161346435547,
+      "state_changed": true
+    },
+    {
+      "stored": "Oranges cost 3 dollars each. How much do",
+      "state_norm": 2.6082923412323,
+      "state_changed": true
+    },
+    {
+      "stored": "Pencils cost 1 dollar each. How much do ",
+      "state_norm": 2.9569411277770996,
+      "state_changed": true
+    }
+  ],
+  "state_updates_trackable": true,
+  "recall_paths": {
+    "attention": [
+      "Oranges cost 3 dollars each. H",
+      "Pencils cost 1 dollar each. Ho"
+    ],
+    "retrieval": [
+      "Apples cost 2 dollars each. Ho",
+      "Oranges cost 3 dollars each. H"
+    ],
+    "mamba": [
+      "A book has 100 pages. Tom read",
+      "Sara has 3 boxes with 4 pens e"
+    ],
+    "hybrid": [
+      "Apples cost 2 dollars each. Ho",
+      "Pencils cost 1 dollar each. Ho"
+    ]
+  },
+  "compute_path_differs": true,
+  "mamba_module": "MambaMemory"
+}
