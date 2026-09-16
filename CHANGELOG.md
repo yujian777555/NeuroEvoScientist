@@ -1,5 +1,22 @@
 # Changelog
 
+## [Phase-16] Task-conditioned evolution validation - 2026-09-16
+
+### Added
+- `docs/phase16_results.md` — 多 seed 验证结果：双基准矩阵表（3 seed 均值±std）、
+  四条成功判据对照、Mamba 验证结论、遗留问题 P1/P3
+- `results/phase16_matrix.csv`、`results/evolution_history.json`、
+  `results/best_architectures.json`、`results/mamba_trace.json` — 论文产物
+- `experiments/*_seed{1,2}` + `no_memory_*_seed0` — 22 个新运行的原始日志
+
+### Results（A800 × 5，Qwen2.5-1.5B，3 seeds × 2 benchmarks，pop=16, gen=10, limit=100）
+- ENSS > Random：双基准成立（GSM8K 0.6012±0.010 vs 0.5876±0.004；PubMedQA 0.4814 vs 0.4800 且 capability 0.57 vs 0.50）
+- ENSS >> Fixed：fitness ≈2×、capability ≈2.5×
+- 任务依赖架构跨 seed 稳定：GSM8K→Verify/CoT+LoRA，PubMedQA→Planner+INT8/QLoRA
+- 记忆基底真实贡献：no_memory capability 降 23–29%；token 成本权衡可见
+- 事故记录：enss 队列因 HF hub 连接超时中断一次，HF_HUB_OFFLINE=1 修复 + 缓存续跑无数据损失
+- 遗留：P1（no_inherit 仍反超 ENSS，0.6341 vs 0.6012）、P3（PubMedQA 绝对值低）移交 Planner
+
 ## [Phase-16] Task-conditioned validation infrastructure - 2026-09-15
 
 ### Added

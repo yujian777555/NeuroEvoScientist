@@ -1,0 +1,712 @@
+{
+  "fixed_attention|gsm8k": {
+    "seed0": {
+      "architecture": "Attention + Direct + None",
+      "genome": {
+        "memory": "attention",
+        "reasoning": "direct",
+        "tool_adapter": "basic",
+        "compression": "none",
+        "hidden_size": 1024,
+        "state_size": 64
+      },
+      "fitness": 0.3199056965611041,
+      "metrics": {
+        "capability": 0.25,
+        "efficiency": 0.5309641940164658,
+        "adaptability": 0.1780821917808219
+      }
+    }
+  },
+  "fixed_attention|pubmedqa": {
+    "seed0": {
+      "architecture": "Attention + Direct + None",
+      "genome": {
+        "memory": "attention",
+        "reasoning": "direct",
+        "tool_adapter": "basic",
+        "compression": "none",
+        "hidden_size": 1024,
+        "state_size": 64
+      },
+      "fitness": 0.38010542328514435,
+      "metrics": {
+        "capability": 0.5,
+        "efficiency": 0.43368474428381454,
+        "adaptability": 0.0
+      }
+    }
+  },
+  "fixed_mamba|gsm8k": {
+    "seed0": {
+      "architecture": "Mamba + Direct + None",
+      "genome": {
+        "memory": "mamba",
+        "reasoning": "direct",
+        "tool_adapter": "basic",
+        "compression": "none",
+        "hidden_size": 1024,
+        "state_size": 64
+      },
+      "fitness": 0.3432330967898568,
+      "metrics": {
+        "capability": 0.25,
+        "efficiency": 0.7274436559661893,
+        "adaptability": 0.0
+      }
+    }
+  },
+  "fixed_mamba|pubmedqa": {
+    "seed0": {
+      "architecture": "Mamba + Direct + None",
+      "genome": {
+        "memory": "mamba",
+        "reasoning": "direct",
+        "tool_adapter": "basic",
+        "compression": "none",
+        "hidden_size": 1024,
+        "state_size": 64
+      },
+      "fitness": 0.41508726262938545,
+      "metrics": {
+        "capability": 0.49,
+        "efficiency": 0.5669575420979516,
+        "adaptability": 0.0
+      }
+    }
+  },
+  "fixed_hybrid|gsm8k": {
+    "seed0": {
+      "architecture": "Hybrid + Direct + None",
+      "genome": {
+        "memory": "hybrid",
+        "reasoning": "direct",
+        "tool_adapter": "basic",
+        "compression": "none",
+        "hidden_size": 1024,
+        "state_size": 64
+      },
+      "fitness": 0.2567648507541174,
+      "metrics": {
+        "capability": 0.18,
+        "efficiency": 0.4645586349338161,
+        "adaptability": 0.136986301369863
+      }
+    }
+  },
+  "fixed_hybrid|pubmedqa": {
+    "seed0": {
+      "architecture": "Hybrid + Direct + None",
+      "genome": {
+        "memory": "hybrid",
+        "reasoning": "direct",
+        "tool_adapter": "basic",
+        "compression": "none",
+        "hidden_size": 1024,
+        "state_size": 64
+      },
+      "fitness": 0.3662092311871704,
+      "metrics": {
+        "capability": 0.51,
+        "efficiency": 0.37069743729056803,
+        "adaptability": 0.0
+      }
+    }
+  },
+  "random|gsm8k": {
+    "seed0": {
+      "architecture": "Mamba + Verify + LoRA",
+      "genome": {
+        "memory": "mamba",
+        "reasoning": "verify",
+        "tool_adapter": "basic",
+        "compression": "lora",
+        "hidden_size": 1024,
+        "state_size": 64
+      },
+      "fitness": 0.5833978039732409,
+      "metrics": {
+        "capability": 0.57,
+        "efficiency": 0.6658922232897984,
+        "adaptability": 0.4931506849315068
+      }
+    },
+    "seed1": {
+      "architecture": "Mamba + Verify + LoRA",
+      "genome": {
+        "memory": "mamba",
+        "reasoning": "verify",
+        "tool_adapter": "basic",
+        "compression": "lora",
+        "hidden_size": 1024,
+        "state_size": 64
+      },
+      "fitness": 0.5897059163500699,
+      "metrics": {
+        "capability": 0.58,
+        "efficiency": 0.6519877576965798,
+        "adaptability": 0.5205479452054794,
+        "latency_sec": 37.90515923500061,
+        "prompt_tokens_total": 39838,
+        "memory_enabled": true
+      }
+    },
+    "seed2": {
+      "architecture": "Mamba + Verify + LoRA",
+      "genome": {
+        "memory": "mamba",
+        "reasoning": "verify",
+        "tool_adapter": "basic",
+        "compression": "lora",
+        "hidden_size": 1024,
+        "state_size": 64
+      },
+      "fitness": 0.5897059163500699,
+      "metrics": {
+        "capability": 0.58,
+        "efficiency": 0.6519877576965798,
+        "adaptability": 0.5205479452054794,
+        "latency_sec": 37.90515923500061,
+        "prompt_tokens_total": 39838,
+        "memory_enabled": true
+      }
+    }
+  },
+  "random|pubmedqa": {
+    "seed0": {
+      "architecture": "Mamba + Planner + INT8",
+      "genome": {
+        "memory": "mamba",
+        "reasoning": "planner",
+        "tool_adapter": "basic",
+        "compression": "int8",
+        "hidden_size": 1024,
+        "state_size": 64
+      },
+      "fitness": 0.5024767047237988,
+      "metrics": {
+        "capability": 0.54,
+        "efficiency": 0.6537102278672082,
+        "adaptability": 0.18181818181818182
+      }
+    },
+    "seed1": {
+      "architecture": "Mamba + Planner + INT8",
+      "genome": {
+        "memory": "mamba",
+        "reasoning": "planner",
+        "tool_adapter": "basic",
+        "compression": "int8",
+        "hidden_size": 1024,
+        "state_size": 64
+      },
+      "fitness": 0.46879377842061004,
+      "metrics": {
+        "capability": 0.48,
+        "efficiency": 0.6414338068565789,
+        "adaptability": 0.18181818181818182,
+        "latency_sec": 37.30178952217102,
+        "prompt_tokens_total": 126526,
+        "memory_enabled": true
+      }
+    },
+    "seed2": {
+      "architecture": "Mamba + Planner + INT8",
+      "genome": {
+        "memory": "mamba",
+        "reasoning": "planner",
+        "tool_adapter": "basic",
+        "compression": "int8",
+        "hidden_size": 1024,
+        "state_size": 64
+      },
+      "fitness": 0.46879377842061004,
+      "metrics": {
+        "capability": 0.48,
+        "efficiency": 0.6414338068565789,
+        "adaptability": 0.18181818181818182,
+        "latency_sec": 37.30178952217102,
+        "prompt_tokens_total": 126526,
+        "memory_enabled": true
+      }
+    }
+  },
+  "no_pareto|gsm8k": {
+    "seed0": {
+      "architecture": "Mamba + Verify + LoRA",
+      "genome": {
+        "memory": "mamba",
+        "reasoning": "verify",
+        "tool_adapter": "basic",
+        "compression": "lora",
+        "hidden_size": 1024,
+        "state_size": 64
+      },
+      "fitness": 0.5810523468279077,
+      "metrics": {
+        "capability": 0.57,
+        "efficiency": 0.6580740328053545,
+        "adaptability": 0.4931506849315068
+      }
+    },
+    "seed1": {
+      "architecture": "Mamba + Verify + None",
+      "genome": {
+        "memory": "mamba",
+        "reasoning": "verify",
+        "tool_adapter": "basic",
+        "compression": "none",
+        "hidden_size": 1024,
+        "state_size": 64
+      },
+      "fitness": 0.5869133795680527,
+      "metrics": {
+        "capability": 0.59,
+        "efficiency": 0.6260126350898558,
+        "adaptability": 0.5205479452054794,
+        "latency_sec": 26.399667739868164,
+        "prompt_tokens_total": 45472,
+        "memory_enabled": true
+      }
+    },
+    "seed2": {
+      "architecture": "Mamba + Verify + None",
+      "genome": {
+        "memory": "mamba",
+        "reasoning": "verify",
+        "tool_adapter": "basic",
+        "compression": "none",
+        "hidden_size": 1024,
+        "state_size": 64
+      },
+      "fitness": 0.5869133795680527,
+      "metrics": {
+        "capability": 0.59,
+        "efficiency": 0.6260126350898558,
+        "adaptability": 0.5205479452054794,
+        "latency_sec": 26.399667739868164,
+        "prompt_tokens_total": 45472,
+        "memory_enabled": true
+      }
+    }
+  },
+  "no_pareto|pubmedqa": {
+    "seed0": {
+      "architecture": "Retrieval + Planner + INT8",
+      "genome": {
+        "memory": "retrieval",
+        "reasoning": "planner",
+        "tool_adapter": "basic",
+        "compression": "int8",
+        "hidden_size": 1024,
+        "state_size": 64
+      },
+      "fitness": 0.4682015040712638,
+      "metrics": {
+        "capability": 0.55,
+        "efficiency": 0.5833989529648186,
+        "adaptability": 0.09090909090909091
+      }
+    },
+    "seed1": {
+      "architecture": "Mamba + Direct + INT8",
+      "genome": {
+        "memory": "mamba",
+        "reasoning": "direct",
+        "tool_adapter": "basic",
+        "compression": "int8",
+        "hidden_size": 1024,
+        "state_size": 64
+      },
+      "fitness": 0.4828664910383955,
+      "metrics": {
+        "capability": 0.57,
+        "efficiency": 0.659554970127985,
+        "adaptability": 0.0,
+        "latency_sec": 20.425816774368286,
+        "prompt_tokens_total": 132952,
+        "memory_enabled": true
+      }
+    },
+    "seed2": {
+      "architecture": "Mamba + Direct + INT8",
+      "genome": {
+        "memory": "mamba",
+        "reasoning": "direct",
+        "tool_adapter": "basic",
+        "compression": "int8",
+        "hidden_size": 1024,
+        "state_size": 64
+      },
+      "fitness": 0.4828664910383955,
+      "metrics": {
+        "capability": 0.57,
+        "efficiency": 0.659554970127985,
+        "adaptability": 0.0,
+        "latency_sec": 20.425816774368286,
+        "prompt_tokens_total": 132952,
+        "memory_enabled": true
+      }
+    }
+  },
+  "enss|gsm8k": {
+    "seed0": {
+      "architecture": "Mamba + Verify + LoRA",
+      "genome": {
+        "memory": "mamba",
+        "reasoning": "verify",
+        "tool_adapter": "basic",
+        "compression": "lora",
+        "hidden_size": 1024,
+        "state_size": 64
+      },
+      "fitness": 0.603887390615107,
+      "metrics": {
+        "capability": 0.6,
+        "efficiency": 0.6567935851553797,
+        "adaptability": 0.5342465753424658
+      }
+    },
+    "seed1": {
+      "architecture": "Mamba + CoT + LoRA",
+      "genome": {
+        "memory": "mamba",
+        "reasoning": "cot",
+        "tool_adapter": "basic",
+        "compression": "lora",
+        "hidden_size": 1024,
+        "state_size": 64
+      },
+      "fitness": 0.5897680659118851,
+      "metrics": {
+        "capability": 0.55,
+        "efficiency": 0.720459763085279,
+        "adaptability": 0.4931506849315068,
+        "latency_sec": 23.454763174057007,
+        "prompt_tokens_total": 31734,
+        "memory_enabled": true
+      }
+    },
+    "seed2": {
+      "architecture": "Mamba + Verify + LoRA",
+      "genome": {
+        "memory": "mamba",
+        "reasoning": "verify",
+        "tool_adapter": "basic",
+        "compression": "lora",
+        "hidden_size": 1024,
+        "state_size": 64
+      },
+      "fitness": 0.6098990337149782,
+      "metrics": {
+        "capability": 0.6,
+        "efficiency": 0.6676999753969594,
+        "adaptability": 0.547945205479452,
+        "latency_sec": 26.986822366714478,
+        "prompt_tokens_total": 33889,
+        "memory_enabled": true
+      }
+    }
+  },
+  "enss|pubmedqa": {
+    "seed0": {
+      "architecture": "Mamba + Planner + QLoRA",
+      "genome": {
+        "memory": "mamba",
+        "reasoning": "planner",
+        "tool_adapter": "basic",
+        "compression": "qlora",
+        "hidden_size": 1024,
+        "state_size": 64
+      },
+      "fitness": 0.4718700661972905,
+      "metrics": {
+        "capability": 0.55,
+        "efficiency": 0.6562335539909683,
+        "adaptability": 0.0
+      }
+    },
+    "seed1": {
+      "architecture": "Mamba + Planner + INT8",
+      "genome": {
+        "memory": "mamba",
+        "reasoning": "planner",
+        "tool_adapter": "basic",
+        "compression": "int8",
+        "hidden_size": 1024,
+        "state_size": 64
+      },
+      "fitness": 0.48612187547202423,
+      "metrics": {
+        "capability": 0.58,
+        "efficiency": 0.6537395849067476,
+        "adaptability": 0.0,
+        "latency_sec": 35.113441705703735,
+        "prompt_tokens_total": 114587,
+        "memory_enabled": true
+      }
+    },
+    "seed2": {
+      "architecture": "Mamba + Planner + INT8",
+      "genome": {
+        "memory": "mamba",
+        "reasoning": "planner",
+        "tool_adapter": "basic",
+        "compression": "int8",
+        "hidden_size": 1024,
+        "state_size": 64
+      },
+      "fitness": 0.48612187547202423,
+      "metrics": {
+        "capability": 0.58,
+        "efficiency": 0.6537395849067476,
+        "adaptability": 0.0,
+        "latency_sec": 35.113441705703735,
+        "prompt_tokens_total": 114587,
+        "memory_enabled": true
+      }
+    }
+  },
+  "no_memory|gsm8k": {
+    "seed0": {
+      "architecture": "Mamba + Planner + INT8",
+      "genome": {
+        "memory": "mamba",
+        "reasoning": "planner",
+        "tool_adapter": "basic",
+        "compression": "int8",
+        "hidden_size": 1024,
+        "state_size": 64
+      },
+      "fitness": 0.5326158598694097,
+      "metrics": {
+        "capability": 0.41,
+        "efficiency": 0.8820072041309094,
+        "adaptability": 0.3150684931506849,
+        "latency_sec": 26.472749948501587,
+        "prompt_tokens_total": 7891,
+        "memory_enabled": false
+      }
+    },
+    "seed1": {
+      "architecture": "Mamba + Planner + INT8",
+      "genome": {
+        "memory": "mamba",
+        "reasoning": "planner",
+        "tool_adapter": "basic",
+        "compression": "int8",
+        "hidden_size": 1024,
+        "state_size": 64
+      },
+      "fitness": 0.5326158598694097,
+      "metrics": {
+        "capability": 0.41,
+        "efficiency": 0.8820072041309094,
+        "adaptability": 0.3150684931506849,
+        "latency_sec": 26.472749948501587,
+        "prompt_tokens_total": 7891,
+        "memory_enabled": false
+      }
+    },
+    "seed2": {
+      "architecture": "Mamba + Planner + INT8",
+      "genome": {
+        "memory": "mamba",
+        "reasoning": "planner",
+        "tool_adapter": "basic",
+        "compression": "int8",
+        "hidden_size": 1024,
+        "state_size": 64
+      },
+      "fitness": 0.5326158598694097,
+      "metrics": {
+        "capability": 0.41,
+        "efficiency": 0.8820072041309094,
+        "adaptability": 0.3150684931506849,
+        "latency_sec": 26.472749948501587,
+        "prompt_tokens_total": 7891,
+        "memory_enabled": false
+      }
+    }
+  },
+  "no_memory|pubmedqa": {
+    "seed0": {
+      "architecture": "Mamba + Direct + INT8",
+      "genome": {
+        "memory": "mamba",
+        "reasoning": "direct",
+        "tool_adapter": "basic",
+        "compression": "int8",
+        "hidden_size": 1024,
+        "state_size": 64
+      },
+      "fitness": 0.6099729213929719,
+      "metrics": {
+        "capability": 0.44,
+        "efficiency": 0.8150612531280879,
+        "adaptability": 0.7272727272727273,
+        "latency_sec": 15.976230382919312,
+        "prompt_tokens_total": 34846,
+        "memory_enabled": false
+      }
+    },
+    "seed1": {
+      "architecture": "Mamba + Direct + INT8",
+      "genome": {
+        "memory": "mamba",
+        "reasoning": "direct",
+        "tool_adapter": "basic",
+        "compression": "int8",
+        "hidden_size": 1024,
+        "state_size": 64
+      },
+      "fitness": 0.6099729213929719,
+      "metrics": {
+        "capability": 0.44,
+        "efficiency": 0.8150612531280879,
+        "adaptability": 0.7272727272727273,
+        "latency_sec": 15.976230382919312,
+        "prompt_tokens_total": 34846,
+        "memory_enabled": false
+      }
+    },
+    "seed2": {
+      "architecture": "Mamba + Direct + INT8",
+      "genome": {
+        "memory": "mamba",
+        "reasoning": "direct",
+        "tool_adapter": "basic",
+        "compression": "int8",
+        "hidden_size": 1024,
+        "state_size": 64
+      },
+      "fitness": 0.6099729213929719,
+      "metrics": {
+        "capability": 0.44,
+        "efficiency": 0.8150612531280879,
+        "adaptability": 0.7272727272727273,
+        "latency_sec": 15.976230382919312,
+        "prompt_tokens_total": 34846,
+        "memory_enabled": false
+      }
+    }
+  },
+  "no_inherit|gsm8k": {
+    "seed0": {
+      "architecture": "Mamba + CoT + LoRA",
+      "genome": {
+        "memory": "mamba",
+        "reasoning": "cot",
+        "tool_adapter": "basic",
+        "compression": "lora",
+        "hidden_size": 1024,
+        "state_size": 64
+      },
+      "fitness": 0.6488305587190397,
+      "metrics": {
+        "capability": 0.64,
+        "efficiency": 0.6942753783785345,
+        "adaptability": 0.6027397260273972
+      }
+    },
+    "seed1": {
+      "architecture": "Mamba + CoT + LoRA",
+      "genome": {
+        "memory": "mamba",
+        "reasoning": "cot",
+        "tool_adapter": "basic",
+        "compression": "lora",
+        "hidden_size": 1024,
+        "state_size": 64
+      },
+      "fitness": 0.6266849781614343,
+      "metrics": {
+        "capability": 0.6,
+        "efficiency": 0.7145207034604889,
+        "adaptability": 0.5616438356164384,
+        "latency_sec": 25.896122455596924,
+        "prompt_tokens_total": 33854,
+        "memory_enabled": true
+      }
+    },
+    "seed2": {
+      "architecture": "Mamba + CoT + LoRA",
+      "genome": {
+        "memory": "mamba",
+        "reasoning": "cot",
+        "tool_adapter": "basic",
+        "compression": "lora",
+        "hidden_size": 1024,
+        "state_size": 64
+      },
+      "fitness": 0.6266849781614343,
+      "metrics": {
+        "capability": 0.6,
+        "efficiency": 0.7145207034604889,
+        "adaptability": 0.5616438356164384,
+        "latency_sec": 25.896122455596924,
+        "prompt_tokens_total": 33854,
+        "memory_enabled": true
+      }
+    }
+  },
+  "no_inherit|pubmedqa": {
+    "seed0": {
+      "architecture": "Mamba + Planner + INT8",
+      "genome": {
+        "memory": "mamba",
+        "reasoning": "planner",
+        "tool_adapter": "basic",
+        "compression": "int8",
+        "hidden_size": 1024,
+        "state_size": 64
+      },
+      "fitness": 0.4904208254273207,
+      "metrics": {
+        "capability": 0.56,
+        "efficiency": 0.6407966908183416,
+        "adaptability": 0.09090909090909091
+      }
+    },
+    "seed1": {
+      "architecture": "Mamba + Verify + INT8",
+      "genome": {
+        "memory": "mamba",
+        "reasoning": "verify",
+        "tool_adapter": "basic",
+        "compression": "int8",
+        "hidden_size": 1024,
+        "state_size": 64
+      },
+      "fitness": 0.46843144349502697,
+      "metrics": {
+        "capability": 0.4,
+        "efficiency": 0.652347235892514,
+        "adaptability": 0.36363636363636365,
+        "latency_sec": 26.988826990127563,
+        "prompt_tokens_total": 115875,
+        "memory_enabled": true
+      }
+    },
+    "seed2": {
+      "architecture": "Mamba + Verify + INT8",
+      "genome": {
+        "memory": "mamba",
+        "reasoning": "verify",
+        "tool_adapter": "basic",
+        "compression": "int8",
+        "hidden_size": 1024,
+        "state_size": 64
+      },
+      "fitness": 0.46843144349502697,
+      "metrics": {
+        "capability": 0.4,
+        "efficiency": 0.652347235892514,
+        "adaptability": 0.36363636363636365,
+        "latency_sec": 26.988826990127563,
+        "prompt_tokens_total": 115875,
+        "memory_enabled": true
+      }
+    }
+  }
+}

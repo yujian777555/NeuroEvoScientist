@@ -4,6 +4,9 @@
 set -e
 cd /202532803004/NeuroEvoScientist
 export HF_ENDPOINT=https://hf-mirror.com HF_HOME=/202532803004/datasets/hf
+# Model + datasets are fully cached locally; never hit the network
+# (a hub connect timeout killed a queue once already).
+export HF_HUB_OFFLINE=1
 export CUDA_VISIBLE_DEVICES=${1:?need cuda index}
 METHOD=${2:?need method}
 BENCH=${3:-gsm8k}
