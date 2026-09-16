@@ -116,6 +116,9 @@ def adapt_substrate(memory_controller, calibration_samples,
                    for w in windows) / max(1, len(windows))
 
     substrate.to("cpu")
+    # Weights changed: any cached memory state is now stale.
+    if hasattr(memory_controller, "invalidate_state_cache"):
+        memory_controller.invalidate_state_cache()
     return {
         "trainable": True,
         "pre_loss": pre,

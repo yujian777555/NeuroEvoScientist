@@ -94,6 +94,33 @@ def test_differs_from_legacy_linear_proxy():
     assert not torch.allclose(out_real, out_proxy, atol=1e-4)
 
 
+def test_memory_state_cached_until_store_or_invalidate():
+    """Regression: Phase-17 run wedged because memory_state() recomputed the
+    Mamba-2 forward over the whole bank for EVERY query. State must be
+    cached per bank configuration."""
+    torch.manual_seed(0)
+    g = ArchitectureGenome(memory="mamba2", state_size=16)
+    mem = build_memory_controller(g)
+    for q, a in EPISODE:
+        mem.store(q, a)
+
+    calls = []
+    orig = mem.substrate.memory_state
+
+    def counting(x):
+        calls.append(1)
+        return orig(x)
+
+    mem.substrate.memory_state = counting
+    mem.recall("query one", k=2)
+    mem.recall("query two", k=2)
+    assert len(calls) == 1  # second recall reuses the cached state
+
+    mem.invalidate_state_cache()
+    mem.recall("query three", k=2)
+    assert len(calls) == 2
+
+
 def _calib_samples(n=48):
     base = [{"question": q, "answer": a} for q, a in EPISODE]
     return [base[i % len(base)] for i in range(n)]

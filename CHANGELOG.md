@@ -1,5 +1,23 @@
 # Changelog
 
+## [Phase-17] correct substrate semantics and validate real Mamba adaptation - 2026-09-17
+
+### Added
+- `src/scripts/aggregate_phase17.py` — 聚焦矩阵 / 继承曲线 / 逐代 Pareto 前沿聚合
+- `results/phase17_focused_matrix.csv`、`phase17_inheritance_curve.json`、`phase17_pareto.json`
+- `docs/phase17_results.md`、`docs/claim_audit.md`（逐条 claim 审计：supported/partially/unsupported + 证据指针）
+- 回归测试 `test_memory_state_cached_until_store_or_invalidate`
+
+### Results（phase17 schema，GSM8K，3 seeds）
+- ENSS 0.6811 / no_inherit 0.6811 / random 0.6829 / fixed 0.36–0.41；
+  进化架构 capability 0.62 vs 固定 0.24–0.26（2.5×）
+- 继承在基底可训练后转正：继承候选 cap 0.535 vs 0.489、post-loss 0.621 vs 0.738（n=2，弱证据）
+- 真实 Mamba2 未被进化选中（候选 cap 0.49 < recency 0.62）——按计划 stop condition 如实封存该 claim
+- 工程事故：Mamba2 记忆状态每查询重算前向导致 24h 空转；修复为按银行配置缓存 + 回归测试
+
+### Verification gates（plans/phase17_plan.md）
+全部通过：真实 Mamba2、无语义误标、无泄漏、等预算继承比较、原始目标持久化、3-seed 完成、claim 审计
+
 ## [Phase-17] Substrate semantics correction + real Mamba - 2026-09-16
 
 ### Added

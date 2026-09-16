@@ -1,0 +1,396 @@
+{
+  "per_method_records": {
+    "enss": [
+      {
+        "generation": 1,
+        "memory": "mamba2",
+        "inherited": false,
+        "pre_loss": 0.9918137490749359,
+        "post_loss": 0.7364284694194794,
+        "wall_time_sec": 0.36478352546691895,
+        "capability": 0.57,
+        "fitness": 0.5865831406277595
+      },
+      {
+        "generation": 1,
+        "memory": "mamba2",
+        "inherited": false,
+        "pre_loss": 1.0053988695144653,
+        "post_loss": 0.7425637245178223,
+        "wall_time_sec": 0.3636162281036377,
+        "capability": 0.49,
+        "fitness": 0.5307344057611497
+      },
+      {
+        "generation": 1,
+        "memory": "mamba2",
+        "inherited": false,
+        "pre_loss": 1.0122435688972473,
+        "post_loss": 0.7366652190685272,
+        "wall_time_sec": 0.44374918937683105,
+        "capability": 0.44,
+        "fitness": 0.5125746202307836
+      },
+      {
+        "generation": 1,
+        "memory": "mamba2",
+        "inherited": false,
+        "pre_loss": 0.9931249022483826,
+        "post_loss": 0.7368846535682678,
+        "wall_time_sec": 0.37222957611083984,
+        "capability": 0.49,
+        "fitness": 0.4979840373129496
+      },
+      {
+        "generation": 1,
+        "memory": "mamba2",
+        "inherited": false,
+        "pre_loss": 0.9987495541572571,
+        "post_loss": 0.7416113018989563,
+        "wall_time_sec": 2.6070120334625244,
+        "capability": 0.41,
+        "fitness": 0.4959429253400473
+      },
+      {
+        "generation": 1,
+        "memory": "mamba2",
+        "inherited": false,
+        "pre_loss": 0.9956282377243042,
+        "post_loss": 0.7355702519416809,
+        "wall_time_sec": 0.3533599376678467,
+        "capability": 0.29,
+        "fitness": 0.3834920507609685
+      },
+      {
+        "generation": 2,
+        "memory": "mamba2",
+        "inherited": false,
+        "pre_loss": 0.9918137490749359,
+        "post_loss": 0.7364284694194794,
+        "wall_time_sec": 0.3022456169128418,
+        "capability": 0.57,
+        "fitness": 0.5865831406277595
+      },
+      {
+        "generation": 2,
+        "memory": "mamba2",
+        "inherited": false,
+        "pre_loss": 0.9918137490749359,
+        "post_loss": 0.7364284694194794,
+        "wall_time_sec": 0.3022456169128418,
+        "capability": 0.57,
+        "fitness": 0.5865831406277595
+      },
+      {
+        "generation": 2,
+        "memory": "mamba2",
+        "inherited": false,
+        "pre_loss": 0.9991424381732941,
+        "post_loss": 0.739668607711792,
+        "wall_time_sec": 0.5569705963134766,
+        "capability": 0.55,
+        "fitness": 0.5696178254347917
+      },
+      {
+        "generation": 3,
+        "memory": "mamba2",
+        "inherited": false,
+        "pre_loss": 0.9918137490749359,
+        "post_loss": 0.7364284694194794,
+        "wall_time_sec": 0.34384894371032715,
+        "capability": 0.57,
+        "fitness": 0.5865831406277595
+      },
+      {
+        "generation": 3,
+        "memory": "mamba2",
+        "inherited": false,
+        "pre_loss": 0.9918137490749359,
+        "post_loss": 0.7364284694194794,
+        "wall_time_sec": 0.34384894371032715,
+        "capability": 0.57,
+        "fitness": 0.5865831406277595
+      },
+      {
+        "generation": 3,
+        "memory": "mamba2",
+        "inherited": true,
+        "pre_loss": 0.620382696390152,
+        "post_loss": 0.5759771764278412,
+        "wall_time_sec": 0.4018895626068115,
+        "capability": 0.53,
+        "fitness": 0.5615439540357184
+      },
+      {
+        "generation": 1,
+        "memory": "mamba2",
+        "inherited": false,
+        "pre_loss": 0.9992795586585999,
+        "post_loss": 0.7432434558868408,
+        "wall_time_sec": 1.9179527759552002,
+        "capability": 0.36,
+        "fitness": 0.45551155820500155
+      },
+      {
+        "generation": 1,
+        "memory": "mamba2",
+        "inherited": false,
+        "pre_loss": 0.9967350959777832,
+        "post_loss": 0.737648069858551,
+        "wall_time_sec": 0.4399895668029785,
+        "capability": 0.55,
+        "fitness": 0.5780829586353167
+      },
+      {
+        "generation": 1,
+        "memory": "mamba2",
+        "inherited": false,
+        "pre_loss": 1.003833830356598,
+        "post_loss": 0.7397819757461548,
+        "wall_time_sec": 0.5155315399169922,
+        "capability": 0.53,
+        "fitness": 0.5598537326472568
+      },
+      {
+        "generation": 1,
+        "memory": "mamba2",
+        "inherited": false,
+        "pre_loss": 1.0040050148963928,
+        "post_loss": 0.7379894852638245,
+        "wall_time_sec": 0.3422966003417969,
+        "capability": 0.53,
+        "fitness": 0.5595446090571827
+      },
+      {
+        "generation": 1,
+        "memory": "mamba2",
+        "inherited": false,
+        "pre_loss": 1.0040050148963928,
+        "post_loss": 0.7379894852638245,
+        "wall_time_sec": 0.3422966003417969,
+        "capability": 0.53,
+        "fitness": 0.5595446090571827
+      },
+      {
+        "generation": 1,
+        "memory": "mamba2",
+        "inherited": false,
+        "pre_loss": 0.9964473247528076,
+        "post_loss": 0.7379553020000458,
+        "wall_time_sec": 0.3917717933654785,
+        "capability": 0.53,
+        "fitness": 0.5593984790762689
+      },
+      {
+        "generation": 1,
+        "memory": "mamba2",
+        "inherited": false,
+        "pre_loss": 0.9965795874595642,
+        "post_loss": 0.7366010248661041,
+        "wall_time_sec": 0.3074944019317627,
+        "capability": 0.19,
+        "fitness": 0.3435287707832126
+      },
+      {
+        "generation": 2,
+        "memory": "mamba2",
+        "inherited": false,
+        "pre_loss": 0.9967350959777832,
+        "post_loss": 0.737648069858551,
+        "wall_time_sec": 0.4399895668029785,
+        "capability": 0.55,
+        "fitness": 0.5780829586353167
+      },
+      {
+        "generation": 2,
+        "memory": "mamba2",
+        "inherited": true,
+        "pre_loss": 0.7366010248661041,
+        "post_loss": 0.6661551594734192,
+        "wall_time_sec": 0.3445866107940674,
+        "capability": 0.54,
+        "fitness": 0.570170595070971
+      }
+    ],
+    "no_inherit": [
+      {
+        "generation": 1,
+        "memory": "mamba2",
+        "inherited": false,
+        "pre_loss": 0.9998755753040314,
+        "post_loss": 0.7400152683258057,
+        "wall_time_sec": 0.3248116970062256,
+        "capability": 0.51,
+        "fitness": 0.5442116909613819
+      },
+      {
+        "generation": 1,
+        "memory": "mamba2",
+        "inherited": false,
+        "pre_loss": 0.9895254671573639,
+        "post_loss": 0.7378129959106445,
+        "wall_time_sec": 0.32903313636779785,
+        "capability": 0.51,
+        "fitness": 0.5229904424384415
+      },
+      {
+        "generation": 1,
+        "memory": "mamba2",
+        "inherited": false,
+        "pre_loss": 1.0002231299877167,
+        "post_loss": 0.7355513274669647,
+        "wall_time_sec": 0.4162719249725342,
+        "capability": 0.47,
+        "fitness": 0.5026677118114249
+      },
+      {
+        "generation": 1,
+        "memory": "mamba2",
+        "inherited": false,
+        "pre_loss": 1.0153149962425232,
+        "post_loss": 0.7400358319282532,
+        "wall_time_sec": 0.30907320976257324,
+        "capability": 0.38,
+        "fitness": 0.473430154064245
+      },
+      {
+        "generation": 1,
+        "memory": "mamba2",
+        "inherited": false,
+        "pre_loss": 1.0119171142578125,
+        "post_loss": 0.741458535194397,
+        "wall_time_sec": 2.100130081176758,
+        "capability": 0.26,
+        "fitness": 0.38490719230125015
+      },
+      {
+        "generation": 1,
+        "memory": "mamba2",
+        "inherited": false,
+        "pre_loss": 0.9709473848342896,
+        "post_loss": 0.7372024953365326,
+        "wall_time_sec": 0.334888219833374,
+        "capability": 0.19,
+        "fitness": 0.31157424254179034
+      },
+      {
+        "generation": 2,
+        "memory": "mamba2",
+        "inherited": false,
+        "pre_loss": 0.9998755753040314,
+        "post_loss": 0.7400152683258057,
+        "wall_time_sec": 0.3248116970062256,
+        "capability": 0.51,
+        "fitness": 0.5442116909613819
+      },
+      {
+        "generation": 1,
+        "memory": "mamba2",
+        "inherited": false,
+        "pre_loss": 1.003713846206665,
+        "post_loss": 0.7382321357727051,
+        "wall_time_sec": 0.4618997573852539,
+        "capability": 0.27,
+        "fitness": 0.39872146458568425
+      },
+      {
+        "generation": 1,
+        "memory": "mamba2",
+        "inherited": false,
+        "pre_loss": 0.9940359592437744,
+        "post_loss": 0.7375605404376984,
+        "wall_time_sec": 0.3522942066192627,
+        "capability": 0.53,
+        "fitness": 0.5626514311130852
+      },
+      {
+        "generation": 1,
+        "memory": "mamba2",
+        "inherited": false,
+        "pre_loss": 1.001244604587555,
+        "post_loss": 0.7379249036312103,
+        "wall_time_sec": 0.37012505531311035,
+        "capability": 0.51,
+        "fitness": 0.5507511341954296
+      },
+      {
+        "generation": 1,
+        "memory": "mamba2",
+        "inherited": false,
+        "pre_loss": 1.0028842091560364,
+        "post_loss": 0.7419147193431854,
+        "wall_time_sec": 0.36362648010253906,
+        "capability": 0.48,
+        "fitness": 0.5162274155269558
+      },
+      {
+        "generation": 1,
+        "memory": "mamba2",
+        "inherited": false,
+        "pre_loss": 1.0028842091560364,
+        "post_loss": 0.7419147193431854,
+        "wall_time_sec": 0.36362648010253906,
+        "capability": 0.48,
+        "fitness": 0.5162274155269558
+      },
+      {
+        "generation": 1,
+        "memory": "mamba2",
+        "inherited": false,
+        "pre_loss": 0.9905524849891663,
+        "post_loss": 0.7373158037662506,
+        "wall_time_sec": 0.565732479095459,
+        "capability": 0.41,
+        "fitness": 0.48009081923427044
+      },
+      {
+        "generation": 1,
+        "memory": "mamba2",
+        "inherited": false,
+        "pre_loss": 1.0003085434436798,
+        "post_loss": 0.739044576883316,
+        "wall_time_sec": 0.36881041526794434,
+        "capability": 0.2,
+        "fitness": 0.3402527188119506
+      },
+      {
+        "generation": 2,
+        "memory": "mamba2",
+        "inherited": false,
+        "pre_loss": 0.9940359592437744,
+        "post_loss": 0.7375605404376984,
+        "wall_time_sec": 0.3522942066192627,
+        "capability": 0.53,
+        "fitness": 0.5626514311130852
+      },
+      {
+        "generation": 2,
+        "memory": "mamba2",
+        "inherited": false,
+        "pre_loss": 1.001749575138092,
+        "post_loss": 0.7421846985816956,
+        "wall_time_sec": 0.314849853515625,
+        "capability": 0.54,
+        "fitness": 0.5474956800532271
+      }
+    ]
+  },
+  "summary": {
+    "enss": {
+      "n_inherited": 2,
+      "n_scratch": 19,
+      "inherited_mean_capability": 0.535,
+      "scratch_mean_capability": 0.4889473684210527,
+      "inherited_mean_post_loss": 0.6210661679506302,
+      "scratch_mean_post_loss": 0.7381033144499126
+    },
+    "no_inherit": {
+      "n_inherited": 0,
+      "n_scratch": 16,
+      "inherited_mean_capability": null,
+      "scratch_mean_capability": 0.42375,
+      "inherited_mean_post_loss": null,
+      "scratch_mean_post_loss": 0.7391090225428343
+    }
+  }
+}

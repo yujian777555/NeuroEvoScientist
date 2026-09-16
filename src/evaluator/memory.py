@@ -104,19 +104,33 @@ class Mamba2MemoryController(BaseMemory):
         self.substrate = MambaMemory(hidden_size=dim,
                                      state_size=min(genome.state_size, 64))
         self.embeddings = []
+        self._state_cache = None  # invalidated on store / weight change
 
     def store(self, question, answer):
         super().store(question, answer)
         self.embeddings.append(
             hashed_embedding(question + " " + answer, self.dim))
+        self._state_cache = None
+
+    def invalidate_state_cache(self):
+        """Must be called after substrate weights change (adaptation,
+        inheritance) so the next recall recomputes the memory state."""
+        self._state_cache = None
 
     def memory_state(self):
-        """Current order-dependent memory state over the whole bank."""
+        """Current order-dependent memory state over the whole bank.
+
+        Cached: the bank is static during evaluation, so the Mamba-2
+        forward runs once per bank configuration, not once per query
+        (this was a real performance bug caught in the Phase-17 run).
+        """
         if not self.embeddings:
             return torch.zeros(self.dim)
-        seq = torch.stack(self.embeddings).unsqueeze(0)  # (1, n, dim)
-        with torch.no_grad():
-            return self.substrate.memory_state(seq).squeeze(0)
+        if self._state_cache is None:
+            seq = torch.stack(self.embeddings).unsqueeze(0)  # (1, n, dim)
+            with torch.no_grad():
+                self._state_cache = self.substrate.memory_state(seq).squeeze(0)
+        return self._state_cache
 
     def recall(self, query, k=3):
         if not self.embeddings:
