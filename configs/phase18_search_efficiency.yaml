@@ -1,0 +1,14 @@
+# Phase-18 search-efficiency audit (plans/phase18_plan.md Task 3)
+# Online search policies audited against the exhaustive 48-point landscape
+# oracle: at each step the policy may only use objectives of points it has
+# already "evaluated" (looked up). No new GPU inference.
+
+budgets: [12, 24, 36, 48]   # all <= 48-point space (below full coverage)
+search_seeds: 20
+methods:
+  - enss        # NSGA Pareto selection + mutation/crossover on oracle scores
+  - random      # equal-budget random search
+  - no_pareto   # scalar-fitness GA (optional ablation)
+objectives: [capability, efficiency]   # raw Pareto objectives, no scalar mix
+hypervolume_reference: [0.0, 0.0]
+epsilon: 0.02               # epsilon-Pareto hit tolerance (capability)

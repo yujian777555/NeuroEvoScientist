@@ -1,0 +1,23 @@
+# Phase-18 evaluation protocol (frozen, plans/phase18_plan.md)
+# No method changes; audit/replication only.
+
+benchmarks:
+  - gsm8k
+  - pubmedqa
+
+methods:
+  - enss
+  - random
+  - fixed_recency
+  - fixed_retrieval
+  - fixed_mamba2
+  - fixed_hybrid
+  - no_memory
+
+seeds: [0, 1, 2]          # 3 minimum; extend to 5 where cache makes it cheap
+population: 16
+generations: 10
+limit: 100
+batch_size: 32
+model: Qwen/Qwen2.5-1.5B-Instruct
+schema: phase17            # corrected schema; no legacy gene semantics

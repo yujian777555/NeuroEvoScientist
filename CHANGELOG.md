@@ -1,5 +1,23 @@
 # Changelog
 
+## [Phase-18] corrected dual-benchmark replication and search-efficiency audit (infra) - 2026-09-17
+
+### Added
+- `configs/phase18_eval.yaml`、`configs/phase18_search_efficiency.yaml` — 冻结的审计配置
+- `src/scripts/inheritance_study.py` — Task 4 配对继承研究（20 对、等预算、pre/post loss+capability+wall-clock）
+- `src/scripts/analyze_search_efficiency.py` — Task 3 在线 oracle 审计：ENSS vs random 在预算 {12,24,36,48} × 20 seed 下的 best-capability 曲线、2D Pareto hypervolume、regret、ε-Pareto 命中、达标评估数、AUC
+- `run_experiment.py --landscape` — Task 2 全 48 架构穷举评估（原子 JSONL、断点续跑）
+- `tests/test_phase18.py` — hypervolume 正确性、oracle 在线约束、策略确定性
+- `scripts_vm/p18_*.sh` — landscape/队列/杂项/继承脚本
+- `fixed_hybrid` 基线加入 FIXED_BASELINES
+
+### Fixed
+- 继承研究父/子 substrate 维度不一致（state_size 16 vs 64）
+- tar|ssh 同步与 nohup 启动合并导致静默丢任务（第三次同类事故；已立规矩：必须分开）
+
+### Test Results
+- 本地 47 passed / 11 skipped（mamba2 系在 VM 覆盖）
+
 ## [Phase-17] correct substrate semantics and validate real Mamba adaptation - 2026-09-17
 
 ### Added

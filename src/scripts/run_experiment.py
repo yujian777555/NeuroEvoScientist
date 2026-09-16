@@ -40,6 +40,7 @@ FIXED_BASELINES = {
     "fixed_recency": ArchitectureGenome(memory="recency"),
     "fixed_retrieval": ArchitectureGenome(memory="retrieval"),
     "fixed_mamba2": ArchitectureGenome(memory="mamba2"),
+    "fixed_hybrid": ArchitectureGenome(memory="hybrid"),
 }
 
 MATRIX_METHODS = ["fixed_recency", "fixed_retrieval", "fixed_mamba2",
@@ -87,6 +88,89 @@ def run_fixed(genome, evaluator, weights, logger):
     logger.log_generation(1, [best])
     logger.finalize(best)
     return best
+
+
+def run_landscape(args, evaluator):
+    """Phase-18 Task 2: exhaustive evaluation of every architecture.
+
+    One deterministic evaluation per genome (adaptation included where the
+    substrate is trainable), written as JSONL rows with raw objectives.
+    This table is an analysis oracle, not a search method.
+    """
+    import json
+    import time
+    from evolution.adaptation import adapt_substrate
+    from evolution.controller import (genome_signature,
+                                      substrate_fingerprint)
+    import hashlib
+    import torch
+
+    space = SearchSpace()
+    adaptation = AdaptationConfig.from_yaml(_ADAPT_YAML)
+    out_dir = os.path.join("experiments",
+                           "landscape_%s" % args.benchmark)
+    os.makedirs(out_dir, exist_ok=True)
+    out_path = os.path.join(out_dir, "landscape.jsonl")
+
+    done = set()
+    if os.path.exists(out_path):
+        with open(out_path) as f:
+            for line in f:
+                done.add(json.loads(line)["architecture_id"])
+    combos = space.enumerate_architectures()
+    print("landscape: %d architectures, %d already done"
+          % (len(combos), len(done)))
+
+    with open(out_path, "a", encoding="utf-8") as f:
+        for combo in combos:
+            genome = ArchitectureGenome(**combo)
+            arch_id = genome_signature(genome)
+            if arch_id in done:
+                continue
+            torch.manual_seed(
+                int(hashlib.sha256(arch_id.encode()).hexdigest(),
+                    16) % (2 ** 32))
+
+            memory = None
+            if not getattr(evaluator, "disable_memory", False):
+                memory = evaluator.build_memory_bank(genome)
+            substrate = getattr(memory, "substrate", None)
+            fingerprint = None
+            adaptation_record = {"trainable": False}
+            if substrate is not None:
+                adaptation_record = adapt_substrate(
+                    memory, evaluator.calibration_samples(), adaptation)
+                fingerprint = substrate_fingerprint(substrate)
+
+            agent = build_agent(genome)
+            start = time.time()
+            metrics = evaluator.evaluate(
+                genome, agent, memory_controller=memory,
+                substrate_fingerprint=fingerprint)
+            row = {
+                "benchmark": args.benchmark,
+                "architecture_id": arch_id,
+                "genome": genome.to_dict(),
+                "architecture": genome.describe(),
+                "capability": metrics["capability"],
+                "efficiency": metrics["efficiency"],
+                "adaptability": metrics["adaptability"],
+                "prompt_tokens_total": metrics.get("prompt_tokens_total"),
+                "latency_sec": metrics.get("latency_sec"),
+                "trainable_params": adaptation_record.get("trainable_params",
+                                                          0),
+                "adaptation_wall_time_sec":
+                    adaptation_record.get("wall_time_sec", 0.0),
+                "total_wall_time_sec": time.time() - start,
+            }
+            f.write(json.dumps(row) + "\n")
+            f.flush()
+            os.fsync(f.fileno())
+            print("  [%d/%d] %s cap=%.3f" % (len(done) + 1, len(combos),
+                                             genome.describe(),
+                                             row["capability"]))
+            done.add(arch_id)
+    print("LANDSCAPE_DONE %s" % out_path)
 
 
 def run_method(method, args, evaluator, weights):
@@ -154,6 +238,9 @@ def main():
                                  "no_mamba2", "no_memory"]
                         + sorted(FIXED_BASELINES))
     parser.add_argument("--matrix", action="store_true")
+    parser.add_argument("--landscape", action="store_true",
+                        help="Phase-18: exhaustively evaluate all "
+                             "architectures (analysis oracle)")
     parser.add_argument("--benchmark", type=str, default="mock")
     parser.add_argument("--model", type=str, default=None)
     parser.add_argument("--population", type=int, default=16)
@@ -167,6 +254,11 @@ def main():
     parser.add_argument("--batch-size", type=int, default=16,
                         help="batched inference size for real backends")
     args = parser.parse_args()
+
+    if args.landscape:
+        evaluator = build_evaluator(args, "landscape")
+        run_landscape(args, evaluator)
+        return
 
     evaluator = build_evaluator(args, args.method)
     weights = SearchSpace().objective_weights

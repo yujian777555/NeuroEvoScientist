@@ -1,36 +1,22 @@
-# Phase 17 — Current Sprint Plan (Focused experiment running)
+# Phase 18 — Current Sprint Plan (Running)
 
-依据 `plans/phase17_plan.md` 执行。
-
-## Goal
-
-让每个基因名对应真实机制，然后回答：真实可训练 Mamba/SSM 记忆基底 + 适应 + 继承是否改善 capability-efficiency Pareto 前沿。
+依据 `plans/phase18_plan.md` 执行。冻结方法，纯审计/复现阶段。
 
 ## Tasks
 
-- [x] Task 1 schema 修正（48 架构；lora/qlora 命名清除；旧结果标记 legacy-schema）
-- [x] Task 2 真实 Mamba-2（transformers Mamba2Model；顺序/状态/梯度/state_dict 测试 VM 全过；无静默代理）
-- [x] Task 3 固定预算适应 + 继承语义修正（继承 = 父代适应后权重；pre/post loss 记录）
-- [x] Task 4 原始目标持久化（history.jsonl population 记录）
-- [ ] Task 5 聚焦 GSM8K 实验（15 运行进行中：enss/no_inherit/no_mamba2/random × seeds 0-2 + 3 固定基线）
-- [ ] Task 6 双基准重跑（等 Task 5 门禁通过）
-- [ ] deliverables：results/phase17_* 三件套、docs/phase17_results.md、docs/claim_audit.md
+- [x] 配置冻结：phase18_eval.yaml / phase18_search_efficiency.yaml
+- [ ] Task 1 双基准复现：enss/random/fixed×4/no_memory × seeds 0-2 × GSM8K+PubMedQA（GSM8K 侧复用 Phase-17 数据；其余运行中）
+- [ ] Task 2 48 点 landscape：GSM8K + PubMedQA 穷举（运行中，两卡并行）
+- [x] Task 3 搜索效率审计实现：oracle 在线策略 + hypervolume/regret/ε-命中/ETT/AUC（等 landscape 完成后本地跑）
+- [ ] Task 4 继承配对研究：20 对（运行中）
+- [x] Task 5 Mamba 结论冻结（claim_audit 中维持 negative，不再投入 GPU）
+- [ ] Task 6 终版 claim 审计 + 论文门禁
 
-## 泄漏纪律（Phase-17 门禁）
+## 事故记录（本阶段）
 
-经验银行仅来自 train split；测试项永不入库；PubMedQA 校准/评估切片不相交。
-
-## Verification gates 对照
-
-- [x] 占位 nn.Linear 不再叫 Mamba
-- [x] 真实 Mamba-2 通过顺序/状态/梯度测试
-- [x] context policy 不再误标 LoRA/QLoRA/INT8
-- [x] 无 train/test 泄漏
-- [x] 继承比较使用等适应预算
-- [x] 原始 Pareto 目标持久化
-- [ ] 3-seed 聚焦实验完成
-- [ ] claim_audit.md
+1. 继承研究父/子 substrate state_size 不一致 → 崩溃；已修（统一由 build_memory_controller 构造）
+2. tar|ssh 同步 + nohup 启动合并写法令启动静默丢失（第三次）→ 规矩：同步与启动必须分开两条 ssh
 
 ## Next
 
-cron 监控 → 汇总 → 结果文档 + claim 审计 → 汇报 Planner。
+cron 监控 → 汇总分析 → C1–C8 判定 → 文档与提交。
