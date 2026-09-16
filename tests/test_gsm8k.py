@@ -1,7 +1,8 @@
-"""Verify the GSM8K pipeline: loading, prompting, extraction, scoring.
+"""Verify the GSM8K pipeline: loading, prompting, extraction, scoring,
+leakage discipline (Phase-17).
 
-Uses a fixture file and a scripted backend — this validates the pipeline
-mechanics, not model capability (no real scores are fabricated).
+Uses fixture files and scripted backends — validates pipeline mechanics,
+not model capability (no real scores are fabricated).
 """
 
 import os
@@ -14,6 +15,15 @@ from evaluator.gsm8k import (GSM8KEvaluator, extract_gsm8k_answer,
 
 FIXTURE = os.path.join(os.path.dirname(__file__),
                        "fixtures", "gsm8k_sample.jsonl")
+TRAIN_FIXTURE = os.path.join(os.path.dirname(__file__),
+                             "fixtures", "gsm8k_train_fixture.jsonl")
+DIVERGENT = os.path.join(os.path.dirname(__file__),
+                         "fixtures", "gsm8k_divergent.jsonl")
+
+
+def _ev(backend, data_path=FIXTURE, **kw):
+    kw.setdefault("calibration_path", TRAIN_FIXTURE)
+    return GSM8KEvaluator(backend=backend, data_path=data_path, **kw)
 
 
 def test_extract_answer():
@@ -30,7 +40,7 @@ def test_answers_match():
 
 
 def test_prompt_conditioned_on_genome():
-    ev = GSM8KEvaluator(backend=lambda p, g: "", data_path=FIXTURE)
+    ev = _ev(lambda p, g: "")
     sample = ev.load_samples()[0]
     cot = ev.build_prompt(sample, ArchitectureGenome(reasoning="cot"))
     direct = ev.build_prompt(sample, ArchitectureGenome(reasoning="direct"))
@@ -39,18 +49,16 @@ def test_prompt_conditioned_on_genome():
 
 
 def test_real_scoring_pipeline_with_scripted_backend():
-    # Scripted backend: answers first two correctly, third wrong.
-    answers = iter(["#### 7", "#### 10", "#### 99"])
-    ev = GSM8KEvaluator(backend=lambda p, g: next(answers),
-                        data_path=FIXTURE)
-    metrics = ev.evaluate(ArchitectureGenome(), agent=None)
+    answers = iter(["#### 7", "#### 10", "#### 99"])  # 2/3 correct
+    ev = _ev(lambda p, g: next(answers))
+    metrics = ev.evaluate(ArchitectureGenome(memory="recency"), agent=None)
     assert metrics["capability"] == pytest.approx(2.0 / 3.0)
     assert 0.0 <= metrics["efficiency"] <= 1.0
     assert 0.0 <= metrics["adaptability"] <= 1.0
 
 
 def test_no_backend_refuses_to_score():
-    ev = GSM8KEvaluator(backend=None, data_path=FIXTURE)
+    ev = _ev(None)
     with pytest.raises(RuntimeError, match="backend"):
         ev.evaluate(ArchitectureGenome(), agent=None)
 
@@ -63,16 +71,56 @@ def test_eval_cache_hit_skips_backend(tmp_path):
         calls.append(prompt)
         return "#### 7"
 
-    genome = ArchitectureGenome()
-    ev = GSM8KEvaluator(backend=backend, data_path=FIXTURE,
-                        cache_path=cache)
+    genome = ArchitectureGenome(memory="recency")
+    ev = _ev(backend, cache_path=cache)
     first = ev.evaluate(genome, agent=None)
     assert calls, "first evaluation must call the backend"
 
-    # New evaluator instance, same cache: no backend calls at all.
-    ev2 = GSM8KEvaluator(backend=backend, data_path=FIXTURE,
-                         cache_path=cache)
+    ev2 = _ev(backend, cache_path=cache)
     calls.clear()
     second = ev2.evaluate(genome, agent=None)
     assert calls == []
     assert second == first
+
+
+def test_no_test_leakage_in_exemplars():
+    """Phase-17 gate: exemplars come from the TRAIN bank only; gold answers
+    of test items must never appear in any prompt."""
+    seen = []
+
+    def backend(prompt, genome):
+        seen.append(prompt)
+        return "#### 0"
+
+    ev = _ev(backend)  # test fixture gold answers: #### 7/10/99
+    ev.evaluate(ArchitectureGenome(memory="recency"), agent=None)
+    assert all("#### 10" not in p for p in seen)   # test item 2 gold
+    assert all("#### 99" not in p for p in seen)   # (never a gold answer)
+    # but train-bank exemplars DO appear (memory active)
+    assert any("#### 120" in p for p in seen[1:])
+
+
+def test_memory_gene_changes_prompt_content():
+    """Different memory genes must produce different prompt content.
+    The first train-bank item is lexically closest to the LAST test item,
+    so recency (bank tail) and retrieval (similarity) diverge."""
+    seen = {}
+    train = os.path.join(os.path.dirname(__file__),
+                         "fixtures", "gsm8k_train_divergent.jsonl")
+
+    def make_backend(tag):
+        def backend(prompt, genome):
+            seen.setdefault(tag, []).append(prompt)
+            return "#### 0"
+        return backend
+
+    for mem_gene in ("recency", "retrieval"):
+        ev = _ev(make_backend(mem_gene), data_path=DIVERGENT, memory_k=2,
+                 calibration_path=train)
+        ev.evaluate(ArchitectureGenome(memory=mem_gene), agent=None)
+
+    last_recency, last_retrieval = seen["recency"][-1], seen["retrieval"][-1]
+    assert last_recency != last_retrieval
+    # retrieval recalls the similar first bank item; recency does not
+    assert "Pencils cost 2 dollars" in last_retrieval
+    assert "Pencils cost 2 dollars" not in last_recency

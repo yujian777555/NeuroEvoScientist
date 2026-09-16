@@ -1,16 +1,22 @@
-"""GSM8K benchmark adapter for ENSS (Phase-13/15).
+"""GSM8K benchmark adapter for ENSS (Phase-17 corrected semantics).
 
 Real task scoring pipeline:
 
-    dataset (JSONL)  ->  episodic memory recall (memory gene)
-                     ->  prompt (reasoning gene template + compression
-                         gene exemplar budget)
+    TRAIN-split experience bank (leakage-free)
+                     ->  memory substrate recall (memory gene, possibly
+                         adapted - see evolution/adaptation.py)
+                     ->  prompt (reasoning gene template + context_policy
+                         exemplar verbosity)
                      ->  backend (pluggable LLM inference)
                      ->  answer extraction  ->  accuracy metrics
 
-Since Phase-15 every gene affects real inference: memory selects which
-past experiences enter the prompt, compression controls their verbosity
-(hence real token cost), reasoning sets the instruction template.
+Phase-17 corrections:
+- exemplars come ONLY from the train split; test items are never stored
+  (no train/test leakage in memory exemplars);
+- exemplar verbosity is `context_policy` (full/truncated/answer_only) —
+  the legacy compression=lora/qlora naming is gone;
+- callers may inject a pre-built (e.g. adapted / weight-inherited) memory
+  controller; `substrate_fingerprint` separates such variants in the cache.
 
 The evaluator NEVER fabricates scores: without a configured inference
 backend it raises. MockEvaluator remains available for CI smoke tests
@@ -20,7 +26,7 @@ Dataset format (openai/grade-school-math):
     {"question": "...", "answer": "reasoning...\n#### 72"}
 
 Data loading order:
-    1. explicit ``data_path``
+    1. explicit ``data_path`` / ``calibration_path``
     2. local cache ``data/gsm8k/{split}.jsonl``
     3. ``datasets`` library (if installed)
     4. download from the official GitHub mirror into the cache
@@ -87,14 +93,18 @@ class GSM8KEvaluator:
         backend:   callable(prompt: str, genome) -> str. Required for real
                    evaluation; use ``HFTransformersBackend`` or any custom
                    function.
-        split:     "test" or "train".
+        split:     evaluation split ("test").
         limit:     cap on number of problems (None = all).
-        data_path: explicit JSONL path, overrides cache/download.
+        data_path: explicit evaluation JSONL path, overrides cache/download.
+        calibration_path: TRAIN-split JSONL feeding the memory bank
+                   (leakage-free exemplars + substrate adaptation).
+        calibration_size: how many train samples fill the memory bank.
     """
 
     def __init__(self, backend=None, split="test", limit=None,
                  data_path=None, cache_path=None, memory_k=3,
-                 disable_memory=False):
+                 disable_memory=False, calibration_path=None,
+                 calibration_size=48):
         self.backend = backend
         self.split = split
         self.limit = limit
@@ -104,18 +114,22 @@ class GSM8KEvaluator:
         # Phase-16 ablation: disable_memory=True removes the episodic memory
         # substrate entirely ("w/o Memory Substrate"), whatever the genome says.
         self.disable_memory = disable_memory
+        self.calibration_path = calibration_path
+        self.calibration_size = calibration_size
         self._samples = None
+        self._calibration = None
         self._cache = None
 
     # -- evaluation cache (atomic; crash-safe resume for long GPU runs) -------
 
-    def _cache_key(self, genome):
+    def _cache_key(self, genome, substrate_fingerprint=None):
         model = getattr(self.backend, "model_name", "unknown")
         payload = json.dumps({
             "genome": genome.to_dict(), "split": self.split,
             "limit": self.limit, "model": str(model),
-            "pipeline": "substrate-activated-v2",
+            "pipeline": "phase17-v3",
             "disable_memory": self.disable_memory,
+            "substrate": substrate_fingerprint or "none",
         }, sort_keys=True)
         return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
@@ -144,25 +158,34 @@ class GSM8KEvaluator:
 
     # -- data ---------------------------------------------------------------
 
-    def load_samples(self):
-        if self._samples is not None:
-            return self._samples
-
-        path = self.data_path or os.path.join(_DEFAULT_CACHE,
-                                              "%s.jsonl" % self.split)
+    def _load_jsonl(self, path):
         if not os.path.exists(path):
             self._resolve_dataset(path)
-
         samples = []
         with open(path, "r", encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
                 if line:
                     samples.append(json.loads(line))
-        if self.limit:
-            samples = samples[: self.limit]
-        self._samples = samples
         return samples
+
+    def load_samples(self):
+        if self._samples is None:
+            path = self.data_path or os.path.join(_DEFAULT_CACHE,
+                                                  "%s.jsonl" % self.split)
+            samples = self._load_jsonl(path)
+            if self.limit:
+                samples = samples[: self.limit]
+            self._samples = samples
+        return self._samples
+
+    def calibration_samples(self):
+        """TRAIN-split samples for the memory bank / substrate adaptation."""
+        if self._calibration is None:
+            path = self.calibration_path or os.path.join(
+                _DEFAULT_CACHE, "train.jsonl")
+            self._calibration = self._load_jsonl(path)
+        return self._calibration[: self.calibration_size]
 
     def _resolve_dataset(self, path):
         try:
@@ -170,9 +193,9 @@ class GSM8KEvaluator:
         except ImportError:
             datasets = None
 
+        split = "train" if "train" in os.path.basename(path) else "test"
         if datasets is not None:
-            ds = datasets.load_dataset("openai/gsm8k", "main",
-                                       split=self.split)
+            ds = datasets.load_dataset("openai/gsm8k", "main", split=split)
             os.makedirs(os.path.dirname(path), exist_ok=True)
             with open(path, "w", encoding="utf-8") as f:
                 for row in ds:
@@ -181,25 +204,32 @@ class GSM8KEvaluator:
             return
 
         os.makedirs(os.path.dirname(path), exist_ok=True)
-        urllib.request.urlretrieve(GSM8K_URL.format(split=self.split), path)
+        urllib.request.urlretrieve(GSM8K_URL.format(split=split), path)
 
     # -- pipeline -------------------------------------------------------------
 
     def build_prompt(self, sample, genome, exemplars=None):
         """Prompt = (memory exemplars) + reasoning-conditioned question.
 
-        The memory gene controls WHICH past experiences appear; the
-        compression gene controls HOW verbosely they are rendered; the
-        reasoning gene controls the instruction template.
+        memory gene         -> WHICH bank entries appear
+        context_policy gene -> HOW verbosely they are rendered
+        reasoning gene      -> the instruction template
         """
         blocks = []
         if exemplars:
-            blocks.extend(format_exemplar(e, genome.compression)
+            blocks.extend(format_exemplar(e, genome.context_policy)
                           for e in exemplars)
         template = PROMPT_TEMPLATES.get(genome.reasoning,
                                         PROMPT_TEMPLATES["direct"])
         blocks.append(template.format(q=sample["question"]))
         return "\n\n".join(blocks)
+
+    def build_memory_bank(self, genome):
+        """A memory controller pre-filled from the TRAIN split (leakage-free)."""
+        controller = build_memory_controller(genome)
+        for s in self.calibration_samples():
+            controller.store(s["question"], s["answer"])
+        return controller
 
     def _count_tokens(self, prompts):
         """Real token count when the backend tokenizer is loaded,
@@ -209,7 +239,8 @@ class GSM8KEvaluator:
             return sum(len(tok(p)["input_ids"]) for p in prompts)
         return sum(len(p.split()) for p in prompts)
 
-    def evaluate(self, genome, agent):
+    def evaluate(self, genome, agent, memory_controller=None,
+                 substrate_fingerprint=None):
         if self.backend is None:
             raise RuntimeError(
                 "GSM8KEvaluator requires an inference backend "
@@ -217,24 +248,23 @@ class GSM8KEvaluator:
                 "Refusing to fabricate scores; use benchmark='mock' for CI."
             )
 
-        key = self._cache_key(genome)
+        key = self._cache_key(genome, substrate_fingerprint)
         cached = self._load_cache().get(key)
         if cached is not None:
             return cached
 
         samples = self.load_samples()
 
-        # Episodic memory: history accumulates GOLD experience as the episode
-        # proceeds, so prompts are determined upfront and batched generation
-        # stays valid.
-        memory = None if self.disable_memory else build_memory_controller(genome)
+        # Memory: bank comes from the TRAIN split only; test items are
+        # never stored (no test-answer leakage into prompts).
+        memory = None
+        if not self.disable_memory:
+            memory = memory_controller or self.build_memory_bank(genome)
         prompts = []
         for sample in samples:
             exemplars = None if memory is None else memory.recall(
                 sample["question"], k=self.memory_k)
             prompts.append(self.build_prompt(sample, genome, exemplars))
-            if memory is not None:
-                memory.store(sample["question"], sample["answer"])
 
         start = time.time()
         if hasattr(self.backend, "batch_generate"):

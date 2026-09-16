@@ -1,0 +1,12 @@
+# Phase-17 candidate adaptation protocol (plans/phase17_plan.md Task 3).
+# Fixed budget for every candidate; LLM backbone frozen; only trainable
+# substrate parameters are optimized.
+
+calibration_split: train        # GSM8K train (never test items)
+calibration_samples: 48         # within the recommended 32-64 range
+adaptation_steps: 30            # within the recommended 20-50
+optimizer: adamw
+learning_rate: 0.001
+weight_decay: 0.01
+sequence_window: 16             # embeddings per training sequence
+seed: 0                         # fixed optimizer seed for all candidates

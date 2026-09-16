@@ -1,23 +1,20 @@
-"""Real episodic memory substrates for ENSS agents (Phase-15, Task 1/2).
+"""Episodic memory substrates for ENSS agents (Phase-17 corrected schema).
 
-Each ``memory`` gene instantiates a controller that manages experience
-across one evaluation episode (a benchmark run is a stream of problems).
-The controller decides what past experience enters the LLM prompt, so the
-memory gene directly changes inference behavior and content:
+Memory genes and their REAL mechanisms:
 
-- attention:  full-context window (keep the most recent K experiences)
-- retrieval:  TF-IDF similarity top-k over the episode history
-- mamba:      SSM-gated recall — a recurrent hidden state (MambaMemory
-              module) integrates hashed experience embeddings; candidates
-              are scored by interaction with the current state
-- hybrid:     retrieval top-k plus the most recent experience
+- recency:   select the most recent k entries of the experience bank
+- retrieval: TF-IDF similarity top-k over the experience bank
+- mamba2:    real Mamba-2 substrate (models/mamba_memory.py) processes the
+             bank as an ordered sequence; recall scores candidates against
+             the resulting order-dependent memory state
+- hybrid:    retrieval top-(k-1) plus the most recent entry
 
-The ``compression`` gene controls exemplar verbosity (context budget):
-none = full solution text, lora = truncated, qlora/int8 = answer only.
+Leakage discipline (Phase-17 verification gate): the experience bank comes
+ONLY from the benchmark's train/calibration split. Test items are never
+stored, so gold test answers can never leak into prompts.
 
-Mamba gate weights are untrained placeholders by design; they transfer
-parent -> child through evolution/inheritance.py, which is what makes
-weight inheritance meaningful once substrates are real.
+The context_policy gene controls exemplar verbosity:
+full / truncated / answer_only.
 """
 
 import math
@@ -25,6 +22,8 @@ import re
 from collections import Counter
 
 import torch
+
+from models.mamba_memory import MambaMemory
 
 _TOKEN_RE = re.compile(r"[a-z0-9]+")
 
@@ -56,78 +55,91 @@ def tfidf_scores(query, docs):
 
 
 class BaseMemory:
-    """Episode memory controller interface."""
+    """Experience-bank memory controller interface."""
 
     def __init__(self, genome):
         self.genome = genome
-        self.history = []  # list of (question, answer) dicts
+        self.bank = []  # list of {"question", "answer"} from TRAIN split
 
     def store(self, question, answer):
-        self.history.append({"question": question, "answer": answer})
+        self.bank.append({"question": question, "answer": answer})
 
     def recall(self, query, k=3):
         """Return up to k exemplar dicts to inject into the prompt."""
         raise NotImplementedError
 
 
-class AttentionMemoryController(BaseMemory):
-    """Full-context: the most recent k experiences (recency window)."""
+class RecencyMemoryController(BaseMemory):
+    """Recency: the last k entries of the experience bank."""
 
     def recall(self, query, k=3):
-        return self.history[-k:]
+        return self.bank[-k:]
 
 
 class RetrievalMemoryController(BaseMemory):
-    """Similarity top-k over the whole episode history."""
+    """Similarity top-k over the whole experience bank."""
 
     def recall(self, query, k=3):
-        if not self.history:
+        if not self.bank:
             return []
-        docs = [h["question"] for h in self.history]
+        docs = [h["question"] for h in self.bank]
         scores = tfidf_scores(query, docs)
-        ranked = sorted(zip(scores, self.history), key=lambda x: -x[0])
+        ranked = sorted(zip(scores, self.bank), key=lambda x: -x[0])
         return [h for s, h in ranked[:k] if s > 0]
 
 
-class MambaMemoryController(BaseMemory):
-    """SSM-gated episodic memory.
+class Mamba2MemoryController(BaseMemory):
+    """Real Mamba-2 gated recall.
 
-    A recurrent state integrates hashed experience embeddings via the
-    MambaMemory module; recall scores candidates by cosine similarity
-    between their embedding and the current memory state.
+    The substrate processes the experience bank as an ordered embedding
+    sequence and produces an order-dependent memory state; candidates are
+    scored by cosine similarity between their embedding and that state.
+    Substrate parameters are trainable (see evolution/adaptation.py) and
+    transferable via evolution/inheritance.py.
     """
 
     def __init__(self, genome, dim=64):
         super().__init__(genome)
-        from models.mamba_memory import MambaMemory
         self.dim = dim
-        self.gate = MambaMemory(hidden_size=dim,
-                                state_size=min(genome.state_size, dim))
-        self.state = torch.zeros(dim)
+        self.substrate = MambaMemory(hidden_size=dim,
+                                     state_size=min(genome.state_size, 64))
         self.embeddings = []
 
     def store(self, question, answer):
         super().store(question, answer)
-        emb = hashed_embedding(question + " " + answer, self.dim)
-        self.embeddings.append(emb)
+        self.embeddings.append(
+            hashed_embedding(question + " " + answer, self.dim))
+
+    def memory_state(self):
+        """Current order-dependent memory state over the whole bank."""
+        if not self.embeddings:
+            return torch.zeros(self.dim)
+        seq = torch.stack(self.embeddings).unsqueeze(0)  # (1, n, dim)
         with torch.no_grad():
-            self.state = self.gate(emb.unsqueeze(0)).squeeze(0) \
-                + 0.9 * self.state
+            return self.substrate.memory_state(seq).squeeze(0)
 
     def recall(self, query, k=3):
         if not self.embeddings:
             return []
+        state = self.memory_state()
         with torch.no_grad():
             scores = [
-                torch.cosine_similarity(self.state, e, dim=0).item()
+                torch.cosine_similarity(state, e, dim=0).item()
                 for e in self.embeddings
             ]
-        ranked = sorted(zip(scores, self.history), key=lambda x: -x[0])
+        ranked = sorted(zip(scores, self.bank), key=lambda x: -x[0])
         return [h for _, h in ranked[:k]]
+
+    # Trainable-substrate accessors used by adaptation and inheritance.
+    def substrate_parameters(self):
+        return self.substrate.parameters()
+
+    def substrate_state_dict(self):
+        return self.substrate.state_dict()
 
 
 class HybridMemoryController(BaseMemory):
-    """Retrieval top-k plus the most recent experience."""
+    """Retrieval top-(k-1) plus the most recent entry."""
 
     def __init__(self, genome):
         super().__init__(genome)
@@ -139,38 +151,40 @@ class HybridMemoryController(BaseMemory):
 
     def recall(self, query, k=3):
         picked = self._retrieval.recall(query, k=max(1, k - 1))
-        if self.history:
-            latest = self.history[-1]
+        if self.bank:
+            latest = self.bank[-1]
             if all(h is not latest for h in picked):
                 picked = picked + [latest]
         return picked[:k]
 
 
 MEMORY_CONTROLLERS = {
-    "attention": AttentionMemoryController,
+    "recency": RecencyMemoryController,
     "retrieval": RetrievalMemoryController,
-    "mamba": MambaMemoryController,
+    "mamba2": Mamba2MemoryController,
     "hybrid": HybridMemoryController,
 }
 
 
 def build_memory_controller(genome):
-    """Instantiate the episode memory substrate named by the genome."""
+    """Instantiate the episodic memory substrate named by the genome."""
     cls = MEMORY_CONTROLLERS.get(genome.memory)
     if cls is None:
         raise ValueError("unknown memory substrate: %s" % genome.memory)
     return cls(genome)
 
 
-# --- compression gene: exemplar context budget --------------------------------
+# --- context_policy gene: exemplar verbosity ----------------------------------
 
-def format_exemplar(exemplar, compression):
-    """Render one experience under the compression gene's context budget."""
+def format_exemplar(exemplar, context_policy):
+    """Render one experience under the context policy's verbosity budget."""
     answer = exemplar["answer"]
-    if compression == "none":
+    if context_policy == "full":
         body = answer
-    elif compression == "lora":
+    elif context_policy == "truncated":
         body = "\n".join(answer.split("\n")[-2:])
-    else:  # qlora / int8: most aggressive — final answer only
+    elif context_policy == "answer_only":
         body = answer.split("\n")[-1]
+    else:
+        raise ValueError("unknown context policy: %s" % context_policy)
     return "Question: %s\nAnswer: %s" % (exemplar["question"], body)

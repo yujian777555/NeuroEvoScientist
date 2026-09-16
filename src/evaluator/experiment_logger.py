@@ -1,10 +1,11 @@
-"""Experiment logging for ENSS runs (Phase-14).
+"""Experiment logging for ENSS runs (Phase-14..17).
 
 Each run writes to ``experiments/<run_name>/``:
 
 - ``history.jsonl``  one record per generation: best/mean fitness, best
                      architecture + metrics, Pareto front objectives,
-                     architecture distribution (Figure 1/2/3 data)
+                     architecture distribution (Figure 1/2/3 data), and
+                     (Phase-17) raw per-individual objectives
 - ``results.json``   final summary: run config + best agent (Table 1/2 data)
 """
 
@@ -40,6 +41,20 @@ class ExperimentLogger:
 
         distribution = Counter(e.genome.describe() for e in evaluated)
 
+        # Phase-17 Task 4: persist raw per-individual objectives so Pareto
+        # analysis never depends on the scalar fitness aggregate.
+        population = [
+            {"genome": e.genome.to_dict(),
+             "capability": e.metrics.get("capability"),
+             "efficiency": e.metrics.get("efficiency"),
+             "adaptability": e.metrics.get("adaptability"),
+             "prompt_tokens_total": e.metrics.get("prompt_tokens_total"),
+             "latency_sec": e.metrics.get("latency_sec"),
+             "adaptation": e.metrics.get("adaptation"),
+             "fitness": e.fitness}
+            for e in ranked
+        ]
+
         record = {
             "generation": gen,
             "best_fitness": best.fitness,
@@ -48,6 +63,7 @@ class ExperimentLogger:
             "best_metrics": best.metrics,
             "pareto_front": pareto_front,
             "architecture_distribution": dict(distribution),
+            "population": population,
         }
         with open(self.history_path, "a", encoding="utf-8") as f:
             f.write(json.dumps(record) + "\n")

@@ -27,23 +27,23 @@ class MockEvaluator:
     results are reproducible.
     """
 
-    # Capability priors over the Phase-13 64-architecture space.
+    # Capability priors over the Phase-17 schema (CI signal only).
     CAPABILITY_PRIOR = {
-        "memory": {"mamba": 0.08, "attention": 0.05, "retrieval": 0.06,
+        "memory": {"mamba2": 0.08, "recency": 0.05, "retrieval": 0.06,
                    "hybrid": 0.10},
         "reasoning": {"verify": 0.12, "direct": 0.0, "planner": 0.10,
                       "cot": 0.09},
     }
-    # Adaptability prior: compression helps transfer under shift.
+    # Adaptability prior: leaner context policies transfer better under shift.
     ADAPTABILITY_PRIOR = {
-        "compression": {"lora": 0.10, "none": 0.0, "qlora": 0.09,
-                        "int8": 0.04},
+        "context_policy": {"full": 0.0, "truncated": 0.06,
+                           "answer_only": 0.10},
     }
 
     def __init__(self, n_tasks=8):
         self.n_tasks = n_tasks
 
-    def evaluate(self, genome, agent):
+    def evaluate(self, genome, agent, **kwargs):
         """Return metrics dict {capability, efficiency, adaptability}."""
         rng = random.Random(_stable_seed(genome))
 
@@ -56,8 +56,8 @@ class MockEvaluator:
         ]
 
         adaptability = 0.40
-        adaptability += self.ADAPTABILITY_PRIOR["compression"].get(
-            genome.compression, 0.0
+        adaptability += self.ADAPTABILITY_PRIOR["context_policy"].get(
+            genome.context_policy, 0.0
         )
         shifted_scores = [
             min(1.0, max(0.0, adaptability + rng.uniform(-0.08, 0.08)))

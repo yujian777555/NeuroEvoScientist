@@ -2,18 +2,18 @@
 Crossover operators for Evolutionary Neural Substrate Search (ENSS).
 
 Combines architecture genomes from two parent agents via uniform
-module-level crossover.
+gene-level crossover over the Phase-17 schema.
 """
 
 import random
 from copy import deepcopy
 
 
-FIELDS = ["memory", "reasoning", "tool_adapter", "compression"]
+FIELDS = ["memory", "reasoning", "context_policy", "quantization"]
 
 
 def crossover(parent_a, parent_b, rng=None):
-    """Uniform crossover: each module is taken from either parent."""
+    """Uniform crossover: each gene is taken from either parent."""
     rng = rng or random
     child = deepcopy(parent_a)
     for field in FIELDS:

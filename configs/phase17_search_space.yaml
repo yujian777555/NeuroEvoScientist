@@ -1,0 +1,36 @@
+# Phase-17 corrected search space schema.
+# Every gene maps to a REAL mechanism (see plans/phase17_plan.md Task 1):
+#   memory          -> episodic memory substrate (recency/retrieval/mamba2/hybrid)
+#   reasoning       -> prompt-level reasoning strategy
+#   context_policy  -> exemplar verbosity (NOT LoRA/QLoRA; those names removed)
+#   quantization    -> real runtime quantization (fp16 default; int8 via
+#                      bitsandbytes when enabled - omitted from the focused
+#                      Phase-17 space, see plan Task 1 rules)
+
+memory:
+  - recency
+  - retrieval
+  - mamba2
+  - hybrid
+
+reasoning:
+  - direct
+  - cot
+  - verify
+  - planner
+
+context_policy:
+  - full
+  - truncated
+  - answer_only
+
+quantization:
+  - fp16
+
+population: 16
+generations: 10
+
+objectives:
+  capability: 0.5
+  efficiency: 0.3
+  adaptability: 0.2

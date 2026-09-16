@@ -1,34 +1,50 @@
 """
-Evolution Controller for ENSS (Phase-13).
+Evolution Controller for ENSS (Phase-17).
 
-Closes the loop:
+Closes the loop with corrected substrate semantics:
 
-    Architecture Genome -> Agent Builder -> Candidate Agent
-        -> Evaluation -> Fitness -> NSGA Selection -> Mutation/Crossover
-        (+ Weight Inheritance) -> New Generation
+    Architecture Genome -> Memory Bank (train split, leakage-free)
+        -> [Weight Inheritance into substrate] -> [Candidate Adaptation]
+        -> Evaluation -> Raw Objectives -> NSGA Selection
+        -> Mutation/Crossover -> New Generation
+
+Weight inheritance (Phase-17): transfers the parent's POST-ADAPTATION
+substrate weights to children with the same memory substrate, so what is
+inherited is trained state, not random init. Every candidate receives the
+same fixed adaptation budget (evolution/adaptation.py), making the
+inheritance comparison controlled.
 
 Selection is genuinely multi-objective: non-dominated sorting into Pareto
 fronts + crowding-distance diversity preservation (NSGA3Selector). Scalar
 fitness is kept for logging/reporting only, not for selection.
-
-Weight inheritance: offspring built from a parent reuse all compatible
-parent tensors (evolution/inheritance.py), cutting evaluation cost.
 """
 
+import hashlib
 import json
 import random
+
+import torch
 
 from genome.architecture import ArchitectureGenome
 from models.builder import build_agent
 from evolution.mutation import mutate
 from evolution.crossover import crossover
 from evolution.fitness import calculate_fitness
-from evolution.inheritance import inherit_state
 from evolution.nsga3 import Individual, NSGA3Selector
 
 
 def genome_signature(genome):
     return json.dumps(genome.to_dict(), sort_keys=True)
+
+
+def substrate_fingerprint(substrate):
+    """Content hash of a substrate state dict (separates inherited/adapted
+    variants in the evaluation cache)."""
+    h = hashlib.sha256()
+    for name in sorted(substrate.state_dict()):
+        h.update(name.encode())
+        h.update(substrate.state_dict()[name].numpy().tobytes())
+    return h.hexdigest()[:16]
 
 
 class EvaluatedAgent:
@@ -55,7 +71,8 @@ class EvaluatedAgent:
 class EvolutionController:
     def __init__(self, search_space, evaluator, population_size=None,
                  generations=None, seed=0, elite_size=2, mutation_rate=0.3,
-                 use_inheritance=True, use_pareto=True):
+                 use_inheritance=True, use_pareto=True,
+                 adaptation_config=None):
         self.search_space = search_space
         self.evaluator = evaluator
         self.population_size = population_size or search_space.population
@@ -66,6 +83,8 @@ class EvolutionController:
         # use_pareto=False is the "evolution w/o Pareto" ablation/baseline:
         # selection falls back to scalar-fitness tournament + truncation.
         self.use_pareto = use_pareto
+        # Phase-17: fixed per-candidate adaptation budget (None disables).
+        self.adaptation_config = adaptation_config
         self.rng = random.Random(seed)
         self.selector = NSGA3Selector(self.population_size)
         self.weights = search_space.objective_weights
@@ -73,7 +92,9 @@ class EvolutionController:
         self.population = [
             self._random_genome() for _ in range(self.population_size)
         ]
-        self.state_bank = {}  # genome signature -> latest agent state_dict
+        # Post-adaptation substrate weights, keyed by substrate architecture
+        # (memory gene + dims) — inheritance pool across the population.
+        self.substrate_bank = {}
         self.history = []
         self.n_inherited_tensors = 0
 
@@ -83,21 +104,52 @@ class EvolutionController:
     # -- evaluation -----------------------------------------------------------
 
     def evaluate_genome(self, genome, parent_genome=None):
-        """Build + evaluate one candidate, optionally inheriting weights."""
+        """Build + (inherit) + (adapt) + evaluate one candidate."""
+        from evolution.adaptation import adapt_substrate
+
+        # Deterministic per-genome init: substrate weights before any
+        # inheritance/adaptation are a pure function of the genome,
+        # so cache fingerprints stay reproducible across runs and seeds.
+        torch.manual_seed(
+            int(hashlib.sha256(genome_signature(genome).encode()).hexdigest(),
+                16) % (2 ** 32))
+
+        memory = None
+        if (hasattr(self.evaluator, "build_memory_bank")
+                and not getattr(self.evaluator, "disable_memory", False)):
+            memory = self.evaluator.build_memory_bank(genome)
+
+        substrate = getattr(memory, "substrate", None)
+        fingerprint = None
+        adaptation_record = {"trainable": False}
+
+        if substrate is not None:
+            key = "substrate:%s:%d" % (genome.memory, genome.state_size)
+            if (self.use_inheritance and parent_genome is not None
+                    and parent_genome.memory == genome.memory
+                    and key in self.substrate_bank):
+                substrate.load_state_dict(self.substrate_bank[key])
+                self.n_inherited_tensors += len(self.substrate_bank[key])
+                adaptation_record["inherited"] = True
+            else:
+                adaptation_record["inherited"] = False
+
+            if self.adaptation_config is not None:
+                record = adapt_substrate(
+                    memory, self.evaluator.calibration_samples(),
+                    self.adaptation_config)
+                adaptation_record.update(record)
+                self.substrate_bank[key] = {
+                    k: v.clone() for k, v in substrate.state_dict().items()
+                }
+            fingerprint = substrate_fingerprint(substrate)
+
         agent = build_agent(genome)
-
-        if (self.use_inheritance and parent_genome is not None):
-            parent_state = self.state_bank.get(genome_signature(parent_genome))
-            if parent_state:
-                inherited = inherit_state(parent_genome, parent_state, genome,
-                                          child_state=agent.state_dict())
-                if inherited:
-                    agent.load_state_dict(inherited, strict=False)
-                    self.n_inherited_tensors += len(inherited)
-
-        metrics = self.evaluator.evaluate(genome, agent)
+        metrics = self.evaluator.evaluate(
+            genome, agent, memory_controller=memory,
+            substrate_fingerprint=fingerprint)
+        metrics["adaptation"] = adaptation_record
         fitness = calculate_fitness(metrics, self.weights)
-        self.state_bank[genome_signature(genome)] = agent.state_dict()
         return EvaluatedAgent(genome, metrics, fitness)
 
     # -- selection ------------------------------------------------------------
@@ -112,7 +164,7 @@ class EvolutionController:
         return [self.evaluate_genome(g) for g in self.population]
 
     def step(self, evaluated):
-        """One generation: mate -> inherit -> evaluate -> select.
+        """One generation: mate -> inherit/adapt -> evaluate -> select.
 
         With ``use_pareto`` selection is NSGA multi-objective (fronts +
         crowding); otherwise it is scalar-fitness truncation (ablation).

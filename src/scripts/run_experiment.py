@@ -1,30 +1,24 @@
-"""Phase-14/15/16 experiment runner: baseline matrix + ablations.
+"""Phase-17 focused experiment runner (corrected schema).
 
-Methods:
-    fixed_*      fixed hand-designed architectures (attention/mamba/hybrid
-                 memory, direct reasoning, no compression)
-    random       random search ("w/o Evolution" baseline)
-    enss         full ENSS (Pareto selection + weight inheritance + memory)
-    no_pareto    evolution with scalar-fitness selection ("w/o NSGA Pareto")
-    no_inherit   ENSS without weight inheritance ("w/o Inheritance")
-    no_memory    ENSS without the episodic memory substrate ("w/o Memory")
-    no_mamba     ENSS with mamba removed from the search space
+Methods (plans/phase17_plan.md Task 5 minimum comparisons):
+    enss           full ENSS: real Mamba2 substrate + inheritance + adaptation
+    no_inherit     ENSS with scratch-init substrates (same adaptation budget)
+    no_mamba2      ENSS with the mamba2 gene removed from the search space
+    random         random search, equal evaluation + adaptation budget
+    fixed_retrieval / fixed_recency / fixed_mamba2   fixed memory baselines
+    no_pareto / no_memory                            extra ablations
 
 Examples:
-    # single run
+    # focused GSM8K validation (one seed)
     python src/scripts/run_experiment.py --method enss --benchmark gsm8k \
-        --model Qwen/Qwen2.5-1.5B-Instruct --population 16 --generations 10
-
-    # full baseline matrix
-    python src/scripts/run_experiment.py --matrix --benchmark gsm8k \
-        --model Qwen/Qwen2.5-1.5B-Instruct
+        --model Qwen/Qwen2.5-1.5B-Instruct --population 16 --generations 10 \
+        --seed 0
 
 Every run logs to experiments/<run_name>/{history.jsonl, results.json}.
 """
 
 import argparse
 import csv
-import json
 import os
 import sys
 
@@ -34,18 +28,22 @@ from genome.architecture import ArchitectureGenome
 from genome.search_space import SearchSpace
 from models.builder import build_agent
 from evaluator.experiment_logger import ExperimentLogger
+from evolution.adaptation import AdaptationConfig
 from evolution.controller import EvolutionController
 from evolution.fitness import calculate_fitness
 from evolution.random_search import RandomSearchController
 
+_ADAPT_YAML = os.path.join(os.path.dirname(__file__), "..", "..",
+                           "configs", "phase17_adaptation.yaml")
+
 FIXED_BASELINES = {
-    "fixed_attention": ArchitectureGenome(memory="attention"),
-    "fixed_mamba": ArchitectureGenome(memory="mamba"),
-    "fixed_hybrid": ArchitectureGenome(memory="hybrid"),
+    "fixed_recency": ArchitectureGenome(memory="recency"),
+    "fixed_retrieval": ArchitectureGenome(memory="retrieval"),
+    "fixed_mamba2": ArchitectureGenome(memory="mamba2"),
 }
 
-MATRIX_METHODS = ["fixed_attention", "fixed_mamba", "fixed_hybrid",
-                  "random", "no_pareto", "enss", "no_memory", "no_inherit"]
+MATRIX_METHODS = ["fixed_recency", "fixed_retrieval", "fixed_mamba2",
+                  "random", "no_inherit", "enss", "no_mamba2"]
 
 
 def build_evaluator(args, method):
@@ -65,9 +63,8 @@ def build_evaluator(args, method):
         else:
             backend = HFTransformersBackend(args.model, **kwargs)
         model_tag = os.path.basename(str(args.model))
-        # Per-method cache file shared ACROSS SEEDS: genome evaluation is
-        # deterministic (greedy decoding), and seeds of one method run
-        # sequentially in the card queue, so no write race occurs.
+        # Per-method cache file shared ACROSS SEEDS where fingerprints match:
+        # same-method runs are sequential in the card queue, so no race.
         cache_path = os.path.join(
             "experiments",
             "eval_cache_%s_%s_%s_limit%s.json"
@@ -98,19 +95,24 @@ def run_method(method, args, evaluator, weights):
         config={"method": method, "benchmark": args.benchmark,
                 "model": args.model, "population": args.population,
                 "generations": args.generations, "seed": args.seed,
-                "limit": args.limit},
+                "limit": args.limit, "schema": "phase17",
+                "adaptation": "phase17_adaptation.yaml"},
     )
 
     if method in FIXED_BASELINES:
         return run_fixed(FIXED_BASELINES[method], evaluator, weights, logger)
 
-    exclude = {"memory": ["mamba"]} if method == "no_mamba" else None
+    exclude = {"memory": ["mamba2"]} if method == "no_mamba2" else None
     space = SearchSpace(exclude=exclude)
+
+    # Phase-17: every candidate gets the same fixed adaptation budget.
+    adaptation = AdaptationConfig.from_yaml(_ADAPT_YAML)
 
     if method == "random":
         controller = RandomSearchController(
             space, evaluator, population_size=args.population,
-            generations=args.generations, seed=args.seed)
+            generations=args.generations, seed=args.seed,
+            adaptation_config=adaptation)
     else:
         controller = EvolutionController(
             space, evaluator,
@@ -119,6 +121,7 @@ def run_method(method, args, evaluator, weights):
             seed=args.seed,
             use_inheritance=(method != "no_inherit"),
             use_pareto=(method != "no_pareto"),
+            adaptation_config=adaptation,
         )
 
     def log(gen, evaluated):
@@ -145,13 +148,12 @@ def write_matrix_table(rows, path):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="ENSS Phase-14 experiment runner")
+        description="ENSS Phase-17 focused experiment runner")
     parser.add_argument("--method", type=str, default="enss",
-                        choices=["fixed", "random", "enss", "no_pareto",
-                                 "no_inherit", "no_mamba", "no_memory"]
+                        choices=["random", "enss", "no_pareto", "no_inherit",
+                                 "no_mamba2", "no_memory"]
                         + sorted(FIXED_BASELINES))
-    parser.add_argument("--matrix", action="store_true",
-                        help="run the full Phase-14 baseline matrix")
+    parser.add_argument("--matrix", action="store_true")
     parser.add_argument("--benchmark", type=str, default="mock")
     parser.add_argument("--model", type=str, default=None)
     parser.add_argument("--population", type=int, default=16)

@@ -1,14 +1,17 @@
-"""Phase-16 Task 4: verify Mamba memory is real in the inference path.
+"""Phase-16 Task 4 / Phase-17 Task 2: verify Mamba memory is real in the
+inference path.
 
-Traces the Mamba episodic memory controller over a synthetic episode and
+Traces the Mamba-2 episodic memory controller over a synthetic episode and
 checks:
 
-1. state update is trackable (state vector changes on every store)
-2. the memory gene changes the compute path (mamba recall sequence differs
-   from attention/retrieval on the same episode)
-3. comparison against attention/retrieval/hybrid recall selections
+1. state update is trackable (memory state changes on every store)
+2. the memory gene changes the compute path (mamba2 recall differs from
+   recency/retrieval/hybrid on the same episode)
+3. comparison across all four memory genes
 
-Writes results/mamba_trace.json.
+Writes results/mamba_trace.json. Requires the real Mamba-2 substrate
+(transformers>=4.44, i.e. the A800 VM); exits loudly otherwise — no proxy
+is reported as Mamba.
 """
 
 import json
@@ -21,6 +24,7 @@ import torch
 
 from genome.architecture import ArchitectureGenome
 from evaluator.memory import build_memory_controller
+from models.mamba_memory import mamba2_available
 
 EPISODE = [
     ("Apples cost 2 dollars each. How much do 5 apples cost?",
@@ -41,24 +45,31 @@ QUERY = "Pens cost 4 dollars each. How much do 6 pens cost?"
 
 
 def main():
+    if not mamba2_available():
+        raise SystemExit(
+            "Real Mamba-2 substrate unavailable here (transformers<4.44). "
+            "Run on the A800 VM; refusing to validate a proxy as Mamba.")
+
     torch.manual_seed(0)
-    genome = ArchitectureGenome(memory="mamba", hidden_size=64, state_size=16)
+    genome = ArchitectureGenome(memory="mamba2", state_size=16)
     mamba = build_memory_controller(genome)
 
-    # 1. trace state updates
+    # 1. trace memory-state updates
     trace = []
-    prev_norm = 0.0
+    prev = None
     for q, a in EPISODE:
         mamba.store(q, a)
-        norm = float(mamba.state.norm())
+        state = mamba.memory_state()
+        norm = float(state.norm())
+        changed = prev is None or not torch.allclose(prev, state, atol=1e-6)
         trace.append({"stored": q[:40], "state_norm": norm,
-                      "state_changed": abs(norm - prev_norm) > 1e-6})
-        prev_norm = norm
+                      "state_changed": bool(changed)})
+        prev = state
 
     # 2./3. compare recall paths across memory genes on the same episode
     recall_paths = {}
-    for gene in ("attention", "retrieval", "mamba", "hybrid"):
-        g = ArchitectureGenome(memory=gene, hidden_size=64, state_size=16)
+    for gene in ("recency", "retrieval", "mamba2", "hybrid"):
+        g = ArchitectureGenome(memory=gene, state_size=16)
         ctrl = build_memory_controller(g)
         for q, a in EPISODE:
             ctrl.store(q, a)
@@ -66,13 +77,14 @@ def main():
                               for h in ctrl.recall(QUERY, k=2)]
 
     result = {
+        "substrate": "transformers.Mamba2Model (real Mamba-2)",
         "state_trace": trace,
         "state_updates_trackable": all(t["state_changed"] for t in trace),
         "recall_paths": recall_paths,
         "compute_path_differs": len({
             tuple(v) for v in recall_paths.values()
         }) > 1,
-        "mamba_module": type(mamba.gate).__name__,
+        "mamba_module": type(mamba.substrate.substrate).__name__,
     }
 
     out = os.path.join(os.path.dirname(__file__), "..", "..", "results")

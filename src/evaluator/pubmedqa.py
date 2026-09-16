@@ -1,17 +1,21 @@
-"""PubMedQA benchmark adapter for ENSS (Phase-15, Task 3).
+"""PubMedQA benchmark adapter for ENSS (Phase-15/17 corrected semantics).
 
 Scientific QA (biomedical research questions, yes/no/maybe) — the second
 task family used to test task-dependent evolution: GSM8K may favor
 reasoning-heavy architectures, PubMedQA may favor memory/retrieval ones.
 
-Same activated-substrate pipeline as GSM8K: episodic memory recall,
-reasoning-gene prompt template, compression-gene exemplar budget, real
-token-cost measurement, atomic evaluation cache.
+Phase-17 corrections (same as GSM8K):
+- experience bank comes from a calibration slice DISJOINT from the
+  evaluation slice (pqa_labeled has no official split; we reserve the tail
+  for calibration: evaluation = samples[:limit], calibration =
+  samples[500:], valid while limit <= 500);
+- exemplar verbosity is `context_policy`; legacy compression naming is gone;
+- adapted / weight-inherited memory controllers can be injected, separated
+  in the cache by `substrate_fingerprint`.
 
 Data: pqa_labeled (1000 expert-annotated questions).
-Loading order: explicit ``data_path`` -> local cache
-``data/pubmedqa/pqal.jsonl`` -> ``datasets`` library -> official GitHub
-mirror download.
+Loading order: explicit paths -> local cache ``data/pubmedqa/pqal.jsonl``
+-> ``datasets`` library -> official GitHub mirror download.
 
 Cache-format JSONL sample:
     {"question": "<question>\\nContext: <abstract sentences>",
@@ -35,6 +39,10 @@ PUBMEDQA_URL = ("https://raw.githubusercontent.com/pubmedqa/pubmedqa/"
 _DEFAULT_CACHE = os.path.join(
     os.path.dirname(__file__), "..", "..", "data", "pubmedqa"
 )
+
+# Calibration slice offset: evaluation uses samples[:limit], calibration the
+# tail from this index on — disjoint while limit <= _CALIB_OFFSET.
+_CALIB_OFFSET = 500
 
 _LABELS = ("yes", "no", "maybe")
 _LABEL_RE = re.compile(r"\b(yes|no|maybe)\b", re.IGNORECASE)
@@ -63,7 +71,8 @@ class PubMedQAEvaluator:
 
     def __init__(self, backend=None, split="test", limit=None,
                  data_path=None, cache_path=None, memory_k=3,
-                 disable_memory=False):
+                 disable_memory=False, calibration_path=None,
+                 calibration_size=48):
         self.backend = backend
         self.split = split
         self.limit = limit
@@ -71,18 +80,22 @@ class PubMedQAEvaluator:
         self.cache_path = cache_path
         self.memory_k = memory_k
         self.disable_memory = disable_memory
+        self.calibration_path = calibration_path
+        self.calibration_size = calibration_size
         self._samples = None
+        self._calibration = None
         self._cache = None
 
     # -- evaluation cache (atomic; crash-safe resume) --------------------------
 
-    def _cache_key(self, genome):
+    def _cache_key(self, genome, substrate_fingerprint=None):
         model = getattr(self.backend, "model_name", "unknown")
         payload = json.dumps({
             "genome": genome.to_dict(), "benchmark": "pubmedqa",
             "limit": self.limit, "model": str(model),
-            "pipeline": "substrate-activated-v2",
+            "pipeline": "phase17-v3",
             "disable_memory": self.disable_memory,
+            "substrate": substrate_fingerprint or "none",
         }, sort_keys=True)
         return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
@@ -111,24 +124,35 @@ class PubMedQAEvaluator:
 
     # -- data -----------------------------------------------------------------
 
-    def load_samples(self):
-        if self._samples is not None:
-            return self._samples
-
-        path = self.data_path or os.path.join(_DEFAULT_CACHE, "pqal.jsonl")
+    def _load_jsonl(self, path):
         if not os.path.exists(path):
             self._resolve_dataset(path)
-
         samples = []
         with open(path, "r", encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
                 if line:
                     samples.append(json.loads(line))
-        if self.limit:
-            samples = samples[: self.limit]
-        self._samples = samples
         return samples
+
+    def load_samples(self):
+        if self._samples is None:
+            path = self.data_path or os.path.join(_DEFAULT_CACHE,
+                                                  "pqal.jsonl")
+            samples = self._load_jsonl(path)
+            if self.limit:
+                samples = samples[: self.limit]
+            self._samples = samples
+        return self._samples
+
+    def calibration_samples(self):
+        """Calibration slice DISJOINT from the evaluation slice."""
+        if self._calibration is None:
+            source = self.calibration_path or os.path.join(
+                _DEFAULT_CACHE, "pqal.jsonl")
+            all_samples = self._load_jsonl(source)
+            self._calibration = all_samples[_CALIB_OFFSET:]
+        return self._calibration[: self.calibration_size]
 
     def _resolve_dataset(self, path):
         os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -167,12 +191,19 @@ class PubMedQAEvaluator:
     def build_prompt(self, sample, genome, exemplars=None):
         blocks = []
         if exemplars:
-            blocks.extend(format_exemplar(e, genome.compression)
+            blocks.extend(format_exemplar(e, genome.context_policy)
                           for e in exemplars)
         template = PROMPT_TEMPLATES.get(genome.reasoning,
                                         PROMPT_TEMPLATES["direct"])
         blocks.append(template.format(q=sample["question"]))
         return "\n\n".join(blocks)
+
+    def build_memory_bank(self, genome):
+        """A memory controller pre-filled from the calibration slice."""
+        controller = build_memory_controller(genome)
+        for s in self.calibration_samples():
+            controller.store(s["question"], s["answer"])
+        return controller
 
     def _count_tokens(self, prompts):
         tok = getattr(self.backend, "_tokenizer", None)
@@ -180,28 +211,29 @@ class PubMedQAEvaluator:
             return sum(len(tok(p)["input_ids"]) for p in prompts)
         return sum(len(p.split()) for p in prompts)
 
-    def evaluate(self, genome, agent):
+    def evaluate(self, genome, agent, memory_controller=None,
+                 substrate_fingerprint=None):
         if self.backend is None:
             raise RuntimeError(
                 "PubMedQAEvaluator requires an inference backend. "
                 "Refusing to fabricate scores; use benchmark='mock' for CI."
             )
 
-        key = self._cache_key(genome)
+        key = self._cache_key(genome, substrate_fingerprint)
         cached = self._load_cache().get(key)
         if cached is not None:
             return cached
 
         samples = self.load_samples()
 
-        memory = None if self.disable_memory else build_memory_controller(genome)
+        memory = None
+        if not self.disable_memory:
+            memory = memory_controller or self.build_memory_bank(genome)
         prompts = []
         for sample in samples:
             exemplars = None if memory is None else memory.recall(
                 sample["question"], k=self.memory_k)
             prompts.append(self.build_prompt(sample, genome, exemplars))
-            if memory is not None:
-                memory.store(sample["question"], sample["answer"])
 
         start = time.time()
         if hasattr(self.backend, "batch_generate"):

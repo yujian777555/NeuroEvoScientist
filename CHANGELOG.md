@@ -1,5 +1,30 @@
 # Changelog
 
+## [Phase-17] Substrate semantics correction + real Mamba - 2026-09-16
+
+### Added
+- `configs/phase17_search_space.yaml` — 修正后 schema：memory{recency/retrieval/mamba2/hybrid} × reasoning{direct/cot/verify/planner} × context_policy{full/truncated/answer_only} × quantization{fp16} = 48 架构；lora/qlora 命名从上下文压缩行为中移除
+- `configs/phase17_adaptation.yaml` — 候选适应协议：train split 48 样本、30 AdamW 步、固定 lr/seed、冻结主干
+- `src/evolution/adaptation.py` — 固定预算基底适应（下一经验嵌入预测目标），记录 pre/post loss、耗时、可训练参数量
+- `tests/test_mamba2_substrate.py` — 真实 Mamba2 测试：顺序敏感、状态敏感、梯度流、state_dict、与旧线性代理差异、无占位假冒
+- `tests/test_phase16.py` 缓存指纹隔离测试；`tests/test_gsm8k.py` 泄漏纪律测试
+- `scripts_vm/p17_queue.sh` — 聚焦实验队列
+
+### Changed（语义修正，breaking）
+- `src/genome/architecture.py` / `search_space.py` — Phase-17 schema；旧 8/64 架构结果标记 legacy-schema 仅供审计
+- `src/models/mamba_memory.py` — **真实 Mamba-2**（transformers Mamba2Model，维护中的实现）；不再静默回退占位
+- `src/models/builder.py` — SubstrateAgent：候选的神经组件 = 可训练记忆基底
+- `src/evaluator/memory.py` — 控制器重写：bank 仅来自 train split（**修复 Phase-15/16 的 test-gold 泄漏**）；mamba2 控制器用真实基底计算 order-dependent 记忆状态
+- `src/evaluator/gsm8k.py` / `pubmedqa.py` — context_policy 基因名、可注入已适应控制器、substrate_fingerprint 缓存隔离、calibration split 接口
+- `src/evolution/controller.py` — 继承改为转移**适应后**基底权重（同 memory 基因才继承）；确定性 per-genome 初始化；适应记录进 metrics
+- `src/evolution/random_search.py` — 随机基线同等适应预算（公平比较）
+- `src/evaluator/experiment_logger.py` — 逐代持久化全部个体的原始目标值（Pareto 分析不再依赖标量 fitness）
+- `src/scripts/validate_mamba.py` — 新 schema 版 Mamba 验证（VM 上 MAMBA_VALIDATION_OK）
+
+### Test Results
+- 本地 43 passed + 10 skipped（mamba2 需 VM）；VM 53 passed / 0 skipped
+- GPU 冒烟：适应协议生效（pre_loss 1.00 → post 0.74，30 步 0.5s，2.29M 基底参数）
+
 ## [Phase-16] Task-conditioned evolution validation - 2026-09-16
 
 ### Added

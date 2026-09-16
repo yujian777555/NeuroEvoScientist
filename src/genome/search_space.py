@@ -1,8 +1,13 @@
-"""Search space definition for ENSS.
+"""Search space definition for ENSS (Phase-17 corrected schema).
 
-Loads ``configs/search_space.yaml`` and exposes the combinatorial space of
-agent cognitive architectures (Phase-13: 4 x 4 x 4 = 64 architectures).
-Supports ablation subsets via ``exclude`` (e.g. "w/o Mamba memory").
+Loads ``configs/phase17_search_space.yaml`` by default and exposes the
+combinatorial space of agent cognitive architectures
+(4 memory x 4 reasoning x 3 context_policy x 1 quantization = 48 in the
+focused Phase-17 space; int8 quantization is added only when real
+quantized inference is enabled).
+
+Legacy Phase-14..16 space (configs/search_space.yaml) is retained for
+audit only; old results are tagged legacy-schema.
 """
 
 import itertools
@@ -15,20 +20,22 @@ except ImportError:  # pragma: no cover - yaml is optional
 
 
 DEFAULT_CONFIG = os.path.join(
-    os.path.dirname(__file__), "..", "..", "configs", "search_space.yaml"
+    os.path.dirname(__file__), "..", "..", "configs",
+    "phase17_search_space.yaml"
 )
 
-# Fallback matching configs/search_space.yaml when PyYAML is unavailable.
+# Fallback matching configs/phase17_search_space.yaml when PyYAML is missing.
 _FALLBACK = {
-    "memory": ["attention", "mamba", "retrieval", "hybrid"],
-    "reasoning": ["direct", "verify", "planner", "cot"],
-    "compression": ["none", "lora", "qlora", "int8"],
+    "memory": ["recency", "retrieval", "mamba2", "hybrid"],
+    "reasoning": ["direct", "cot", "verify", "planner"],
+    "context_policy": ["full", "truncated", "answer_only"],
+    "quantization": ["fp16"],
     "population": 16,
     "generations": 10,
     "objectives": {"capability": 0.5, "efficiency": 0.3, "adaptability": 0.2},
 }
 
-MODULE_FIELDS = ["memory", "reasoning", "compression"]
+MODULE_FIELDS = ["memory", "reasoning", "context_policy", "quantization"]
 
 
 class SearchSpace:
@@ -37,7 +44,7 @@ class SearchSpace:
     Args:
         config_path: override path to a search-space YAML.
         exclude:     optional {field: [values]} ablation filter, e.g.
-                     ``{"memory": ["mamba"]}`` for the w/o-Mamba ablation.
+                     ``{"memory": ["mamba2"]}`` for the w/o-Mamba ablation.
     """
 
     def __init__(self, config_path=None, exclude=None):
@@ -45,8 +52,10 @@ class SearchSpace:
         exclude = exclude or {}
         self.memory = self._filter(config["memory"], exclude, "memory")
         self.reasoning = self._filter(config["reasoning"], exclude, "reasoning")
-        self.compression = self._filter(config["compression"], exclude,
-                                        "compression")
+        self.context_policy = self._filter(config["context_policy"], exclude,
+                                           "context_policy")
+        self.quantization = self._filter(config["quantization"], exclude,
+                                         "quantization")
         self.population = int(config.get("population", 16))
         self.generations = int(config.get("generations", 10))
         self.objective_weights = dict(
@@ -73,12 +82,10 @@ class SearchSpace:
         return list(getattr(self, field))
 
     def enumerate_architectures(self):
-        """Return all valid module combinations (64 in Phase-13)."""
-        combos = itertools.product(self.memory, self.reasoning, self.compression)
-        return [
-            dict(zip(MODULE_FIELDS, combo))
-            for combo in combos
-        ]
+        """Return all valid module combinations."""
+        combos = itertools.product(self.memory, self.reasoning,
+                                   self.context_policy, self.quantization)
+        return [dict(zip(MODULE_FIELDS, combo)) for combo in combos]
 
     def sample(self, rng):
         """Sample one random architecture genome dict."""
