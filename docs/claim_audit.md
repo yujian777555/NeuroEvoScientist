@@ -1,27 +1,19 @@
-# Claim Audit（Phase-17 收官，2026-09-17）
+# Claim Audit（终版，Phase-18 收官，2026-09-17）
 
-按 `plans/phase17_plan.md` 的 Paper-claim rules 逐条审计。
-旧 Phase-14/15/16 结果一律视为 legacy-schema，仅供审计，不作论文证据。
+仅采信修正 schema（Phase-17/18）证据。Phase-14/15/16 结果仅作开发历史参考。
 
-## 论文级 claim 审计表
-
-| # | Claim | 状态 | 证据/说明 |
+| # | Claim | 终判 | 证据指针 |
 |---|---|---|---|
-| C1 | 进化搜索能发现显著优于人工固定设计的 agent 架构 | **supported** | Phase-16 表 1/2（capability 2.5×）；Phase-17 表 1（0.62 vs 0.24-0.26）`results/phase16_matrix.csv`、`results/phase17_focused_matrix.csv` |
-| C2 | 不同任务进化出不同认知架构（任务条件化） | **supported**（legacy-schema 下）| Phase-16：GSM8K→Verify/CoT+LoRA，PubMedQA→Planner+INT8/QLoRA，3 seed 稳定。注意：Phase-17 只跑了 GSM8K；**Task 6 双基准重跑后此 claim 才在新 schema 下成立** |
-| C3 | ENSS 优于等预算随机搜索 | **partially supported** | Phase-16：GSM8K 0.6012 vs 0.5876（3 seed）✅，PubMedQA 微弱 ✅；Phase-17：GSM8K 0.6811 vs 0.6829 基本打平。结论不一致，需更多 seed/更大空间 |
-| C4 | memory substrate 对 capability 有真实贡献 | **supported** | Phase-16 no_memory 消融：GSM8K -29%、PubMedQA -23% capability |
-| C5 | 真实 Mamba/SSM 记忆基底提升性能 | **unsupported（不实 claim，禁止）** | Phase-17：Mamba2 候选 mean cap 0.49 < recency 0.62；进化未选择它。实现是真实的（可训练、顺序敏感、梯度通），但无性能优势证据 |
-| C6 | 权重继承改善 ENSS | **partially supported（方向转正，弱证据）** | Phase-17 继承 vs 全新（等预算）：cap 0.535 vs 0.489，post-loss 0.621 vs 0.738，但 n=2。Phase-16（未训练基底）为负。当前只能声称"基底可训练时继承不再有害，且有适应效率改善的迹象" |
-| C7 | LoRA/QLoRA 压缩提升效率 | **unsupported（已从方法中移除该语义）** | Phase-14-16 误标；Phase-17 起 context_policy 才是上下文预算基因 |
-| C8 | "neural architecture self-evolution" | **partially supported** | 基底层现在有真实可训练神经组件参与进化；但 backbone 冻结、reasoning 仍是 prompt 级。措辞应精确为"agent 认知架构（记忆基底+推理策略+上下文策略）的进化搜索" |
+| C1 | 自动搜索优于固定人工架构 | **supported** | `results/phase18_dual_benchmark.csv`；GSM8K cap 0.62 vs 0.21–0.26；PubMedQA fitness 0.501 vs 0.44–0.48（附注：PubMedQA capability 维度 fixed_mamba2 0.57 反超，全文不得隐去） |
+| C2 | 不同任务偏好不同认知架构 | **supported** | `results/phase18_architecture_distribution.json`；GSM8K→Verify+Truncated，PubMedQA→Verify+Full/AnswerOnly，跨 3 seed 稳定 |
+| C3 | ENSS 比等预算随机搜索更样本高效 | **unsupported** | `results/phase18_search_efficiency.csv`：AUC/HV 全预算打平（<0.01）。按 Phase-18 规则从摘要/贡献中移除搜索优越性措辞；进化保留为实现机制 |
+| C4 | 情景记忆选择实质影响 capability/成本 | **supported** | no_memory 消融 cap -34%（GSM8K）/ -17%（PubMedQA）；`phase18_dual_benchmark.csv` |
+| C5 | Mamba 提升性能 | **unsupported（负结果）** | Phase-17 聚焦实验；允许措辞："搜索空间包含真实可训练 Mamba-2 基底；在本协议下进化更偏好更简单的 recency/hybrid 记忆，说明 ENSS 能拒绝无益的复杂基底" |
+| C6 | 权重继承改善适应效率 | **partially supported → 附录机制** | `results/phase18_inheritance_pairs.csv`（n=20 配对）：post-loss 20/20 改善；capability 0/20 无差异。不得作为头条贡献 |
+| C7 | 上下文策略在能力与成本间权衡 | **supported** | landscape 实测 token 计数（`experiments/landscape_*/landscape.jsonl`） |
+| C8 | 神经架构自进化 | **partially supported（限定措辞）** | "冻结 LLM 主干之上，可训练记忆基底+推理策略+上下文策略的进化协同设计"；不得暗示全主干 NAS |
 
-## Phase-17 门禁状态
+## 论文门禁结论
 
-全部通过（见 docs/phase17_results.md 末尾清单）。
-
-## 下一步建议（等 Planner）
-
-1. Task 6：修正 schema 下重跑 GSM8K + PubMedQA 双基准（解锁 C2 在新 schema 下成立）
-2. C3 需要更强分离设计：更大空间或更难基准
-3. C5 按 stop condition 封存，不强行投入
+C1 + C2 + C4 成立、C3 不成立 → 按计划走 narrower paper 路线：
+**任务条件化的 agent 认知架构协同设计**；进化是搜索引擎而非被声称的优越优化器。

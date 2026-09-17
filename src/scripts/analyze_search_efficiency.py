@@ -95,23 +95,29 @@ class _DotDict(dict):
 def enss_policy(oracle, space, budget, seed):
     """ENSS search policy, one evaluation at a time, budget-limited."""
     rng = random.Random(seed)
-    selector = NSGA3Selector(population_size=8)
     evaluated = {}  # key -> objectives
 
     pop = [ArchitectureGenome(**space.sample(rng)) for _ in range(4)]
     curve = []
-    while len(evaluated) < budget:
-        batch = []
+    stagnant_rounds = 0
+    for _round in range(10000):  # hard cap; budget always terminates first
+        if len(evaluated) >= budget:
+            break
+        before = len(evaluated)
         for g in pop:
             key = gene_key(g)
             if key not in evaluated:
                 evaluated[key] = oracle.evaluate(g)
-                batch.append((key, evaluated[key]))
                 curve.append(dict(evaluated))
             if len(evaluated) >= budget:
                 break
         if len(evaluated) >= budget:
             break
+
+        if len(evaluated) == before:
+            stagnant_rounds += 1
+        else:
+            stagnant_rounds = 0
 
         inds = [Individual(genome=None, objectives=list(o))
                 for o in evaluated.values()]
@@ -121,6 +127,14 @@ def enss_policy(oracle, space, budget, seed):
         front_objs = {tuple(i.objectives) for i in front0}
         pool_keys = [k for k, v in evaluated.items()
                      if tuple(v) in front_objs] or list(evaluated)
+
+        if stagnant_rounds >= 2:
+            # stagnation kick: explore unevaluated points directly
+            # (standard EA restart; keeps the policy online-legal)
+            pop = [ArchitectureGenome(**space.sample(rng))
+                   for _ in range(4)]
+            stagnant_rounds = 0
+            continue
 
         pop = []
         while len(pop) < 4 and len(evaluated) + len(pop) < budget:

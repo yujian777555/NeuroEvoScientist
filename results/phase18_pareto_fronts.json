@@ -1,0 +1,240 @@
+{
+  "gsm8k": [
+    {
+      "architecture": "Recency + Direct + AnswerOnly + FP16",
+      "capability": 0.11,
+      "efficiency": 0.8930511946262345,
+      "genome": {
+        "memory": "recency",
+        "reasoning": "direct",
+        "context_policy": "answer_only",
+        "quantization": "fp16",
+        "hidden_size": 1024,
+        "state_size": 64
+      }
+    },
+    {
+      "architecture": "Recency + CoT + Truncated + FP16",
+      "capability": 0.56,
+      "efficiency": 0.8605753911102105,
+      "genome": {
+        "memory": "recency",
+        "reasoning": "cot",
+        "context_policy": "truncated",
+        "quantization": "fp16",
+        "hidden_size": 1024,
+        "state_size": 64
+      }
+    },
+    {
+      "architecture": "Recency + CoT + AnswerOnly + FP16",
+      "capability": 0.24,
+      "efficiency": 0.8909447847198062,
+      "genome": {
+        "memory": "recency",
+        "reasoning": "cot",
+        "context_policy": "answer_only",
+        "quantization": "fp16",
+        "hidden_size": 1024,
+        "state_size": 64
+      }
+    },
+    {
+      "architecture": "Recency + Planner + AnswerOnly + FP16",
+      "capability": 0.42,
+      "efficiency": 0.8897512142935372,
+      "genome": {
+        "memory": "recency",
+        "reasoning": "planner",
+        "context_policy": "answer_only",
+        "quantization": "fp16",
+        "hidden_size": 1024,
+        "state_size": 64
+      }
+    },
+    {
+      "architecture": "Retrieval + Planner + AnswerOnly + FP16",
+      "capability": 0.49,
+      "efficiency": 0.8795139416113199,
+      "genome": {
+        "memory": "retrieval",
+        "reasoning": "planner",
+        "context_policy": "answer_only",
+        "quantization": "fp16",
+        "hidden_size": 1024,
+        "state_size": 64
+      }
+    },
+    {
+      "architecture": "Hybrid + CoT + Truncated + FP16",
+      "capability": 0.5,
+      "efficiency": 0.860728255981356,
+      "genome": {
+        "memory": "hybrid",
+        "reasoning": "cot",
+        "context_policy": "truncated",
+        "quantization": "fp16",
+        "hidden_size": 1024,
+        "state_size": 64
+      }
+    },
+    {
+      "architecture": "Hybrid + Verify + Truncated + FP16",
+      "capability": 0.62,
+      "efficiency": 0.8594583228593813,
+      "genome": {
+        "memory": "hybrid",
+        "reasoning": "verify",
+        "context_policy": "truncated",
+        "quantization": "fp16",
+        "hidden_size": 1024,
+        "state_size": 64
+      }
+    },
+    {
+      "architecture": "Hybrid + Planner + AnswerOnly + FP16",
+      "capability": 0.46,
+      "efficiency": 0.8843590253804898,
+      "genome": {
+        "memory": "hybrid",
+        "reasoning": "planner",
+        "context_policy": "answer_only",
+        "quantization": "fp16",
+        "hidden_size": 1024,
+        "state_size": 64
+      }
+    }
+  ],
+  "pubmedqa": [
+    {
+      "architecture": "Recency + Direct + Full + FP16",
+      "capability": 0.52,
+      "efficiency": 0.7270907222373877,
+      "genome": {
+        "memory": "recency",
+        "reasoning": "direct",
+        "context_policy": "full",
+        "quantization": "fp16",
+        "hidden_size": 1024,
+        "state_size": 64
+      }
+    },
+    {
+      "architecture": "Recency + Direct + Truncated + FP16",
+      "capability": 0.52,
+      "efficiency": 0.7270907222373877,
+      "genome": {
+        "memory": "recency",
+        "reasoning": "direct",
+        "context_policy": "truncated",
+        "quantization": "fp16",
+        "hidden_size": 1024,
+        "state_size": 64
+      }
+    },
+    {
+      "architecture": "Recency + Direct + AnswerOnly + FP16",
+      "capability": 0.52,
+      "efficiency": 0.7270907222373877,
+      "genome": {
+        "memory": "recency",
+        "reasoning": "direct",
+        "context_policy": "answer_only",
+        "quantization": "fp16",
+        "hidden_size": 1024,
+        "state_size": 64
+      }
+    },
+    {
+      "architecture": "Recency + CoT + Full + FP16",
+      "capability": 0.49,
+      "efficiency": 0.727191951604154,
+      "genome": {
+        "memory": "recency",
+        "reasoning": "cot",
+        "context_policy": "full",
+        "quantization": "fp16",
+        "hidden_size": 1024,
+        "state_size": 64
+      }
+    },
+    {
+      "architecture": "Recency + CoT + Truncated + FP16",
+      "capability": 0.49,
+      "efficiency": 0.727191951604154,
+      "genome": {
+        "memory": "recency",
+        "reasoning": "cot",
+        "context_policy": "truncated",
+        "quantization": "fp16",
+        "hidden_size": 1024,
+        "state_size": 64
+      }
+    },
+    {
+      "architecture": "Recency + CoT + AnswerOnly + FP16",
+      "capability": 0.49,
+      "efficiency": 0.727191951604154,
+      "genome": {
+        "memory": "recency",
+        "reasoning": "cot",
+        "context_policy": "answer_only",
+        "quantization": "fp16",
+        "hidden_size": 1024,
+        "state_size": 64
+      }
+    },
+    {
+      "architecture": "Recency + Planner + Full + FP16",
+      "capability": 0.56,
+      "efficiency": 0.7268885332737826,
+      "genome": {
+        "memory": "recency",
+        "reasoning": "planner",
+        "context_policy": "full",
+        "quantization": "fp16",
+        "hidden_size": 1024,
+        "state_size": 64
+      }
+    },
+    {
+      "architecture": "Recency + Planner + Truncated + FP16",
+      "capability": 0.56,
+      "efficiency": 0.7268885332737826,
+      "genome": {
+        "memory": "recency",
+        "reasoning": "planner",
+        "context_policy": "truncated",
+        "quantization": "fp16",
+        "hidden_size": 1024,
+        "state_size": 64
+      }
+    },
+    {
+      "architecture": "Recency + Planner + AnswerOnly + FP16",
+      "capability": 0.56,
+      "efficiency": 0.7268885332737826,
+      "genome": {
+        "memory": "recency",
+        "reasoning": "planner",
+        "context_policy": "answer_only",
+        "quantization": "fp16",
+        "hidden_size": 1024,
+        "state_size": 64
+      }
+    },
+    {
+      "architecture": "Mamba2 + Direct + AnswerOnly + FP16",
+      "capability": 0.59,
+      "efficiency": 0.5235285065647933,
+      "genome": {
+        "memory": "mamba2",
+        "reasoning": "direct",
+        "context_policy": "answer_only",
+        "quantization": "fp16",
+        "hidden_size": 1024,
+        "state_size": 64
+      }
+    }
+  ]
+}

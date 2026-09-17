@@ -1,22 +1,25 @@
-# Phase 18 — Current Sprint Plan (Running)
+# Phase 18 — Current Sprint Plan (DONE)
 
-依据 `plans/phase18_plan.md` 执行。冻结方法，纯审计/复现阶段。
+依据 `plans/phase18_plan.md` 执行完毕。冻结方法的审计/复现阶段已收官。
 
-## Tasks
+## Tasks 终态
 
-- [x] 配置冻结：phase18_eval.yaml / phase18_search_efficiency.yaml
-- [ ] Task 1 双基准复现：enss/random/fixed×4/no_memory × seeds 0-2 × GSM8K+PubMedQA（GSM8K 侧复用 Phase-17 数据；其余运行中）
-- [ ] Task 2 48 点 landscape：GSM8K + PubMedQA 穷举（运行中，两卡并行）
-- [x] Task 3 搜索效率审计实现：oracle 在线策略 + hypervolume/regret/ε-命中/ETT/AUC（等 landscape 完成后本地跑）
-- [ ] Task 4 继承配对研究：20 对（运行中）
-- [x] Task 5 Mamba 结论冻结（claim_audit 中维持 negative，不再投入 GPU）
-- [ ] Task 6 终版 claim 审计 + 论文门禁
+- [x] Task 1 双基准复现（修正 schema，seeds 0-2）
+- [x] Task 2 48 点 landscape 双基准穷举（oracle 表）
+- [x] Task 3 搜索效率审计（预算 12–48 × 20 seed；ENSS≈Random，C3 否定）
+- [x] Task 4 继承配对研究 n=20（效率改善成立、能力增益不成立 → 附录）
+- [x] Task 5 Mamba 负结果冻结
+- [x] Task 6 终版 claim 审计（C1-C8 全部有判定，无悬而未决的头条 claim）
 
-## 事故记录（本阶段）
+## 论文门禁结论
 
-1. 继承研究父/子 substrate state_size 不一致 → 崩溃；已修（统一由 build_memory_controller 构造）
-2. tar|ssh 同步 + nohup 启动合并写法令启动静默丢失（第三次）→ 规矩：同步与启动必须分开两条 ssh
+C1+C2+C4 成立、C3 不成立 → narrower paper 路线：任务条件化 agent 认知架构协同设计，
+进化为搜索引擎而非优越性声明。
+
+## Verification gates
+
+全部通过（见 docs/phase18_results.md 与 docs/claim_audit.md）。
 
 ## Next
 
-cron 监控 → 汇总分析 → C1–C8 判定 → 文档与提交。
+等 Planner 的论文写作阶段指示（Phase-19）。

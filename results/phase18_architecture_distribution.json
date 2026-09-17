@@ -1,0 +1,111 @@
+{
+  "pareto_set_gene_frequency": {
+    "gsm8k": {
+      "memory": {
+        "recency": 4,
+        "retrieval": 1,
+        "hybrid": 3
+      },
+      "reasoning": {
+        "direct": 1,
+        "cot": 3,
+        "planner": 3,
+        "verify": 1
+      },
+      "context_policy": {
+        "answer_only": 5,
+        "truncated": 3
+      }
+    },
+    "pubmedqa": {
+      "memory": {
+        "recency": 9,
+        "mamba2": 1
+      },
+      "reasoning": {
+        "direct": 4,
+        "cot": 3,
+        "planner": 3
+      },
+      "context_policy": {
+        "full": 3,
+        "truncated": 3,
+        "answer_only": 4
+      }
+    }
+  },
+  "final_population_gene_frequency": {
+    "enss|gsm8k": {
+      "memory": {
+        "hybrid": 17,
+        "retrieval": 6,
+        "recency": 25
+      },
+      "reasoning": {
+        "verify": 6,
+        "cot": 14,
+        "planner": 24,
+        "direct": 4
+      },
+      "context_policy": {
+        "truncated": 17,
+        "answer_only": 31
+      }
+    },
+    "enss|pubmedqa": {
+      "memory": {
+        "recency": 31,
+        "mamba2": 17
+      },
+      "reasoning": {
+        "verify": 13,
+        "planner": 23,
+        "cot": 7,
+        "direct": 5
+      },
+      "context_policy": {
+        "answer_only": 23,
+        "truncated": 15,
+        "full": 10
+      }
+    },
+    "random|gsm8k": {
+      "memory": {
+        "recency": 14,
+        "hybrid": 10,
+        "retrieval": 13,
+        "mamba2": 11
+      },
+      "reasoning": {
+        "cot": 13,
+        "verify": 14,
+        "planner": 14,
+        "direct": 7
+      },
+      "context_policy": {
+        "truncated": 15,
+        "full": 18,
+        "answer_only": 15
+      }
+    },
+    "random|pubmedqa": {
+      "memory": {
+        "recency": 14,
+        "retrieval": 13,
+        "hybrid": 10,
+        "mamba2": 11
+      },
+      "reasoning": {
+        "verify": 14,
+        "planner": 14,
+        "direct": 7,
+        "cot": 13
+      },
+      "context_policy": {
+        "full": 18,
+        "answer_only": 15,
+        "truncated": 15
+      }
+    }
+  }
+}

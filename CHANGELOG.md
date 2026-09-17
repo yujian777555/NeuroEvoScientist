@@ -1,5 +1,25 @@
 # Changelog
 
+## [Phase-18] corrected dual-benchmark replication and search-efficiency audit (final) - 2026-09-17
+
+### Added（结果收官）
+- `results/phase18_dual_benchmark.csv`、`phase18_search_efficiency.csv(+curves.json)`、`phase18_pareto_fronts.json`、`phase18_architecture_distribution.json`、`phase18_inheritance_pairs.{csv,json}`
+- `paper/phase18_tables.md`、`paper/phase18_figures_data.json`
+- `src/scripts/aggregate_phase18.py`、`docs/phase18_results.md`、终版 `docs/claim_audit.md`
+
+### Results（全部判据终判）
+- C1 supported（GSM8K cap 2.5×；PubMedQA 以 fitness/效率成立，fixed_mamba2 capability 反超如实记录）
+- C2 supported（修正 schema 下跨 3 seed 稳定的任务依赖基因分布）
+- C3 **unsupported**（oracle 审计：ENSS 与随机在全部预算/基准上打平，差 <0.01；搜索优越性措辞已移除）
+- C4 supported（no_memory 消融 cap -34%/-17%）
+- C5 unsupported（Mamba 负结果保留）
+- C6 partially supported → 附录效率机制（n=20 配对：loss 20/20 改善，capability 0/20 无差异）
+- C7 supported（真实 token 计数）
+- C8 partial（限定措辞：冻结主干上的认知架构协同进化设计）
+
+### Fixed
+- 搜索审计策略停滞死循环（enss_policy 交配池耗尽空转 → 停滞踢脚 + 硬迭代上限）
+
 ## [Phase-18] corrected dual-benchmark replication and search-efficiency audit (infra) - 2026-09-17
 
 ### Added
