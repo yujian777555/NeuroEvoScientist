@@ -28,7 +28,7 @@ from models.builder import build_agent
 from evaluator.gsm8k import GSM8KEvaluator
 from evaluator.pubmedqa import PubMedQAEvaluator
 from evaluator.memory import build_memory_controller
-from evolution.adaptation import AdaptationConfig
+from evolution.adaptation import AdaptationConfig, adapt_substrate
 
 _REPO = os.path.join(os.path.dirname(__file__), "..", "..")
 LOCK = os.path.join(_REPO, "results", "phase19_selection_lock.json")

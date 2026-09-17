@@ -1,0 +1,11 @@
+config,gsm8k_capability,pubmedqa_capability
+A_gsm,0.5431,0.5375
+A_pubmed,0.5316,0.5375
+fixed_hybrid,0.2116,0.5550
+fixed_mamba2,0.2051,0.5450
+fixed_recency,0.2289,0.5525
+fixed_retrieval,0.1862,0.5725
+no_memory,0.4487,0.5100
+pareto_gsm_cot,0.5365,0.3900
+pareto_pub_mamba2,0.0878,0.6175
+pareto_pub_planner,0.4487,0.5475
