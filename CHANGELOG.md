@@ -1,5 +1,27 @@
 # Changelog
 
+## [Phase-19] paper lock + holdout robustness + cross-backbone transfer - 2026-09-17
+
+### Phase-19a（锁定，先于 holdout 推理）
+- `configs/phase19_protocol.yaml`、`results/phase19_selection_lock.json`（10 配置锁定）
+- 评估器新增 start/limit 区间 + 逐题预测日志；不相交测试（`tests/test_phase19.py`）
+- `src/scripts/phase19_holdout.py` holdout 运行器（done-skip + 缓存续跑）
+
+### Phase-19b（结果）
+- 40 个 holdout 运行完成（10 配置 × 2 基准 × 2 骨干）；32380 行逐题预测
+- `src/scripts/phase19_statistics.py`（bootstrap 10000 + McNemar）、
+  `phase19_rebuild_predictions.py`（从缓存 item_scores 重建，含 model/config 字段）
+- 产物：`phase19_holdout_results.csv`、`phase19_item_predictions.jsonl`、
+  `phase19_statistics.json`、`phase19_cross_task_matrix.csv`、`phase19_backbone_transfer.csv`
+- 结论：C1 GSM8K 大幅成立（+33.8pp, p≈0）；C2 降级（方向一致但统计不显著，
+  成本维度占优）；C4 成立且随骨干增强；任务偏好方向可转移至 7B
+
+### Phase-19c（论文迁移）
+- paper/ 七文件重写为修正语义；新增 `manuscript_v1.md`、`abstract_v1.md`、
+  `title_candidates.md`；`docs/claim_audit.md` 终版；`docs/phase19_results.md`
+- 事故记录：holdout runner 缺 import 崩溃→修复+缓存续跑零损失；
+  预测文件缺 model 列→从缓存重建（未重跑推理）
+
 ## [Phase-18] corrected dual-benchmark replication and search-efficiency audit (final) - 2026-09-17
 
 ### Added（结果收官）
