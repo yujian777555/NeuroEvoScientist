@@ -1,0 +1,59 @@
+{
+  "protocol": "configs/phase19_protocol.yaml",
+  "source_commit": "dd4bb7f8a6d22106aa87a035a7b1ca019958cbe9",
+  "locked_at": "2026-09-17",
+  "note": "Locked before any holdout inference. No post-hoc substitution.",
+  "configurations": [
+    {
+      "name": "A_gsm",
+      "role": "task-selected (GSM8K, Phase-18 ENSS winner, landscape top)",
+      "genome": {"memory": "hybrid", "reasoning": "verify", "context_policy": "truncated", "quantization": "fp16"}
+    },
+    {
+      "name": "A_pubmed",
+      "role": "task-selected (PubMedQA, Phase-18 ENSS evolved, 2/3 seeds)",
+      "genome": {"memory": "recency", "reasoning": "verify", "context_policy": "full", "quantization": "fp16"}
+    },
+    {
+      "name": "pareto_gsm_cot",
+      "role": "Pareto representative (GSM8K front: cap 0.56 / eff 0.861)",
+      "genome": {"memory": "recency", "reasoning": "cot", "context_policy": "truncated", "quantization": "fp16"}
+    },
+    {
+      "name": "pareto_pub_planner",
+      "role": "Pareto representative (PubMedQA front: cap 0.56 / eff 0.727)",
+      "genome": {"memory": "recency", "reasoning": "planner", "context_policy": "full", "quantization": "fp16"}
+    },
+    {
+      "name": "pareto_pub_mamba2",
+      "role": "Pareto representative (PubMedQA front: cap 0.59 / eff 0.524)",
+      "genome": {"memory": "mamba2", "reasoning": "direct", "context_policy": "answer_only", "quantization": "fp16"}
+    },
+    {
+      "name": "fixed_recency",
+      "role": "fixed baseline",
+      "genome": {"memory": "recency", "reasoning": "direct", "context_policy": "full", "quantization": "fp16"}
+    },
+    {
+      "name": "fixed_retrieval",
+      "role": "fixed baseline",
+      "genome": {"memory": "retrieval", "reasoning": "direct", "context_policy": "full", "quantization": "fp16"}
+    },
+    {
+      "name": "fixed_hybrid",
+      "role": "fixed baseline",
+      "genome": {"memory": "hybrid", "reasoning": "direct", "context_policy": "full", "quantization": "fp16"}
+    },
+    {
+      "name": "fixed_mamba2",
+      "role": "fixed baseline",
+      "genome": {"memory": "mamba2", "reasoning": "direct", "context_policy": "full", "quantization": "fp16"}
+    },
+    {
+      "name": "no_memory",
+      "role": "ablation baseline (A_gsm genome, memory substrate disabled)",
+      "genome": {"memory": "hybrid", "reasoning": "verify", "context_policy": "truncated", "quantization": "fp16"},
+      "disable_memory": true
+    }
+  ]
+}

@@ -104,10 +104,11 @@ class GSM8KEvaluator:
     def __init__(self, backend=None, split="test", limit=None,
                  data_path=None, cache_path=None, memory_k=3,
                  disable_memory=False, calibration_path=None,
-                 calibration_size=48):
+                 calibration_size=48, start=0, predictions_path=None):
         self.backend = backend
         self.split = split
         self.limit = limit
+        self.start = start
         self.data_path = data_path
         self.cache_path = cache_path
         self.memory_k = memory_k
@@ -116,6 +117,8 @@ class GSM8KEvaluator:
         self.disable_memory = disable_memory
         self.calibration_path = calibration_path
         self.calibration_size = calibration_size
+        # Phase-19: per-item prediction logging for statistical tests.
+        self.predictions_path = predictions_path
         self._samples = None
         self._calibration = None
         self._cache = None
@@ -126,7 +129,7 @@ class GSM8KEvaluator:
         model = getattr(self.backend, "model_name", "unknown")
         payload = json.dumps({
             "genome": genome.to_dict(), "split": self.split,
-            "limit": self.limit, "model": str(model),
+            "start": self.start, "limit": self.limit, "model": str(model),
             "pipeline": "phase17-v3",
             "disable_memory": self.disable_memory,
             "substrate": substrate_fingerprint or "none",
@@ -174,9 +177,9 @@ class GSM8KEvaluator:
             path = self.data_path or os.path.join(_DEFAULT_CACHE,
                                                   "%s.jsonl" % self.split)
             samples = self._load_jsonl(path)
-            if self.limit:
-                samples = samples[: self.limit]
-            self._samples = samples
+            self._samples = samples[self.start:
+                                    self.start + self.limit
+                                    if self.limit else None]
         return self._samples
 
     def calibration_samples(self):
@@ -292,8 +295,25 @@ class GSM8KEvaluator:
         metrics["latency_sec"] = latency_sec
         metrics["prompt_tokens_total"] = prompt_tokens
         metrics["memory_enabled"] = not self.disable_memory
+        if self.predictions_path:
+            metrics["item_scores"] = task_scores
+            self._write_predictions(samples, task_scores, genome)
         self._store_cache(key, metrics)
         return metrics
+
+    def _write_predictions(self, samples, task_scores, genome):
+        """Per-item outcomes for paired statistics (Phase-19)."""
+        os.makedirs(os.path.dirname(os.path.abspath(self.predictions_path)),
+                    exist_ok=True)
+        with open(self.predictions_path, "a", encoding="utf-8") as f:
+            for i, (sample, correct) in enumerate(zip(samples, task_scores)):
+                f.write(json.dumps({
+                    "benchmark": "gsm8k",
+                    "item_index": self.start + i,
+                    "architecture": genome.describe(),
+                    "genome": genome.to_dict(),
+                    "correct": correct,
+                }) + "\n")
 
 
 # Backends live in evaluator/backends.py (Phase-14); re-exported here so

@@ -1,0 +1,31 @@
+# Phase-19 frozen protocol (plans/phase19_plan.md)
+# Locked BEFORE any holdout inference. No post-hoc changes.
+
+source_commit_for_selection: dd4bb7f  # Phase-18 final audit commit
+
+benchmarks:
+  gsm8k:
+    dev_history: "test[0:100]"       # Phase-18 search used this; NOT holdout
+    holdout: "test[100:1319]"        # 1219 untouched items
+    calibration: "train split (memory bank + adaptation)"
+  pubmedqa:
+    dev_history: "samples[0:100]"
+    holdout: "samples[100:500]"      # 400 untouched items
+    calibration: "samples[500:1000]"
+
+backbones:
+  A: Qwen/Qwen2.5-1.5B-Instruct
+  B: Qwen/Qwen2.5-7B-Instruct      # transfer only; no re-search
+
+generation:
+  decoding: greedy (do_sample=false)
+  max_new_tokens: 256
+  batch_size: 32
+  quantization_runtime: fp16
+
+adaptation: configs/phase17_adaptation.yaml   # unchanged, fixed budget
+
+rules:
+  - no method/operator/prompt/memory changes after this file is committed
+  - no post-hoc architecture replacement after holdout results are seen
+  - per-item predictions persisted for paired statistics
