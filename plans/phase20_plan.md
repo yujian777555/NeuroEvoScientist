@@ -1,55 +1,42 @@
-# Phase 20 — Structured Search-Space Expansion After Robustness Gate
+# Phase 20 — Structured Cognitive Co-Design After Phase-19 Holdout
 
 ## Status
 
-**Conditional phase. Do not execute before Phase-19 finishes.**
+**GO. Phase-19 robustness gate passed, but only under the narrower-paper route.**
 
-Phase-18 established three important facts under the corrected schema:
+Phase-19 established the final evidence boundary:
 
-1. task-dependent cognitive configurations are real and reproducible;
-2. memory/context choices materially affect capability and inference cost;
-3. ENSS is **not** currently more sample-efficient than equal-budget random search in the 48-point discrete space.
+- GSM8K: automatically selected configuration strongly beats simple fixed baselines on untouched holdout data;
+- PubMedQA: no universal capability superiority; the result is a capability–cost tradeoff;
+- task-specific preferences are directionally consistent across both Qwen2.5-1.5B and 7B, but own-task capability gains are small and not individually significant;
+- episodic memory contribution survives holdout and strengthens on the larger backbone;
+- C3 (ENSS search-efficiency superiority over random search) is permanently closed by the Phase-18 oracle audit;
+- Mamba-performance superiority is permanently closed.
 
-Therefore Phase-20 must not try to "tune ENSS until it beats random". Its purpose is to test whether evolutionary search becomes useful only when the architecture space has genuine structure, locality, conditional dependencies, and a size that random search cannot nearly exhaust.
+Therefore Phase-20 must **not** attempt to rescue C3 or Mamba. Its purpose is to strengthen the main supported scientific story:
 
-Scientific correctness has priority over recovering C3.
-
----
-
-## Entry Gate from Phase-19
-
-Execute Phase-20 only if Phase-19 shows that the core task-conditioned architecture result survives at least one of the following robustness tests:
-
-- held-out GSM8K / PubMedQA evaluation;
-- cross-task architecture transfer showing a task-specific advantage;
-- cross-backbone transfer from Qwen2.5-1.5B to a larger backbone.
-
-If Phase-19 fails to reproduce task conditioning, **stop architecture-space expansion** and move directly to paper revision around the narrower supported findings.
+> Different tasks induce different capability–cost optima over agent memory, reasoning, and context configuration; structured automatic co-design can expose and analyze these task-specific cognitive architectures above a frozen LLM backbone.
 
 ---
 
 # Goal
 
-Replace the tiny 48-point categorical space with a structured, hierarchical cognitive co-design space where nearby genomes represent meaningfully related architectures and evolutionary operators can exploit locality.
+Build a larger but interpretable structured cognitive-design space, then test whether task identity produces stronger and mechanistically explainable architecture differences on clean held-out data.
 
-The primary research question is:
+Primary research questions:
 
-> Does structured evolutionary search provide a useful capability–cost search advantage over equal-budget random search once the cognitive architecture space is large, conditional, and non-enumerable under the evaluation budget?
+1. Do task-specific architecture preferences become clearer in a richer, genuinely structured space?
+2. Which genome dimensions explain those differences?
+3. Are the preferences stable across backbones and held-out data?
+4. Can an automatically discovered configuration occupy a better capability–cost Pareto position than generic fixed designs, without claiming the search optimizer itself is superior to random search?
 
-This is a fresh hypothesis test. Phase-18 C3 remains unsupported unless Phase-20 provides new evidence.
+C3 is not reopened in this phase.
 
 ---
 
-# Task 1 — Expand the Genome Semantically, Not Combinatorially
+# Task 1 — Structured Genome Expansion
 
-Keep the corrected Phase-17/18 semantics:
-
-- `memory`
-- `reasoning`
-- `context_policy`
-- `quantization` only when it maps to a real runtime mechanism
-
-Add real, interpretable sub-genes.
+Keep the corrected Phase-17/19 semantics and frozen-backbone scope.
 
 Recommended genome:
 
@@ -57,14 +44,14 @@ Recommended genome:
 memory:
   type: [recency, retrieval, mamba2, hybrid]
   k: [1, 2, 3, 4, 6, 8]
-  retrieval_metric: [tfidf, dense]        # active only for retrieval/hybrid
-  state_size: [32, 64, 128, 256]         # active only for mamba2
+  retrieval_metric: [tfidf, dense]        # retrieval/hybrid only
+  state_size: [32, 64, 128, 256]         # mamba2 only
   hybrid_retrieval_fraction: [0.25, 0.5, 0.75]
 
 reasoning:
   strategy: [direct, cot, verify, planner]
   depth: [1, 2, 3, 4]
-  verifier_passes: [0, 1, 2]              # active only for verify
+  verifier_passes: [0, 1, 2]              # verify only
 
 context_policy:
   mode: [full, truncated, answer_only]
@@ -73,207 +60,182 @@ context_policy:
 
 adaptation:
   enabled: [false, true]
-  steps: [0, 10, 20, 40]                 # conditional on enabled
+  steps: [0, 10, 20, 40]                 # enabled only
 ```
 
 Rules:
 
 - every active gene must change real computation, prompt construction, memory behavior, or adaptation cost;
-- inactive conditional genes must not create duplicate phenotypes;
-- do not re-introduce LoRA/QLoRA names unless actual adapters are instantiated and trained;
-- do not call a component Mamba unless the real Mamba2 path is used;
-- preserve the frozen-backbone scope unless Phase-19 explicitly justifies otherwise.
+- inactive genes must be normalized away so duplicate phenotypes are not counted as distinct architectures;
+- no legacy `compression=lora/qlora/int8` naming;
+- `mamba2` must always map to the real trainable Mamba-2 path;
+- quantization is excluded unless a real runtime path is implemented and validated.
 
-### Deliverable
+Deliverables:
 
-`configs/phase20_structured_search_space.yaml`
-
-plus a canonical genome normalizer that removes inactive fields before hashing/evaluation.
+- `configs/phase20_structured_search_space.yaml`
+- canonical genome normalizer + deterministic phenotype hash
+- tests for conditional-gene validity, normalization, and duplicate removal
 
 ---
 
-# Task 2 — Design Structure-Aware Evolution Operators
+# Task 2 — Structure-Aware Operators
 
-The current operators treat architecture choices too independently.
+Evolution remains an architecture-generation mechanism, not a claimed superior optimizer.
 
-Implement mutation/crossover that respects hierarchy and locality:
+Implement local, semantically valid mutations:
 
-### Local mutation examples
-
-- `memory.k: 3 -> 4`, not random jump `1 -> 8` by default;
-- `token_budget: 256 -> 512` through neighboring values;
+- `memory.k: 3 -> 4` rather than arbitrary jumps by default;
+- `token_budget: 256 -> 512` via neighbors;
 - `reasoning.depth: 2 -> 3`;
-- changing `memory.type` activates/deactivates only valid dependent genes.
+- dependent genes activated/deactivated consistently when memory/reasoning type changes.
 
-### Crossover rules
+Crossover should occur at semantic blocks (`memory`, `reasoning`, `context`, `adaptation`) followed by normalization.
 
-- crossover at semantic blocks (`memory`, `reasoning`, `context`), then reconcile dependent sub-genes;
-- no invalid child genome may reach evaluation;
-- identical normalized phenotypes must be deduplicated.
+Required tests:
 
-### Required tests
-
-- conditional-gene validity;
-- phenotype normalization;
-- locality of mutation;
-- no duplicate effective architectures from inactive fields;
-- deterministic genome hashing.
+- no invalid children;
+- no inactive-field duplicates;
+- mutation locality;
+- deterministic normalization/hash.
 
 ---
 
-# Task 3 — Progressive-Fidelity Evaluation
+# Task 3 — Task-Specific Evidence Is the Primary Experiment
 
-Do not evaluate every candidate on the full benchmark.
+The key experiment is not ENSS vs Random.
 
-Use three fidelity levels:
+For each task, freeze a selected architecture before final held-out evaluation and compare:
 
 ```text
-F0: cheap proxy subset
-F1: medium held-out subset
-F2: full validation / finalist evaluation
+A_taskA -> Task A
+A_taskA -> Task B
+A_taskB -> Task B
+A_taskB -> Task A
 ```
 
-Suggested initial setup:
+Use paired item-level statistics on identical held-out items where possible.
 
-- F0: 32 items
-- F1: 128 items
-- F2: largest clean held-out set available under Phase-19 split rules
+Primary outcomes:
 
-Promotion must depend on raw Pareto objectives, not scalar fitness alone.
+- capability difference;
+- prompt-token difference;
+- latency difference;
+- Pareto dominance / hypervolume contribution;
+- per-example wins/losses.
 
-Record for every candidate:
+Interpretation rule:
 
-- normalized genome;
-- fidelity level;
-- capability;
-- prompt/context tokens;
-- latency;
-- peak VRAM where available;
-- trainable parameter count;
-- adaptation steps/time;
-- benchmark/backbone/split identifiers;
-- seed;
-- cache key/model revision.
+- if own-task capability is not significantly higher but uses materially fewer tokens/latency at equal capability, report a capability–cost specialization, not a capability superiority claim.
 
 ---
 
-# Task 4 — Search-Efficiency Experiment
+# Task 4 — Add One Genuinely Different Third Task
 
-Compare under exactly equal candidate-evaluation budgets.
+Phase-19 shows GSM8K and PubMedQA preferences are directionally different but capability separation is small. Add **one** third task only if it creates a distinct demand profile.
 
-Methods:
+Preferred task properties:
 
-```text
-Structured ENSS
-Uniform Random Search
-Optional Bayesian/SMBO baseline if implementation is mature and fair
-```
+- long-context evidence integration, or
+- multi-hop retrieval/reasoning, or
+- scientific evidence synthesis.
 
-Do not add weak baselines merely to inflate the table.
+Do not add another short-form QA task that is structurally similar to PubMedQA/GSM8K.
 
-Budgets should cover a small fraction of the effective search space, e.g.:
+Before any GPU run:
 
-```text
-{32, 64, 128, 256}
-```
+1. document why the task probes a different cognitive demand;
+2. pre-register the clean split and calibration protocol;
+3. pre-register the expected architecture dimensions to analyze;
+4. freeze the evaluation protocol before seeing results.
 
-Use at least 20 search seeds for offline/oracle landscape simulations when possible and at least 3 real GPU seeds for representative runs.
+The goal is to test whether a third task produces a distinct architecture preference, not to cherry-pick a favorable benchmark.
+
+---
+
+# Task 5 — Mechanistic Analysis
+
+This is mandatory and more important than another optimizer comparison.
+
+For representative Pareto architectures, record and analyze:
+
+- which exemplars each memory policy retrieves;
+- overlap/divergence of retrieved exemplars across tasks;
+- token-budget utilization;
+- reasoning depth / verifier usage;
+- examples helped or harmed by memory;
+- examples where own-task architecture wins over cross-task transfer;
+- examples where the cheaper architecture matches the more expensive one.
+
+Produce 8–12 auditable case studies with exact item IDs and model outputs.
+
+Required artifact:
+
+- `results/phase20_mechanism_cases.json`
+- `docs/phase20_mechanism_analysis.md`
+
+---
+
+# Task 6 — Cross-Backbone Validation
+
+Do not re-search every architecture on every backbone.
+
+Search/select on Qwen2.5-1.5B, then freeze representative configurations and evaluate them on Qwen2.5-7B.
 
 Report:
 
-- hypervolume vs evaluations;
-- best capability vs evaluations;
-- regret to best-known Pareto set;
-- probability of finding an epsilon-Pareto candidate;
-- evaluations-to-threshold;
-- wall-clock search cost;
-- duplicate-evaluation rate.
+- ranking consistency;
+- direction of task specialization;
+- capability changes;
+- cost changes;
+- any ranking reversals.
 
-### Decision rule
-
-C3 may only be reopened if ENSS shows a consistent advantage across multiple budgets and at least two tasks/backbones.
-
-If it again ties random search, permanently drop search-efficiency superiority from the paper and retain evolution only as the architecture-generation mechanism.
+A ranking reversal is a scientific result, not a failure.
 
 ---
 
-# Task 5 — Strengthen Task-Conditioned Evidence
+# Task 7 — Search-Space Characterization
 
-The main paper contribution remains task-conditioned cognitive co-design.
+Because C3 is permanently closed, Phase-20 must not use random search as a target to beat.
 
-Required comparisons:
+Random sampling may still be used as a **diagnostic reference** to characterize:
 
-1. architecture searched on Task A -> evaluated on Task A;
-2. architecture searched on Task A -> evaluated on Task B;
-3. architecture searched on Task B -> evaluated on Task B;
-4. architecture searched on Task B -> evaluated on Task A.
+- phenotype diversity;
+- duplicate rate;
+- objective distribution;
+- coverage of the structured space.
 
-Use paired evaluation on identical held-out items where possible.
+Do not write or optimize toward:
 
-Primary question:
+> ENSS is more sample-efficient than Random Search.
 
-> Is the architecture discovered for a task measurably better on that task than a configuration transferred from another task under comparable cost?
-
-This is more important than recovering C3.
+That claim is closed unless a future, separately pre-registered paper explicitly reopens it.
 
 ---
 
-# Task 6 — Optional Third Task
+# Task 8 — Paper Claim Lock v2
 
-Only add a third benchmark if Phase-19 confirms the two-task result and the implementation cost is modest.
+Allowed paper-facing core claims after Phase-19:
 
-Prefer a task with a genuinely different demand profile, such as:
+1. agent memory/reasoning/context choices materially affect capability–cost tradeoffs;
+2. automatic co-design can discover strong task-specific configurations;
+3. GSM8K shows a large held-out advantage over simple fixed baselines;
+4. PubMedQA shows competitive capability–cost tradeoffs rather than universal capability superiority;
+5. episodic memory removal degrades held-out capability, especially on the larger backbone;
+6. task-specific architecture preferences are directionally stable across 1.5B and 7B backbones;
+7. negative findings on random-search superiority and Mamba performance are explicitly retained.
 
-- long-context evidence integration;
-- scientific QA with retrieval;
-- multi-step tool/reasoning workload.
+Not allowed:
 
-The purpose is not benchmark count. The purpose is to test whether a third task produces a distinct architectural preference.
-
-Do not add a third task that is merely another short-form QA benchmark with the same structure.
-
----
-
-# Task 7 — Mechanistic Analysis
-
-For selected Pareto architectures, explain *why* they differ.
-
-Analyze:
-
-- exemplar selections produced by each memory strategy;
-- token-budget utilization;
-- failure cases improved/degraded by memory;
-- reasoning depth/verifier usage;
-- architecture sensitivity to removing one gene;
-- per-example capability gain versus added token/latency cost.
-
-Produce case studies that connect genome choices to actual inference behavior.
-
-This section is essential for turning the work from "search benchmark" into a scientific analysis of agent architecture design.
-
----
-
-# Task 8 — Paper Positioning Lock
-
-Unless stronger evidence emerges, the paper-facing positioning should remain:
-
-> **Task-conditioned cognitive architecture co-design for LLM agents**
-
-Allowed core claims:
-
-- agent memory/reasoning/context configurations materially affect capability-cost tradeoffs;
-- different tasks favor different cognitive configurations;
-- automatic search can recover competitive task-specific configurations;
-- memory removal degrades capability under controlled evaluation;
-- real Mamba2 is included as a valid candidate but is not claimed to improve performance.
-
-Not allowed without new evidence:
-
-- ENSS is superior to random search;
+- universal automatic-search superiority;
+- ENSS > Random Search;
 - Mamba improves performance;
 - full neural architecture self-evolution;
-- LoRA/QLoRA compression claims from legacy phases;
-- universal superiority over manually designed fixed agents.
+- task-specific capability superiority when Phase-19 only shows non-significant differences.
+
+Preferred positioning remains:
+
+> **Task-conditioned cognitive architecture co-design for LLM agents**
 
 ---
 
@@ -282,12 +244,14 @@ Not allowed without new evidence:
 ```text
 configs/
   phase20_structured_search_space.yaml
+  phase20_protocol.yaml
 
 results/
-  phase20_search_efficiency.csv
   phase20_task_transfer.csv
   phase20_pareto.json
+  phase20_architecture_distribution.json
   phase20_mechanism_cases.json
+  phase20_backbone_transfer.csv
 
 paper/
   phase20_tables.md
@@ -295,6 +259,7 @@ paper/
 
 docs/
   phase20_results.md
+  phase20_mechanism_analysis.md
   phase20_claim_update.md
 ```
 
@@ -303,20 +268,21 @@ Update:
 - `status.json`
 - `CHANGELOG.md`
 - `docs/claim_audit.md`
+- `paper/manuscript_v1.md`
 
 ---
 
 # Stop Conditions
 
-Stop Phase-20 and move to manuscript finalization if any of the following occurs:
+Stop Phase-20 and move directly to manuscript finalization if any of the following occurs:
 
-1. Phase-19 task-conditioning result does not hold on held-out data;
-2. expanded-space ENSS again ties random search across fair budgets;
-3. additional search-space complexity does not create meaningful capability/cost diversity;
-4. the third task does not produce a distinct architectural preference;
-5. new complexity makes claims less interpretable rather than more informative.
+1. richer structured genes do not create meaningful objective diversity;
+2. third-task preference is not distinct after the pre-registered test;
+3. task-specific configurations show no capability–cost specialization on held-out data;
+4. added complexity reduces interpretability without producing stronger scientific evidence;
+5. the experiment starts drifting toward post-hoc tuning to rescue a failed claim.
 
-Do not continue burning GPU time to rescue a failed claim.
+Do not spend GPU time trying to rescue C3 or Mamba.
 
 ---
 
@@ -326,15 +292,17 @@ Kimi is the executor. Do not redefine the research objective.
 
 Execution order:
 
-1. finish Phase-19 first;
-2. report Phase-19 robustness results to Planner;
-3. only after Planner confirms the gate, begin Phase-20;
-4. implement the structured genome and tests before any large GPU search;
-5. run small fidelity-validation experiments before full budgets;
-6. preserve all negative results and update claim audit honestly.
+1. treat Phase-19 claims and negative findings as locked;
+2. implement structured genome + normalization/tests;
+3. pre-register the third-task protocol before running it;
+4. run small validation first;
+5. perform task-transfer + mechanistic analysis;
+6. evaluate frozen representatives on 7B;
+7. update claim audit without reopening C3/C5;
+8. stop if the evidence does not strengthen the narrower paper story.
 
-Suggested commit message when this phase is eventually completed:
+Suggested commit message:
 
 ```text
-[Phase-20] structured cognitive search-space expansion and efficiency audit
+[Phase-20] structured task-conditioned cognitive co-design validation
 ```
