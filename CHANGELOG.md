@@ -1,5 +1,28 @@
 # Changelog
 
+## [Phase-20 hotfix] correct structured phenotype semantics and QASPER evaluation - 2026-09-22
+
+### Fixed（Planner hotfix gate H1–H6，计划见 plans/phase20_hotfix_plan.md）
+- H1 `hashed_embedding` 改用 SHA-256 稳定摘要（原 Python hash() 跨进程随机，
+  嵌入不可复现）+ 双进程子进程回归测试
+- H2 规范化无记忆表型：`exemplar_count=0` → `memory_type="none"` 且适应强制关闭，
+  四种 memory 变体共享同一 phenotype hash（去重测试）
+- H3 verifier_passes 精确语义：空间改为 [1,2,3]，prompt 精确渲染 "N times"，逐值测试
+- H4 新增基因 `input_context_budget`（文档词数 512–4096），真实接入 QASPER 文档路径
+- H5 "dense" 全部更名为 `hashed_bow`（不冒充学习型 dense retriever）
+- H6 QASPER 指标改为 LongBench 兼容规范化（小写/去标点/去冠词/空白）F1，
+  命名精确为 "on extracted final answer"
+- 命名诚实化：exemplar 侧预算更名 `exemplar_word_budget`（词数，不冒称 token）
+
+### Changed
+- 缓存管线版本 phase17-v3 → phase20-v4（hotfix 前后结果永不混算）
+- QASPER 预注册修订（docs/phase20_third_task_preregistration.md）；
+  hotfix 前全部 p20 产物在 VM 上删除并标记 invalid
+
+### Test Results
+- 本地 74 passed / VM 85 passed（含全部 hotfix 回归测试）
+- 修正版矩阵已启动：enss × 3 基准 × seeds 0-2 + random 诊断
+
 ## [Phase-20] structured genome + QASPER + main matrix launch - 2026-09-22
 
 ### Added
