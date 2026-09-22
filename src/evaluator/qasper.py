@@ -135,12 +135,18 @@ class QasperEvaluator:
         return self._samples
 
     def calibration_samples(self):
-        """Calibration slice (items[150:]) disjoint from eval slices."""
+        """Calibration slice (items[150:]) disjoint from eval slices,
+        normalized to {"question", "answer"} for adaptation/memory use."""
         if self._calibration is None:
             source = self.calibration_path or os.path.join(
                 _DEFAULT_CACHE, "qasper.jsonl")
             all_samples = self._load_jsonl(source)
-            self._calibration = all_samples[_CAL_OFFSET:]
+            raw = all_samples[_CAL_OFFSET:]
+            self._calibration = [
+                {"question": s["input"],
+                 "answer": s["answers"][0] if s["answers"] else ""}
+                for s in raw
+            ]
         return self._calibration[: self.calibration_size]
 
     # -- pipeline ---------------------------------------------------------------
@@ -165,9 +171,7 @@ class QasperEvaluator:
     def build_memory_bank(self, genome):
         controller = build_memory_controller(genome)
         for s in self.calibration_samples():
-            _, q = self._render_sample(s)
-            gold = s["answers"][0] if s["answers"] else ""
-            controller.store(q, gold)
+            controller.store(s["question"], s["answer"])
         return controller
 
     def _count_tokens(self, prompts):

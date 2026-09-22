@@ -1,5 +1,27 @@
 # Changelog
 
+## [Phase-20] structured genome + QASPER + main matrix launch - 2026-09-22
+
+### Added
+- `src/genome/structured.py` — 结构化基因组：条件子基因、规范化去重、确定性 phenotype hash
+- `src/genome/structured_space.py`、`configs/phase20_structured_search_space.yaml`、`configs/phase20_protocol.yaml`
+- `src/evolution/structured_operators.py` — 局部邻域变异（80%）+ 语义块交叉 + 规范化
+- `src/evaluator/qasper.py` — 第三任务 QASPER（长上下文证据整合，LongBench 官方词级 F1），预注册划分 dev[0:50]/holdout[50:150]/calibration[150:200]
+- `src/evaluator/prompts.py` — 推理基因模板引擎（depth/verifier_passes 真实生效）
+- `src/scripts/run_structured_search.py`、`scripts_vm/p20_*.sh`
+- `docs/phase20_third_task_preregistration.md` — 第三任务预注册（GPU 运行前冻结）
+- `tests/test_phase20.py`、`tests/test_qasper.py` — 条件有效性/规范化/去重/局部性/管线/回归测试
+
+### Changed
+- `src/evaluator/memory.py` — retrieval 支持 dense 度量；hybrid 支持 retrieval_fraction；format_exemplar 支持 token_budget
+- `src/evaluator/gsm8k.py`/`pubmedqa.py` — exemplar_count 覆盖、token_budget 透传、推理模板走 prompts 引擎
+- `src/evolution/controller.py`/`random_search.py` — 可插拔算子 + 逐基因适应预算
+- 修复：QASPER 原始行缺 question/answer 键导致适应崩溃（calibration 规范化 + 回归测试）
+
+### Test Results
+- VM 77 passed（本地 66 passed + 11 mamba2 skip）
+- GPU 小规模验证：structured enss GSM8K dev cap 0.60，结构化基因全生效
+
 ## [Phase-19] paper lock + holdout robustness + cross-backbone transfer - 2026-09-17
 
 ### Phase-19a（锁定，先于 holdout 推理）

@@ -67,3 +67,19 @@ def test_split_disjointness():
     assert dev_ids.isdisjoint(hold_ids)
     # fixture has only 2 items -> calibration (offset 150) is empty, safe
     assert ev_dev.calibration_samples() == []
+
+
+def test_calibration_samples_normalized_for_adaptation():
+    """Regression: adapt_substrate consumes calibration samples with
+    question/answer keys — raw LongBench rows must be normalized."""
+    from evolution.adaptation import _calibration_embeddings
+    import json as _json
+    raw = [_json.loads(l) for l in open(FIXTURE)]
+    ev = QasperEvaluator(backend=lambda p, g: "", data_path=FIXTURE,
+                         calibration_path=FIXTURE)
+    # force non-empty calibration by monkey-patching the offset view
+    ev._calibration = [{"question": s["input"],
+                        "answer": s["answers"][0]} for s in raw]
+    samples = ev.calibration_samples()
+    embs = _calibration_embeddings(samples, 64)  # must not raise
+    assert len(embs) == len(samples)
