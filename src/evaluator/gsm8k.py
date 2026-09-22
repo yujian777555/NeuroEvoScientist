@@ -131,7 +131,7 @@ class GSM8KEvaluator:
         payload = json.dumps({
             "genome": genome.to_dict(), "split": self.split,
             "start": self.start, "limit": self.limit, "model": str(model),
-            "pipeline": "phase17-v3",
+            "pipeline": "phase20-v4",
             "disable_memory": self.disable_memory,
             "substrate": substrate_fingerprint or "none",
         }, sort_keys=True)
@@ -216,14 +216,14 @@ class GSM8KEvaluator:
         """Prompt = (memory exemplars) + reasoning-conditioned question.
 
         memory gene         -> WHICH bank entries appear
-        context_policy gene -> HOW verbosely (mode + token_budget)
+        context_policy gene -> HOW verbosely (mode + exemplar_word_budget)
         reasoning gene      -> the instruction template (+ depth/passes)
         """
         blocks = []
         if exemplars:
-            token_budget = getattr(genome, "token_budget", None)
+            exemplar_word_budget = getattr(genome, "exemplar_word_budget", None)
             blocks.extend(format_exemplar(e, genome.context_policy,
-                                          token_budget)
+                                          exemplar_word_budget)
                           for e in exemplars)
         hint = ("Answer with the final number only."
                 if genome.reasoning == "direct"
@@ -232,7 +232,13 @@ class GSM8KEvaluator:
         return "\n\n".join(blocks)
 
     def build_memory_bank(self, genome):
-        """A memory controller pre-filled from the TRAIN split (leakage-free)."""
+        """A memory controller pre-filled from the TRAIN split (leakage-free).
+
+        exemplar_count=0 (canonical no-memory phenotype): no bank is built
+        and no memory is injected.
+        """
+        if getattr(genome, "exemplar_count", None) == 0:
+            return None
         controller = build_memory_controller(genome)
         for s in self.calibration_samples():
             controller.store(s["question"], s["answer"])

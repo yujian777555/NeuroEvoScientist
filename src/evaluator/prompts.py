@@ -27,7 +27,8 @@ def reasoning_prompt(genome, question, answer_hint):
         depth_txt = ""
 
     passes = getattr(genome, "verifier_passes", None)
-    if strategy == "verify" and passes:
+    if strategy == "verify" and passes is not None:
+        # exact semantics: N means N verification passes (hotfix H3)
         passes_txt = " %d times" % passes
     else:
         passes_txt = " step by step"

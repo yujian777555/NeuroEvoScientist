@@ -17,6 +17,7 @@ The context_policy gene controls exemplar verbosity:
 full / truncated / answer_only.
 """
 
+import hashlib
 import math
 import re
 from collections import Counter
@@ -32,11 +33,26 @@ def tokenize(text):
     return _TOKEN_RE.findall(text.lower())
 
 
+def _stable_token_index(tok, dim):
+    """Process-stable token index (Phase-20 hotfix H1).
+
+    Python's built-in hash() is randomized across processes unless
+    PYTHONHASHSEED is pinned — embeddings were not reproducible run-to-run.
+    SHA-256 gives a fixed mapping in every process.
+    """
+    digest = hashlib.sha256(tok.encode("utf-8")).hexdigest()
+    return int(digest, 16) % dim
+
+
 def hashed_embedding(text, dim=64):
-    """Deterministic bag-of-words hashed embedding (no external model)."""
+    """Deterministic bag-of-words hashed embedding (no external model).
+
+    Guaranteed identical across processes (SHA-256 based; regression-tested
+    via a two-process subprocess test).
+    """
     vec = torch.zeros(dim)
     for tok in tokenize(text):
-        vec[hash(tok) % dim] += 1.0
+        vec[_stable_token_index(tok, dim)] += 1.0
     norm = vec.norm()
     return vec / norm if norm > 0 else vec
 
@@ -79,8 +95,10 @@ class RecencyMemoryController(BaseMemory):
 class RetrievalMemoryController(BaseMemory):
     """Similarity top-k over the whole experience bank.
 
-    retrieval_metric gene (Phase-20): "tfidf" (sparse cosine) or "dense"
-    (cosine over hashed embeddings) — genuinely different selection.
+    retrieval_metric gene (Phase-20): "tfidf" (sparse cosine) or
+    "hashed_bow" (cosine over hashed bag-of-words embeddings).
+    Note: hashed_bow is NOT a learned dense retriever — the paper-facing
+    name stays precise (hotfix H5).
     """
 
     def __init__(self, genome):
@@ -90,14 +108,14 @@ class RetrievalMemoryController(BaseMemory):
 
     def store(self, question, answer):
         super().store(question, answer)
-        if self.metric == "dense":
+        if self.metric == "hashed_bow":
             self._embeddings.append(
                 hashed_embedding(question + " " + answer, 64))
 
     def recall(self, query, k=3):
         if not self.bank:
             return []
-        if self.metric == "dense":
+        if self.metric == "hashed_bow":
             q = hashed_embedding(query, 64)
             scores = [
                 torch.cosine_similarity(q, e, dim=0).item()
@@ -205,7 +223,15 @@ class HybridMemoryController(BaseMemory):
         return picked[:k]
 
 
+class NoneMemoryController(BaseMemory):
+    """Canonical no-memory phenotype (exemplar_count=0): never recalls."""
+
+    def recall(self, query, k=3):
+        return []
+
+
 MEMORY_CONTROLLERS = {
+    "none": NoneMemoryController,
     "recency": RecencyMemoryController,
     "retrieval": RetrievalMemoryController,
     "mamba2": Mamba2MemoryController,
@@ -221,13 +247,15 @@ def build_memory_controller(genome):
     return cls(genome)
 
 
-# --- context_policy gene: exemplar verbosity + token budget ------------------
+# --- context_policy gene: exemplar verbosity + word budget -------------------
 
-def format_exemplar(exemplar, context_policy, token_budget=None):
+def format_exemplar(exemplar, context_policy, exemplar_word_budget=None):
     """Render one experience under the context policy's verbosity budget.
 
-    token_budget (Phase-20, active for truncated/answer_only): hard cap on
-    exemplar words after mode reduction — a real context-cost control.
+    exemplar_word_budget (Phase-20, active for truncated/answer_only): hard
+    cap on exemplar WORDS after mode reduction. Deliberately named "word"
+    budget: it counts whitespace words, not model tokens (hotfix token
+    semantics rule — no token claim without the model tokenizer).
     """
     answer = exemplar["answer"]
     if context_policy == "full":
@@ -238,8 +266,8 @@ def format_exemplar(exemplar, context_policy, token_budget=None):
         body = answer.split("\n")[-1]
     else:
         raise ValueError("unknown context policy: %s" % context_policy)
-    if token_budget:
+    if exemplar_word_budget:
         words = body.split()
-        if len(words) > token_budget:
-            body = " ".join(words[:token_budget])
+        if len(words) > exemplar_word_budget:
+            body = " ".join(words[:exemplar_word_budget])
     return "Question: %s\nAnswer: %s" % (exemplar["question"], body)

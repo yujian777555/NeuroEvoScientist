@@ -10,8 +10,11 @@ Splits (pre-registered in docs/phase20_third_task_preregistration.md):
     holdout     = items[50:150]
     calibration = items[150:200]   (memory bank / adaptation; disjoint)
 
-Metric: LongBench official word-level F1 (max over gold answers).
-Prediction: the whole generated continuation.
+Metric: LongBench-compatible normalized QA F1 on the extracted final answer
+(the text after '####'; falls back to the whole continuation when the marker
+is absent). Normalization follows LongBench: lowercase, punctuation removal,
+article removal, whitespace normalization. It is NOT claimed to be the
+unqualified official LongBench score (hotfix H6).
 
 Same guarantees as the other evaluators: leakage-free calibration bank,
 genome-conditioned prompts, token-cost measurement, atomic cache,
@@ -37,12 +40,26 @@ _DEFAULT_CACHE = os.path.join(
 _CAL_OFFSET = 150  # calibration = items[150:]; eval slices live below 150
 
 _TOKEN_RE = re.compile(r"[a-z0-9]+")
+_ARTICLES = re.compile(r"\b(a|an|the)\b")
+_PUNCT_RE = re.compile(r"[^\w\s]")
+
+
+def _longbench_normalize(text):
+    """LongBench official normalization: lowercase, remove punctuation,
+    remove articles, fix whitespace (hotfix H6)."""
+    text = text.lower()
+    text = _PUNCT_RE.sub(" ", text)
+    text = _ARTICLES.sub(" ", text)
+    return " ".join(text.split())
 
 
 def qa_f1(prediction, gold):
-    """LongBench official QA F1 (word overlap)."""
-    p = Counter(_TOKEN_RE.findall(prediction.lower()))
-    g = Counter(_TOKEN_RE.findall(gold.lower()))
+    """LongBench-compatible normalized QA F1 on the extracted final answer.
+
+    Both sides pass through LongBench normalization before token F1.
+    """
+    p = Counter(_longbench_normalize(prediction).split())
+    g = Counter(_longbench_normalize(gold).split())
     if not p or not g:
         return 0.0
     overlap = sum((p & g).values())
@@ -84,7 +101,7 @@ class QasperEvaluator:
         payload = json.dumps({
             "genome": genome.to_dict(), "benchmark": "qasper",
             "start": self.start, "limit": self.limit, "model": str(model),
-            "pipeline": "phase17-v3",
+            "pipeline": "phase20-v4",
             "disable_memory": self.disable_memory,
             "substrate": substrate_fingerprint or "none",
         }, sort_keys=True)
@@ -151,24 +168,36 @@ class QasperEvaluator:
 
     # -- pipeline ---------------------------------------------------------------
 
-    def _render_sample(self, sample):
-        context = " ".join(sample["context"].split()[: self.max_context_words])
+    def _render_sample(self, sample, genome=None):
+        """Render paper context under the genome-controlled input budget.
+
+        input_context_budget (Phase-20 hotfix H4): document WORDS reaching
+        the model, a real genome-controlled long-context allocation. Falls
+        back to the fixed default only when the gene is absent (flat legacy
+        genomes).
+        """
+        budget = getattr(genome, "input_context_budget", None) \
+            if genome is not None else None
+        budget = budget or self.max_context_words
+        context = " ".join(sample["context"].split()[:budget])
         return context, sample["input"]
 
     def build_prompt(self, sample, genome, exemplars=None):
         blocks = []
         if exemplars:
-            token_budget = getattr(genome, "token_budget", None)
+            exemplar_word_budget = getattr(genome, "exemplar_word_budget", None)
             blocks.extend(format_exemplar(e, genome.context_policy,
-                                          token_budget)
+                                          exemplar_word_budget)
                           for e in exemplars)
-        context, question = self._render_sample(sample)
+        context, question = self._render_sample(sample, genome)
         hint = "Answer based on the paper. Be concise. End with '#### <answer>'."
         blocks.append("Paper:\n%s" % context)
         blocks.append(reasoning_prompt(genome, question, hint))
         return "\n\n".join(blocks)
 
     def build_memory_bank(self, genome):
+        if getattr(genome, "exemplar_count", None) == 0:
+            return None  # canonical no-memory phenotype
         controller = build_memory_controller(genome)
         for s in self.calibration_samples():
             controller.store(s["question"], s["answer"])

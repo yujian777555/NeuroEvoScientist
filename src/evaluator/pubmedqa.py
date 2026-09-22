@@ -96,7 +96,7 @@ class PubMedQAEvaluator:
         payload = json.dumps({
             "genome": genome.to_dict(), "benchmark": "pubmedqa",
             "start": self.start, "limit": self.limit, "model": str(model),
-            "pipeline": "phase17-v3",
+            "pipeline": "phase20-v4",
             "disable_memory": self.disable_memory,
             "substrate": substrate_fingerprint or "none",
         }, sort_keys=True)
@@ -194,16 +194,19 @@ class PubMedQAEvaluator:
     def build_prompt(self, sample, genome, exemplars=None):
         blocks = []
         if exemplars:
-            token_budget = getattr(genome, "token_budget", None)
+            exemplar_word_budget = getattr(genome, "exemplar_word_budget", None)
             blocks.extend(format_exemplar(e, genome.context_policy,
-                                          token_budget)
+                                          exemplar_word_budget)
                           for e in exemplars)
         hint = ("Answer yes, no, or maybe. End with '#### <yes|no|maybe>'.")
         blocks.append(reasoning_prompt(genome, sample["question"], hint))
         return "\n\n".join(blocks)
 
     def build_memory_bank(self, genome):
-        """A memory controller pre-filled from the calibration slice."""
+        """A memory controller pre-filled from the calibration slice.
+        exemplar_count=0: no bank, no memory (canonical no-memory phenotype)."""
+        if getattr(genome, "exemplar_count", None) == 0:
+            return None
         controller = build_memory_controller(genome)
         for s in self.calibration_samples():
             controller.store(s["question"], s["answer"])

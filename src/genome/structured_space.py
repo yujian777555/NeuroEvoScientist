@@ -23,15 +23,16 @@ DEFAULT_CONFIG = os.path.join(
 _FALLBACK = {
     "memory": {"type": ["recency", "retrieval", "mamba2", "hybrid"],
                "k": [1, 2, 3, 4, 6, 8],
-               "retrieval_metric": ["tfidf", "dense"],
+               "retrieval_metric": ["tfidf", "hashed_bow"],
                "state_size": [32, 64, 128, 256],
                "hybrid_retrieval_fraction": [0.25, 0.5, 0.75]},
     "reasoning": {"strategy": ["direct", "cot", "verify", "planner"],
                   "depth": [1, 2, 3, 4],
-                  "verifier_passes": [0, 1, 2]},
+                  "verifier_passes": [1, 2, 3]},
     "context_policy": {"mode": ["full", "truncated", "answer_only"],
-                       "token_budget": [128, 256, 512, 768, 1024],
+                       "exemplar_word_budget": [128, 256, 512, 768, 1024],
                        "exemplar_count": [0, 1, 2, 3, 4, 6, 8]},
+    "input_context": {"budget": [512, 1024, 2048, 4096]},
     "adaptation": {"enabled": [False, True], "steps": [0, 10, 20, 40]},
     "population": 16,
     "generations": 10,
@@ -50,6 +51,8 @@ class StructuredSearchSpace:
         self.memory = cfg["memory"]
         self.reasoning = cfg["reasoning"]
         self.context_policy = cfg["context_policy"]
+        self.input_context = cfg.get("input_context",
+                                     _FALLBACK["input_context"])
         self.adaptation = cfg["adaptation"]
         self.population = int(cfg.get("population", 16))
         self.generations = int(cfg.get("generations", 10))
@@ -69,9 +72,11 @@ class StructuredSearchSpace:
             reasoning_depth=rng.choice(self.reasoning["depth"]),
             verifier_passes=rng.choice(self.reasoning["verifier_passes"]),
             context_mode=rng.choice(self.context_policy["mode"]),
-            token_budget=rng.choice(self.context_policy["token_budget"]),
+            exemplar_word_budget=rng.choice(
+                self.context_policy["exemplar_word_budget"]),
             exemplar_count=rng.choice(
                 self.context_policy["exemplar_count"]),
+            input_context_budget=rng.choice(self.input_context["budget"]),
             adaptation_enabled=rng.choice(self.adaptation["enabled"]),
             adaptation_steps=rng.choice(self.adaptation["steps"]),
         )

@@ -1,28 +1,31 @@
-# Phase-20 structured cognitive co-design space (plans/phase20_plan.md Task 1)
+# Phase-20 structured cognitive co-design space (hotfix-revised)
 # Every active gene changes real computation/prompt/memory/adaptation.
 # Conditional genes are normalized away when inactive (no duplicate phenotypes).
-# quantization is NOT a searched gene (FP16 fixed; no real runtime path used).
+# quantization is NOT a searched gene (FP16 fixed).
 
 memory:
   type: [recency, retrieval, mamba2, hybrid]
   k: [1, 2, 3, 4, 6, 8]
-  retrieval_metric: [tfidf, dense]        # active: retrieval, hybrid
-  state_size: [32, 64, 128, 256]          # active: mamba2
-  hybrid_retrieval_fraction: [0.25, 0.5, 0.75]  # active: hybrid
+  retrieval_metric: [tfidf, hashed_bow]   # hashed_bow = hashed bag-of-words cosine (NOT learned dense)
+  state_size: [32, 64, 128, 256]          # mamba2 only
+  hybrid_retrieval_fraction: [0.25, 0.5, 0.75]  # hybrid only
 
 reasoning:
   strategy: [direct, cot, verify, planner]
-  depth: [1, 2, 3, 4]                     # active: cot, planner
-  verifier_passes: [0, 1, 2]              # active: verify
+  depth: [1, 2, 3, 4]                     # cot/planner only
+  verifier_passes: [1, 2, 3]              # verify only; exact pass count
 
 context_policy:
   mode: [full, truncated, answer_only]
-  token_budget: [128, 256, 512, 768, 1024]  # active: truncated, answer_only
-  exemplar_count: [0, 1, 2, 3, 4, 6, 8]
+  exemplar_word_budget: [128, 256, 512, 768, 1024]  # WORDS (not tokens); truncated/answer_only only
+  exemplar_count: [0, 1, 2, 3, 4, 6, 8]   # 0 = canonical no-memory phenotype
+
+input_context:
+  budget: [512, 1024, 2048, 4096]         # document WORDS to the model (long-context tasks)
 
 adaptation:
   enabled: [false, true]
-  steps: [0, 10, 20, 40]                  # active: enabled=true (mamba2 only trains)
+  steps: [0, 10, 20, 40]                  # enabled+mamba2 only
 
 quantization: [fp16]   # fixed, not searched
 

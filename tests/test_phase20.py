@@ -31,9 +31,9 @@ def test_reasoning_conditionals():
 
 def test_context_budget_conditionals():
     assert StructuredGenome(context_mode="full",
-                            token_budget=256).normalize().token_budget is None
+                            exemplar_word_budget=256).normalize().exemplar_word_budget is None
     assert StructuredGenome(context_mode="truncated",
-                            token_budget=256).normalize().token_budget == 256
+                            exemplar_word_budget=256).normalize().exemplar_word_budget == 256
 
 
 def test_adaptation_conditionals():
@@ -74,7 +74,7 @@ def test_mutation_locality_and_validity():
     rng = random.Random(1)
     g = StructuredGenome(memory_type="retrieval", memory_k=3,
                          retrieval_metric="tfidf", exemplar_count=3,
-                         context_mode="truncated", token_budget=256)
+                         context_mode="truncated", exemplar_word_budget=256)
     g = g.normalize()
     for _ in range(100):
         child = structured_mutate(g, space, rng)
@@ -100,7 +100,7 @@ def test_crossover_produces_valid_children():
 def test_describe_and_compat_bridge():
     g = StructuredGenome(memory_type="mamba2", mamba_state_size=128,
                          reasoning="verify", verifier_passes=1,
-                         context_mode="truncated", token_budget=256)
+                         context_mode="truncated", exemplar_word_budget=256)
     assert g.memory == "mamba2"
     assert g.reasoning == "verify"
     assert g.context_policy == "truncated"

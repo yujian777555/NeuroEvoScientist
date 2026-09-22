@@ -19,8 +19,9 @@ _LOCAL_FIELDS = {
     "mamba_state_size": "state_size",
     "reasoning_depth": "depth",
     "verifier_passes": "verifier_passes",
-    "token_budget": "token_budget",
+    "exemplar_word_budget": "exemplar_word_budget",
     "exemplar_count": "exemplar_count",
+    "input_context_budget": "budget",
     "adaptation_steps": "steps",
     "memory_type": "type",
     "retrieval_metric": "retrieval_metric",
@@ -38,7 +39,8 @@ _BLOCKS = {
     "memory": ["memory_type", "memory_k", "retrieval_metric",
                "mamba_state_size", "hybrid_fraction"],
     "reasoning": ["reasoning", "reasoning_depth", "verifier_passes"],
-    "context": ["context_mode", "token_budget", "exemplar_count"],
+    "context": ["context_mode", "exemplar_word_budget", "exemplar_count"],
+    "input_context": ["input_context_budget"],
     "adaptation": ["adaptation_enabled", "adaptation_steps"],
 }
 
@@ -85,4 +87,6 @@ def _options_for(field, space):
         return space.reasoning[key]
     if key in space.context_policy:
         return space.context_policy[key]
+    if key in space.input_context:
+        return space.input_context[key]
     return space.adaptation[key]

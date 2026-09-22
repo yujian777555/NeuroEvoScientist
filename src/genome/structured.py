@@ -20,19 +20,22 @@ class StructuredGenome:
     # memory block
     memory_type: str = "recency"          # recency|retrieval|mamba2|hybrid
     memory_k: int = 3                     # 1,2,3,4,6,8 (max exemplars)
-    retrieval_metric: Optional[str] = None   # tfidf|dense; retrieval/hybrid
+    retrieval_metric: Optional[str] = None   # tfidf|hashed_bow
     mamba_state_size: Optional[int] = None   # 32..256; mamba2 only
     hybrid_fraction: Optional[float] = None  # 0.25..0.75; hybrid only
 
     # reasoning block
     reasoning: str = "direct"             # direct|cot|verify|planner
     reasoning_depth: Optional[int] = None    # 1-4; cot/planner
-    verifier_passes: Optional[int] = None    # 0-2; verify only
+    verifier_passes: Optional[int] = None    # 1-3; verify only (exact count)
 
-    # context block
+    # context block (exemplar side)
     context_mode: str = "full"            # full|truncated|answer_only
-    token_budget: Optional[int] = None    # 128..1024; truncated/answer_only
-    exemplar_count: int = 3               # 0-8 (0 = memory disabled in effect)
+    exemplar_word_budget: Optional[int] = None  # words; truncated/answer_only
+    exemplar_count: int = 3               # 0-8 (0 = no exemplars at all)
+
+    # input/document block (long-context tasks, e.g. QASPER)
+    input_context_budget: Optional[int] = None  # document words to the model
 
     # adaptation block
     adaptation_enabled: bool = False
@@ -45,6 +48,18 @@ class StructuredGenome:
     def normalize(self) -> "StructuredGenome":
         """Return a canonical copy with inactive conditional genes removed."""
         g = StructuredGenome(**asdict(self))
+
+        # canonical no-memory phenotype (hotfix H2): no exemplars means the
+        # memory gene is behaviorally inert -> one effective phenotype
+        if g.exemplar_count == 0:
+            g.memory_type = "none"
+            g.memory_k = 0
+            g.retrieval_metric = None
+            g.mamba_state_size = None
+            g.hybrid_fraction = None
+            g.adaptation_enabled = False
+            g.adaptation_steps = None
+
         if g.memory_type not in ("retrieval", "hybrid"):
             g.retrieval_metric = None
         if g.memory_type != "mamba2":
@@ -56,19 +71,13 @@ class StructuredGenome:
         if g.reasoning != "verify":
             g.verifier_passes = None
         if g.context_mode == "full":
-            g.token_budget = None
+            g.exemplar_word_budget = None
         if not g.adaptation_enabled:
             g.adaptation_steps = None
-        # adaptation only trains the mamba2 substrate; with no mamba2 the
-        # adaptation genes have no effect and are normalized off
+        # adaptation only trains the mamba2 substrate
         if g.memory_type != "mamba2":
             g.adaptation_enabled = False
             g.adaptation_steps = None
-        # exemplar_count=0 means no exemplars; memory sub-genes inert
-        if g.exemplar_count == 0:
-            g.retrieval_metric = None
-            g.mamba_state_size = None
-            g.hybrid_fraction = None
         return g
 
     def phenotype_hash(self) -> str:
