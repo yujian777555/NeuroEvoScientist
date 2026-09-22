@@ -2,7 +2,18 @@
 
 ## Status
 
-**GO. Phase-19 robustness gate passed, but only under the narrower-paper route.**
+**GO, with mandatory hotfix gate. Phase-19 robustness passed under the narrower-paper route, but commit `c772108` exposed several semantic/reproducibility issues that must be fixed before any Phase-20 matrix result becomes paper evidence.**
+
+The authoritative execution order is now:
+
+1. finish the Phase-20 semantic hotfix gate;
+2. bump cache/schema version and invalidate affected pre-hotfix results;
+3. rerun only results affected by changed semantics;
+4. freeze selected per-task architectures;
+5. perform held-out transfer, backbone transfer, and mechanism analysis;
+6. update the claim audit and manuscript.
+
+See also `plans/phase20_hotfix_plan.md`.
 
 Phase-19 established the final evidence boundary:
 
@@ -44,19 +55,22 @@ Recommended genome:
 memory:
   type: [recency, retrieval, mamba2, hybrid]
   k: [1, 2, 3, 4, 6, 8]
-  retrieval_metric: [tfidf, dense]        # retrieval/hybrid only
+  retrieval_metric: [tfidf, hashed_bow]  # retrieval/hybrid only; do not call hash-BOW "dense retrieval"
   state_size: [32, 64, 128, 256]         # mamba2 only
   hybrid_retrieval_fraction: [0.25, 0.5, 0.75]
 
 reasoning:
   strategy: [direct, cot, verify, planner]
   depth: [1, 2, 3, 4]
-  verifier_passes: [0, 1, 2]              # verify only
+  verifier_passes: [1, 2, 3]              # verify only; zero-pass removed to avoid ambiguous semantics
 
 context_policy:
   mode: [full, truncated, answer_only]
-  token_budget: [128, 256, 512, 768, 1024]
+  exemplar_token_budget: [128, 256, 512, 768, 1024]
   exemplar_count: [0, 1, 2, 3, 4, 6, 8]
+
+input_context:
+  budget: [512, 1024, 2048, 4096]       # active on long-context tasks such as QASPER
 
 adaptation:
   enabled: [false, true]
@@ -77,6 +91,49 @@ Deliverables:
 - canonical genome normalizer + deterministic phenotype hash
 - tests for conditional-gene validity, normalization, and duplicate removal
 
+
+## Task 1.5 — Mandatory Semantic / Reproducibility Hotfix Gate
+
+This gate supersedes any pre-hotfix Phase-20 matrix result affected by the following semantics.
+
+### Stable embeddings
+- replace Python built-in `hash()` with a process-stable digest mapping (SHA-256/BLAKE2 or equivalent);
+- add a subprocess regression test proving identical embeddings across independent Python processes.
+
+### Canonical no-memory phenotype
+- when `exemplar_count=0`, memory selection is behaviorally inactive;
+- normalize equivalent no-memory genomes to one effective phenotype/hash;
+- disable memory adaptation when no memory is actually injected.
+
+### Verifier semantics
+- every `verifier_passes` value must map exactly to its stated number of verification passes;
+- zero-pass is removed from the Phase-20 search space unless implemented as a genuinely distinct explicit path.
+
+### Honest retrieval naming
+- current hashed bag-of-words cosine retrieval must be named `hashed_bow` (or similarly precise);
+- the term `dense retrieval` is reserved for a real embedding-based dense retriever.
+
+### Token semantics
+- fields named `*_token_budget` must be enforced using the actual model tokenizer, not whitespace word counts;
+- if a word budget is used, name it `*_word_budget` explicitly.
+
+### QASPER long-context path
+- QASPER must expose a real genome-controlled **input/document context budget**, separate from exemplar verbosity;
+- the document/evidence budget must change how much paper context reaches the model;
+- pre-hotfix QASPER runs that used a fixed 2500-word paper truncation are invalid for the long-context-budget claim.
+
+### QASPER metric
+- implement LongBench-compatible answer normalization before QA F1 (lowercase, punctuation removal, article removal, whitespace normalization);
+- clearly state whether scoring uses the whole continuation or the extracted final answer.
+
+### Cache isolation
+- bump the Phase-20 pipeline/cache schema version after these fixes;
+- never aggregate pre-hotfix and post-hotfix caches/results.
+
+### Gate
+Paper-facing Phase-20 experiments resume only after all corresponding regression tests pass.
+
+
 ---
 
 # Task 2 — Structure-Aware Operators
@@ -86,7 +143,8 @@ Evolution remains an architecture-generation mechanism, not a claimed superior o
 Implement local, semantically valid mutations:
 
 - `memory.k: 3 -> 4` rather than arbitrary jumps by default;
-- `token_budget: 256 -> 512` via neighbors;
+- `exemplar_token_budget: 256 -> 512` via neighbors;
+- `input_context.budget: 1024 -> 2048` via neighbors on long-context tasks;
 - `reasoning.depth: 2 -> 3`;
 - dependent genes activated/deactivated consistently when memory/reasoning type changes.
 
@@ -147,7 +205,9 @@ Before any GPU run:
 1. document why the task probes a different cognitive demand;
 2. pre-register the clean split and calibration protocol;
 3. pre-register the expected architecture dimensions to analyze;
-4. freeze the evaluation protocol before seeing results.
+4. for QASPER, ensure the genome-controlled input-context budget is active in the actual document path;
+5. use LongBench-compatible normalized QA F1;
+6. freeze the evaluation protocol before seeing holdout results.
 
 The goal is to test whether a third task produces a distinct architecture preference, not to cherry-pick a favorable benchmark.
 
@@ -293,13 +353,15 @@ Kimi is the executor. Do not redefine the research objective.
 Execution order:
 
 1. treat Phase-19 claims and negative findings as locked;
-2. implement structured genome + normalization/tests;
-3. pre-register the third-task protocol before running it;
-4. run small validation first;
-5. perform task-transfer + mechanistic analysis;
-6. evaluate frozen representatives on 7B;
-7. update claim audit without reopening C3/C5;
-8. stop if the evidence does not strengthen the narrower paper story.
+2. complete the mandatory semantic/reproducibility hotfix gate from the review of `c772108`;
+3. bump cache/schema and invalidate affected pre-hotfix results;
+4. implement/verify the corrected structured genome + normalization/tests;
+5. amend/freeze the third-task preregistration before corrected QASPER paper-facing runs;
+6. run small validation first;
+7. perform task-transfer + mechanistic analysis;
+8. evaluate frozen representatives on 7B;
+9. update claim audit without reopening C3/C5;
+10. stop if the evidence does not strengthen the narrower paper story.
 
 Suggested commit message:
 
