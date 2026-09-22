@@ -88,10 +88,16 @@ def _pubmedqa_factory():
     return PubMedQAEvaluator
 
 
+def _qasper_factory():
+    from .qasper import QasperEvaluator
+    return QasperEvaluator
+
+
 BENCHMARKS = {
     "mock": MockEvaluator,
     "gsm8k": _gsm8k_factory(),
     "pubmedqa": _pubmedqa_factory(),
+    "qasper": _qasper_factory(),
     # Future real benchmarks — reserved names, same interface.
     "agentbench": _not_implemented("agentbench"),
 }

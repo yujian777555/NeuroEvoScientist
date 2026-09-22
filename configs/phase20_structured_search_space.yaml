@@ -1,0 +1,35 @@
+# Phase-20 structured cognitive co-design space (plans/phase20_plan.md Task 1)
+# Every active gene changes real computation/prompt/memory/adaptation.
+# Conditional genes are normalized away when inactive (no duplicate phenotypes).
+# quantization is NOT a searched gene (FP16 fixed; no real runtime path used).
+
+memory:
+  type: [recency, retrieval, mamba2, hybrid]
+  k: [1, 2, 3, 4, 6, 8]
+  retrieval_metric: [tfidf, dense]        # active: retrieval, hybrid
+  state_size: [32, 64, 128, 256]          # active: mamba2
+  hybrid_retrieval_fraction: [0.25, 0.5, 0.75]  # active: hybrid
+
+reasoning:
+  strategy: [direct, cot, verify, planner]
+  depth: [1, 2, 3, 4]                     # active: cot, planner
+  verifier_passes: [0, 1, 2]              # active: verify
+
+context_policy:
+  mode: [full, truncated, answer_only]
+  token_budget: [128, 256, 512, 768, 1024]  # active: truncated, answer_only
+  exemplar_count: [0, 1, 2, 3, 4, 6, 8]
+
+adaptation:
+  enabled: [false, true]
+  steps: [0, 10, 20, 40]                  # active: enabled=true (mamba2 only trains)
+
+quantization: [fp16]   # fixed, not searched
+
+population: 16
+generations: 10
+
+objectives:
+  capability: 0.5
+  efficiency: 0.3
+  adaptability: 0.2

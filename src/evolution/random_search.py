@@ -49,9 +49,22 @@ class RandomSearchController:
 
         substrate = getattr(memory, "substrate", None)
         fingerprint = None
-        if substrate is not None and self.adaptation_config is not None:
-            adapt_substrate(memory, self.evaluator.calibration_samples(),
-                            self.adaptation_config)
+        # Phase-20: respect per-genome adaptation genes when present.
+        adapt_ok = getattr(genome, "adaptation_enabled", True)
+        if (substrate is not None and self.adaptation_config is not None
+                and adapt_ok):
+            from evolution.adaptation import AdaptationConfig
+            cfg = self.adaptation_config
+            steps = getattr(genome, "adaptation_steps", None)
+            if steps is not None:
+                cfg = AdaptationConfig(
+                    calibration_samples=cfg.calibration_samples,
+                    adaptation_steps=steps,
+                    learning_rate=cfg.learning_rate,
+                    weight_decay=cfg.weight_decay,
+                    sequence_window=cfg.sequence_window,
+                    seed=cfg.seed)
+            adapt_substrate(memory, self.evaluator.calibration_samples(), cfg)
             fingerprint = substrate_fingerprint(substrate)
 
         agent = build_agent(genome)
@@ -64,11 +77,12 @@ class RandomSearchController:
     def run(self, on_generation=None):
         best = None
         for gen in range(1, self.generations + 1):
-            batch = [
-                self._evaluate(ArchitectureGenome(
-                    **self.search_space.sample(self.rng)))
-                for _ in range(self.population_size)
-            ]
+            batch = []
+            for _ in range(self.population_size):
+                sample = self.search_space.sample(self.rng)
+                genome = sample if not isinstance(sample, dict) \
+                    else ArchitectureGenome(**sample)
+                batch.append(self._evaluate(genome))
             batch.sort(key=lambda e: e.fitness, reverse=True)
             if best is None or batch[0].fitness > best.fitness:
                 best = batch[0]

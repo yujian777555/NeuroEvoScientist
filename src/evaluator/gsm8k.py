@@ -42,6 +42,7 @@ import urllib.request
 
 from .memory import build_memory_controller, format_exemplar
 from .metrics import compute_metrics
+from .prompts import reasoning_prompt
 
 GSM8K_URL = ("https://raw.githubusercontent.com/openai/grade-school-math/"
              "master/grade_school_math/data/{split}.jsonl")
@@ -215,16 +216,19 @@ class GSM8KEvaluator:
         """Prompt = (memory exemplars) + reasoning-conditioned question.
 
         memory gene         -> WHICH bank entries appear
-        context_policy gene -> HOW verbosely they are rendered
-        reasoning gene      -> the instruction template
+        context_policy gene -> HOW verbosely (mode + token_budget)
+        reasoning gene      -> the instruction template (+ depth/passes)
         """
         blocks = []
         if exemplars:
-            blocks.extend(format_exemplar(e, genome.context_policy)
+            token_budget = getattr(genome, "token_budget", None)
+            blocks.extend(format_exemplar(e, genome.context_policy,
+                                          token_budget)
                           for e in exemplars)
-        template = PROMPT_TEMPLATES.get(genome.reasoning,
-                                        PROMPT_TEMPLATES["direct"])
-        blocks.append(template.format(q=sample["question"]))
+        hint = ("Answer with the final number only."
+                if genome.reasoning == "direct"
+                else "End with '#### <number>'.")
+        blocks.append(reasoning_prompt(genome, sample["question"], hint))
         return "\n\n".join(blocks)
 
     def build_memory_bank(self, genome):
@@ -263,10 +267,14 @@ class GSM8KEvaluator:
         memory = None
         if not self.disable_memory:
             memory = memory_controller or self.build_memory_bank(genome)
+        # Phase-20: exemplar_count gene overrides the evaluator default;
+        # 0 means memory active but no exemplars injected (real phenotype).
+        k = getattr(genome, "exemplar_count", None)
+        k = self.memory_k if k is None else k
         prompts = []
         for sample in samples:
-            exemplars = None if memory is None else memory.recall(
-                sample["question"], k=self.memory_k)
+            exemplars = None if (memory is None or k == 0) else memory.recall(
+                sample["question"], k=k)
             prompts.append(self.build_prompt(sample, genome, exemplars))
 
         start = time.time()

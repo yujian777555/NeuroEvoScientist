@@ -77,13 +77,35 @@ class RecencyMemoryController(BaseMemory):
 
 
 class RetrievalMemoryController(BaseMemory):
-    """Similarity top-k over the whole experience bank."""
+    """Similarity top-k over the whole experience bank.
+
+    retrieval_metric gene (Phase-20): "tfidf" (sparse cosine) or "dense"
+    (cosine over hashed embeddings) — genuinely different selection.
+    """
+
+    def __init__(self, genome):
+        super().__init__(genome)
+        self.metric = getattr(genome, "retrieval_metric", None) or "tfidf"
+        self._embeddings = []
+
+    def store(self, question, answer):
+        super().store(question, answer)
+        if self.metric == "dense":
+            self._embeddings.append(
+                hashed_embedding(question + " " + answer, 64))
 
     def recall(self, query, k=3):
         if not self.bank:
             return []
-        docs = [h["question"] for h in self.bank]
-        scores = tfidf_scores(query, docs)
+        if self.metric == "dense":
+            q = hashed_embedding(query, 64)
+            scores = [
+                torch.cosine_similarity(q, e, dim=0).item()
+                for e in self._embeddings
+            ]
+        else:
+            docs = [h["question"] for h in self.bank]
+            scores = tfidf_scores(query, docs)
         ranked = sorted(zip(scores, self.bank), key=lambda x: -x[0])
         return [h for s, h in ranked[:k] if s > 0]
 
@@ -153,22 +175,33 @@ class Mamba2MemoryController(BaseMemory):
 
 
 class HybridMemoryController(BaseMemory):
-    """Retrieval top-(k-1) plus the most recent entry."""
+    """Retrieval + recency mix.
+
+    hybrid_retrieval_fraction gene (Phase-20): fraction of the k slots
+    filled by retrieval (rest = most recent). Legacy default (None) keeps
+    the Phase-17 behavior: k-1 retrieval + 1 most recent.
+    """
 
     def __init__(self, genome):
         super().__init__(genome)
         self._retrieval = RetrievalMemoryController(genome)
+        self.fraction = getattr(genome, "hybrid_fraction", None)
 
     def store(self, question, answer):
         super().store(question, answer)
         self._retrieval.store(question, answer)
 
     def recall(self, query, k=3):
-        picked = self._retrieval.recall(query, k=max(1, k - 1))
-        if self.bank:
-            latest = self.bank[-1]
-            if all(h is not latest for h in picked):
-                picked = picked + [latest]
+        if self.fraction is None:
+            picked = self._retrieval.recall(query, k=max(1, k - 1))
+            n_recent = 1
+        else:
+            n_retr = max(0, min(k, round(k * self.fraction)))
+            picked = self._retrieval.recall(query, k=n_retr)
+            n_recent = k - len(picked)
+        for h in reversed(self.bank[-max(0, n_recent):]):
+            if all(p is not h for p in picked):
+                picked.append(h)
         return picked[:k]
 
 
@@ -188,10 +221,14 @@ def build_memory_controller(genome):
     return cls(genome)
 
 
-# --- context_policy gene: exemplar verbosity ----------------------------------
+# --- context_policy gene: exemplar verbosity + token budget ------------------
 
-def format_exemplar(exemplar, context_policy):
-    """Render one experience under the context policy's verbosity budget."""
+def format_exemplar(exemplar, context_policy, token_budget=None):
+    """Render one experience under the context policy's verbosity budget.
+
+    token_budget (Phase-20, active for truncated/answer_only): hard cap on
+    exemplar words after mode reduction — a real context-cost control.
+    """
     answer = exemplar["answer"]
     if context_policy == "full":
         body = answer
@@ -201,4 +238,8 @@ def format_exemplar(exemplar, context_policy):
         body = answer.split("\n")[-1]
     else:
         raise ValueError("unknown context policy: %s" % context_policy)
+    if token_budget:
+        words = body.split()
+        if len(words) > token_budget:
+            body = " ".join(words[:token_budget])
     return "Question: %s\nAnswer: %s" % (exemplar["question"], body)

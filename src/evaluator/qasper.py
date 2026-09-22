@@ -1,25 +1,21 @@
-"""PubMedQA benchmark adapter for ENSS (Phase-15/17 corrected semantics).
+"""QASPER benchmark adapter for ENSS (Phase-20 third task).
 
-Scientific QA (biomedical research questions, yes/no/maybe) — the second
-task family used to test task-dependent evolution: GSM8K may favor
-reasoning-heavy architectures, PubMedQA may favor memory/retrieval ones.
+Long-context scientific-paper QA (LongBench qasper, 200 items, whole-paper
+context ~3k words). Demand profile: long-context evidence integration —
+structurally different from GSM8K (short multi-step arithmetic) and
+PubMedQA (abstract-level yes/no/maybe).
 
-Phase-17 corrections (same as GSM8K):
-- experience bank comes from a calibration slice DISJOINT from the
-  evaluation slice (pqa_labeled has no official split; we reserve the tail
-  for calibration: evaluation = samples[:limit], calibration =
-  samples[500:], valid while limit <= 500);
-- exemplar verbosity is `context_policy`; legacy compression naming is gone;
-- adapted / weight-inherited memory controllers can be injected, separated
-  in the cache by `substrate_fingerprint`.
+Splits (pre-registered in docs/phase20_third_task_preregistration.md):
+    dev         = items[0:50]
+    holdout     = items[50:150]
+    calibration = items[150:200]   (memory bank / adaptation; disjoint)
 
-Data: pqa_labeled (1000 expert-annotated questions).
-Loading order: explicit paths -> local cache ``data/pubmedqa/pqal.jsonl``
--> ``datasets`` library -> official GitHub mirror download.
+Metric: LongBench official word-level F1 (max over gold answers).
+Prediction: the whole generated continuation.
 
-Cache-format JSONL sample:
-    {"question": "<question>\\nContext: <abstract sentences>",
-     "answer": "yes|no|maybe"}
+Same guarantees as the other evaluators: leakage-free calibration bank,
+genome-conditioned prompts, token-cost measurement, atomic cache,
+per-item prediction logging.
 """
 
 import hashlib
@@ -28,52 +24,43 @@ import os
 import re
 import tempfile
 import time
-import urllib.request
+from collections import Counter
 
 from .memory import build_memory_controller, format_exemplar
 from .metrics import compute_metrics
 from .prompts import reasoning_prompt
 
-PUBMEDQA_URL = ("https://raw.githubusercontent.com/pubmedqa/pubmedqa/"
-                "master/data/ori_pqal.json")
-
 _DEFAULT_CACHE = os.path.join(
-    os.path.dirname(__file__), "..", "..", "data", "pubmedqa"
+    os.path.dirname(__file__), "..", "..", "data", "qasper"
 )
 
-# Calibration slice offset: evaluation uses samples[:limit], calibration the
-# tail from this index on — disjoint while limit <= _CALIB_OFFSET.
-_CALIB_OFFSET = 500
+_CAL_OFFSET = 150  # calibration = items[150:]; eval slices live below 150
 
-_LABELS = ("yes", "no", "maybe")
-_LABEL_RE = re.compile(r"\b(yes|no|maybe)\b", re.IGNORECASE)
+_TOKEN_RE = re.compile(r"[a-z0-9]+")
 
 
-def extract_pubmedqa_answer(text):
-    """Extract the final yes/no/maybe decision (last mention wins)."""
-    matches = _LABEL_RE.findall(text.lower())
-    return matches[-1] if matches else None
+def qa_f1(prediction, gold):
+    """LongBench official QA F1 (word overlap)."""
+    p = Counter(_TOKEN_RE.findall(prediction.lower()))
+    g = Counter(_TOKEN_RE.findall(gold.lower()))
+    if not p or not g:
+        return 0.0
+    overlap = sum((p & g).values())
+    if overlap == 0:
+        return 0.0
+    precision = overlap / sum(p.values())
+    recall = overlap / sum(g.values())
+    return 2 * precision * recall / (precision + recall)
 
 
-PROMPT_TEMPLATES = {
-    "direct": ("Question: {q}\nAnswer yes, no, or maybe. "
-               "End with '#### <yes|no|maybe>'."),
-    "verify": ("Question: {q}\nDecide yes/no/maybe, then verify against the "
-               "context. End with '#### <yes|no|maybe>'."),
-    "planner": ("Question: {q}\nFirst outline what the context says, then "
-                "decide. End with '#### <yes|no|maybe>'."),
-    "cot": ("Question: {q}\nLet's think step by step. "
-            "End with '#### <yes|no|maybe>'."),
-}
-
-
-class PubMedQAEvaluator:
-    """Real PubMedQA evaluator; same interface as GSM8KEvaluator."""
+class QasperEvaluator:
+    """Real QASPER evaluator; same interface as GSM8KEvaluator."""
 
     def __init__(self, backend=None, split="test", limit=None,
                  data_path=None, cache_path=None, memory_k=3,
                  disable_memory=False, calibration_path=None,
-                 calibration_size=48, start=0, predictions_path=None):
+                 calibration_size=48, start=50, predictions_path=None,
+                 max_context_words=2500):
         self.backend = backend
         self.split = split
         self.limit = limit
@@ -85,16 +72,17 @@ class PubMedQAEvaluator:
         self.calibration_path = calibration_path
         self.calibration_size = calibration_size
         self.predictions_path = predictions_path
+        self.max_context_words = max_context_words
         self._samples = None
         self._calibration = None
         self._cache = None
 
-    # -- evaluation cache (atomic; crash-safe resume) --------------------------
+    # -- cache -----------------------------------------------------------------
 
     def _cache_key(self, genome, substrate_fingerprint=None):
         model = getattr(self.backend, "model_name", "unknown")
         payload = json.dumps({
-            "genome": genome.to_dict(), "benchmark": "pubmedqa",
+            "genome": genome.to_dict(), "benchmark": "qasper",
             "start": self.start, "limit": self.limit, "model": str(model),
             "pipeline": "phase17-v3",
             "disable_memory": self.disable_memory,
@@ -106,7 +94,7 @@ class PubMedQAEvaluator:
         if self._cache is None:
             self._cache = {}
             if self.cache_path and os.path.exists(self.cache_path):
-                with open(self.cache_path, "r", encoding="utf-8") as f:
+                with open(self.cache_path, encoding="utf-8") as f:
                     self._cache = json.load(f)
         return self._cache
 
@@ -125,13 +113,11 @@ class PubMedQAEvaluator:
             os.fsync(f.fileno())
         os.replace(tmp, self.cache_path)
 
-    # -- data -----------------------------------------------------------------
+    # -- data ------------------------------------------------------------------
 
     def _load_jsonl(self, path):
-        if not os.path.exists(path):
-            self._resolve_dataset(path)
         samples = []
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
                 if line:
@@ -141,7 +127,7 @@ class PubMedQAEvaluator:
     def load_samples(self):
         if self._samples is None:
             path = self.data_path or os.path.join(_DEFAULT_CACHE,
-                                                  "pqal.jsonl")
+                                                  "qasper.jsonl")
             samples = self._load_jsonl(path)
             self._samples = samples[self.start:
                                     self.start + self.limit
@@ -149,47 +135,19 @@ class PubMedQAEvaluator:
         return self._samples
 
     def calibration_samples(self):
-        """Calibration slice DISJOINT from the evaluation slice."""
+        """Calibration slice (items[150:]) disjoint from eval slices."""
         if self._calibration is None:
             source = self.calibration_path or os.path.join(
-                _DEFAULT_CACHE, "pqal.jsonl")
+                _DEFAULT_CACHE, "qasper.jsonl")
             all_samples = self._load_jsonl(source)
-            self._calibration = all_samples[_CALIB_OFFSET:]
+            self._calibration = all_samples[_CAL_OFFSET:]
         return self._calibration[: self.calibration_size]
 
-    def _resolve_dataset(self, path):
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-        try:
-            import datasets
-        except ImportError:
-            datasets = None
-
-        if datasets is not None:
-            ds = datasets.load_dataset("qiaojin/PubMedQA", "pqa_labeled",
-                                       split="train")
-            with open(path, "w", encoding="utf-8") as f:
-                for row in ds:
-                    f.write(json.dumps({
-                        "question": row["question"] + "\nContext: "
-                                    + " ".join(row["context"]["contexts"]),
-                        "answer": row["final_decision"],
-                    }) + "\n")
-            return
-
-        raw_path = path + ".ori.json"
-        urllib.request.urlretrieve(PUBMEDQA_URL, raw_path)
-        with open(raw_path, "r", encoding="utf-8") as f:
-            raw = json.load(f)
-        with open(path, "w", encoding="utf-8") as f:
-            for pmid in sorted(raw):
-                row = raw[pmid]
-                f.write(json.dumps({
-                    "question": row["QUESTION"] + "\nContext: "
-                                + " ".join(row["CONTEXTS"]),
-                    "answer": row["final_decision"],
-                }) + "\n")
-
     # -- pipeline ---------------------------------------------------------------
+
+    def _render_sample(self, sample):
+        context = " ".join(sample["context"].split()[: self.max_context_words])
+        return context, sample["input"]
 
     def build_prompt(self, sample, genome, exemplars=None):
         blocks = []
@@ -198,15 +156,18 @@ class PubMedQAEvaluator:
             blocks.extend(format_exemplar(e, genome.context_policy,
                                           token_budget)
                           for e in exemplars)
-        hint = ("Answer yes, no, or maybe. End with '#### <yes|no|maybe>'.")
-        blocks.append(reasoning_prompt(genome, sample["question"], hint))
+        context, question = self._render_sample(sample)
+        hint = "Answer based on the paper. Be concise. End with '#### <answer>'."
+        blocks.append("Paper:\n%s" % context)
+        blocks.append(reasoning_prompt(genome, question, hint))
         return "\n\n".join(blocks)
 
     def build_memory_bank(self, genome):
-        """A memory controller pre-filled from the calibration slice."""
         controller = build_memory_controller(genome)
         for s in self.calibration_samples():
-            controller.store(s["question"], s["answer"])
+            _, q = self._render_sample(s)
+            gold = s["answers"][0] if s["answers"] else ""
+            controller.store(q, gold)
         return controller
 
     def _count_tokens(self, prompts):
@@ -219,7 +180,7 @@ class PubMedQAEvaluator:
                  substrate_fingerprint=None):
         if self.backend is None:
             raise RuntimeError(
-                "PubMedQAEvaluator requires an inference backend. "
+                "QasperEvaluator requires an inference backend. "
                 "Refusing to fabricate scores; use benchmark='mock' for CI."
             )
 
@@ -238,7 +199,7 @@ class PubMedQAEvaluator:
         prompts = []
         for sample in samples:
             exemplars = None if (memory is None or k == 0) else memory.recall(
-                sample["question"], k=k)
+                sample["input"], k=k)
             prompts.append(self.build_prompt(sample, genome, exemplars))
 
         start = time.time()
@@ -251,17 +212,13 @@ class PubMedQAEvaluator:
         prompt_tokens = self._count_tokens(prompts)
 
         task_scores = []
-        hard_scores = []  # 'maybe'-gold questions: adaptability proxy
         for sample, output in zip(samples, outputs):
-            pred = extract_pubmedqa_answer(output)
-            gold = sample["answer"].strip().lower()
-            correct = 1.0 if pred == gold else 0.0
-            task_scores.append(correct)
-            if gold == "maybe":
-                hard_scores.append(correct)
+            pred = output.split("####")[-1] if "####" in output else output
+            best = max((qa_f1(pred, gold) for gold in sample["answers"]),
+                       default=0.0)
+            task_scores.append(best)
 
         metrics = compute_metrics(agent, task_scores,
-                                  shifted_scores=hard_scores or None,
                                   prompt_tokens=prompt_tokens,
                                   n_prompts=len(prompts))
         metrics["latency_sec"] = latency_sec
@@ -274,15 +231,14 @@ class PubMedQAEvaluator:
         return metrics
 
     def _write_predictions(self, samples, task_scores, genome):
-        """Per-item outcomes for paired statistics (Phase-19)."""
         os.makedirs(os.path.dirname(os.path.abspath(self.predictions_path)),
                     exist_ok=True)
         with open(self.predictions_path, "a", encoding="utf-8") as f:
-            for i, (sample, correct) in enumerate(zip(samples, task_scores)):
+            for i, (sample, score) in enumerate(zip(samples, task_scores)):
                 f.write(json.dumps({
-                    "benchmark": "pubmedqa",
+                    "benchmark": "qasper",
                     "item_index": self.start + i,
                     "architecture": genome.describe(),
                     "genome": genome.to_dict(),
-                    "correct": correct,
+                    "correct": score,
                 }) + "\n")

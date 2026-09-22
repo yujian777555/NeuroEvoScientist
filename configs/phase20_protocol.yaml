@@ -1,0 +1,34 @@
+# Phase-20 evaluation protocol (pre-registered, frozen before GPU runs)
+
+source_commit_for_selection: 8a0a72d   # Phase-19 final
+
+benchmarks:
+  gsm8k:
+    dev: "test[0:100]"
+    holdout: "test[100:1319]"
+    calibration: "train split only"
+  pubmedqa:
+    dev: "samples[0:100]"
+    holdout: "samples[100:500]"
+    calibration: "samples[500:1000]"
+  qasper:   # third task — see docs/phase20_third_task_preregistration.md
+    dev: "items[0:50]"
+    holdout: "items[50:150]"
+    calibration: "items[150:200]"
+
+backbones:
+  A: Qwen/Qwen2.5-1.5B-Instruct   # search/selection backbone
+  B: Qwen/Qwen2.5-7B-Instruct     # transfer-only, no re-search
+
+generation:
+  decoding: greedy
+  max_new_tokens: 256
+  batch_size: 32
+  quantization_runtime: fp16
+
+rules:
+  - structured genome normalization happens before hashing/evaluation
+  - no method changes after seeing holdout results
+  - per-item predictions persisted for paired statistics
+  - random search is a diagnostic reference only; no superiority claim
+  - C3 and C5 remain closed
