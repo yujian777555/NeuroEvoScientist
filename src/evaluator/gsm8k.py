@@ -311,11 +311,11 @@ class GSM8KEvaluator:
         metrics["memory_enabled"] = not self.disable_memory
         if self.predictions_path:
             metrics["item_scores"] = task_scores
-            self._write_predictions(samples, task_scores, genome)
+            self._write_predictions(samples, task_scores, genome, outputs)
         self._store_cache(key, metrics)
         return metrics
 
-    def _write_predictions(self, samples, task_scores, genome):
+    def _write_predictions(self, samples, task_scores, genome, outputs=None):
         """Per-item outcomes for paired statistics (Phase-19)."""
         os.makedirs(os.path.dirname(os.path.abspath(self.predictions_path)),
                     exist_ok=True)
@@ -326,7 +326,9 @@ class GSM8KEvaluator:
                     "item_index": self.start + i,
                     "architecture": genome.describe(),
                     "genome": genome.to_dict(),
+                    "memory_enabled": not self.disable_memory,
                     "correct": correct,
+                    "output": (outputs[i][:600] if outputs else None),
                 }) + "\n")
 
 

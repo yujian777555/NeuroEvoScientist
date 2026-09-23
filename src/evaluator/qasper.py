@@ -259,11 +259,11 @@ class QasperEvaluator:
         metrics["memory_enabled"] = not self.disable_memory
         if self.predictions_path:
             metrics["item_scores"] = task_scores
-            self._write_predictions(samples, task_scores, genome)
+            self._write_predictions(samples, task_scores, genome, outputs)
         self._store_cache(key, metrics)
         return metrics
 
-    def _write_predictions(self, samples, task_scores, genome):
+    def _write_predictions(self, samples, task_scores, genome, outputs=None):
         os.makedirs(os.path.dirname(os.path.abspath(self.predictions_path)),
                     exist_ok=True)
         with open(self.predictions_path, "a", encoding="utf-8") as f:
