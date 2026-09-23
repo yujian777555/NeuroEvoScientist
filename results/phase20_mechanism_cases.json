@@ -1,0 +1,121 @@
+{
+  "n_cases": 10,
+  "cases": [
+    {
+      "benchmark": "gsm8k",
+      "architecture": "A_gsm",
+      "item_index": 103,
+      "score": 1.0,
+      "question": "A fog bank rolls in from the ocean to cover a city. It takes 10 minutes to cover every 3 miles of the city. If the city is 42 miles across from the oceanfront to the opposite inland edge, how many min",
+      "recalled_exemplars": [
+        "The file, 90 megabytes in size, downloads at the rate of 5 megabytes per second for its first 60 megabytes, and then 10 "
+      ],
+      "output": "Step 1: Determine the total distance that needs to be covered.\nThe city is 42 miles wide.\n\nStep 2: Calculate the time it takes to cover one mile.\nIt takes 10 minutes to cover 3 miles. Therefore, the time to cover 1 mile is:\n\\[ \\frac{10 \\text{ minutes}}{3 \\text{ miles}} = \\frac{10}{3} \\text{ minutes per mile} \\]\n\nStep 3: Multiply the time per mile by the total number of miles to find the total time.\nTotal time to cover 42 miles is:\n\\[ 42 \\text{ miles} \\times \\frac{10}{3} \\text{ minutes per mile} = 42 \\times \\frac{10}{3} = 14 \\times 10 = 140 \\text{ minutes} \\]\n\n#### 140"
+    },
+    {
+      "benchmark": "gsm8k",
+      "architecture": "A_gsm",
+      "item_index": 104,
+      "score": 1.0,
+      "question": "Poppy is solving a 1000-piece jigsaw puzzle. She places a quarter of the pieces on the board, then her mom places a third of the remaining pieces. How many jigsaw pieces are left to be placed?",
+      "recalled_exemplars": [
+        "The file, 90 megabytes in size, downloads at the rate of 5 megabytes per second for its first 60 megabytes, and then 10 "
+      ],
+      "output": "Step 1: Calculate the number of pieces Poppy initially places on the board.\nPoppy places a quarter of the total pieces:\n\\[ \\frac{1}{4} \\times 1000 = 250 \\text{ pieces} \\]\n\nStep 2: Determine how many pieces remain after Poppy places her quarter.\nSubtract the pieces Poppy placed from the total:\n\\[ 1000 - 250 = 750 \\text{ pieces} \\]\n\nStep 3: Calculate the number of pieces added by Poppy's mom.\nHer mom adds a third of the remaining pieces:\n\\[ \\frac{1}{3} \\times 750 = 250 \\text{ pieces} \\]\n\nStep 3: Subtract the pieces added by her mom from the remaining pieces.\n\\[ 750 - 250 = 500 \\text{ pieces} \\]\n"
+    },
+    {
+      "benchmark": "gsm8k",
+      "architecture": "A_gsm",
+      "item_index": 100,
+      "score": 0.0,
+      "question": "Jerome had 4 friends who came to visit him on a certain day. The first friend pressed on the doorbell 20 times before Jerome opened, the second friend pressed on the doorbell 1/4 times more than Jerom",
+      "recalled_exemplars": [
+        "The file, 90 megabytes in size, downloads at the rate of 5 megabytes per second for its first 60 megabytes, and then 10 "
+      ],
+      "output": "Step 1: Determine the number of doorbell rings made by the second friend.\nThe second friend pressed the doorbell 1/4 times more than Jerome's first friend. Since the first friend pressed the doorbell 20 times, we calculate:\n\\[ \\text{Second friend} = 20 + (20 \\times \\frac{1}{4}) = 20 + 5 = 25 \\]\n\nStep 2: Determine the number of doorbell rings made by the third friend.\nThe third friend pressed the doorbell 10 times more than the fourth friend. Since the fourth friend pressed the doorbell 60 times, we calculate:\n\\[ \\text{Third friend} = 60 + (60 \\times 10) = 60 + 600 = 660 \\]\n\nStep 3: Calculate t"
+    },
+    {
+      "benchmark": "gsm8k",
+      "architecture": "A_gsm",
+      "item_index": 101,
+      "score": 0.0,
+      "question": "Solo has to read 4 pages from his Science textbook, 20 pages from his Social Studies textbook, 7 pages from his History textbook and 8 pages from his Geography textbook. Solo read 15 pages on Monday. ",
+      "recalled_exemplars": [
+        "The file, 90 megabytes in size, downloads at the rate of 5 megabytes per second for its first 60 megabytes, and then 10 "
+      ],
+      "output": "Step 1: Calculate the total number of pages Solo needs to read.\n\nScience: 4 pages\nSocial Studies: 20 pages\nHistory: 7 pages\nGeography: 8 pages\n\nTotal = 4 + 20 + 7 + 8 = 39 pages\n\nStep 2: Determine how many pages Solo still needs to read after Monday.\n\nSolo has already read 15 pages on Monday.\n\nPages left = Total pages - Pages read on Monday\nPages left = 39 - 15 = 24 pages\n\nStep 3: Calculate the number of days left for Solo to finish reading.\n\nSolo has 4 more days to complete all his reading.\n\nPages needed per day = Pages left / Days left\nPages needed per day = 24 / 4 = 6 pages\n\n#### 6\nTherefor"
+    },
+    {
+      "benchmark": "pubmedqa",
+      "architecture": "A_pubmed",
+      "item_index": 100,
+      "score": 1.0,
+      "question": "Informed consent for total hip arthroplasty: does a written information sheet improve recall by patients?\nContext: To ascertain whether a written information sheet is acceptable to patients and improv",
+      "recalled_exemplars": [],
+      "output": "#### Yes"
+    },
+    {
+      "benchmark": "pubmedqa",
+      "architecture": "A_pubmed",
+      "item_index": 101,
+      "score": 1.0,
+      "question": "Is specialty care associated with improved survival of patients with congestive heart failure?\nContext: Implementation of the complex treatment strategies that have been shown to improve survival of p",
+      "recalled_exemplars": [],
+      "output": "Yes.\n\n#### <yes>"
+    },
+    {
+      "benchmark": "pubmedqa",
+      "architecture": "A_pubmed",
+      "item_index": 102,
+      "score": 0.0,
+      "question": "Does anastomotic leakage affect functional outcome after rectal resection for cancer?\nContext: Anastomotic leakage is the most threatening early complication in sphincter-preserving rectal cancer surg",
+      "recalled_exemplars": [],
+      "output": "Maybe.\n\nThe study found that the continence score in patients with anastomotic leakage did not differ significantly from that in patients without complications. However, it also noted that sphincter function was similar and maximum tolerable volume and rectal compliance were slightly but not significantly worse after leakage. This suggests that while there may be some impact on continence function, other aspects of functional outcomes appear to remain largely unaffected. Therefore, the answer is \"maybe.\""
+    },
+    {
+      "benchmark": "pubmedqa",
+      "architecture": "A_pubmed",
+      "item_index": 103,
+      "score": 0.0,
+      "question": "Is extended aortic replacement in acute type A dissection justifiable?\nContext: The aim of this study was to evaluate the effectiveness of our surgical strategy for acute aortic dissection based on th",
+      "recalled_exemplars": [],
+      "output": "Maybe.\n\nThe study suggests that complete replacement of all dissected tissue is feasible in some cases but not in others due to the extent of the dissection. This implies that while it may be justifiable in certain scenarios, it might not always be appropriate or practical. Therefore, the answer is \"maybe.\""
+    },
+    {
+      "benchmark": "qasper",
+      "architecture": "A_qasper",
+      "item_index": 50,
+      "score": 0.0,
+      "question": "What other tasks do they test their method on?",
+      "recalled_exemplars": [
+        "Do they evaluate only on English datasets?",
+        "What were the scores of their system?",
+        "Do they employ their indexing-based method to create a sample of a QA Wikipedia dataset?",
+        "What are the network's baseline features?",
+        "What model did they use for their system?",
+        "What datasets do they evaluate on?",
+        "What was the baseline used?",
+        "What was their highest MRR score?"
+      ],
+      "output": null
+    },
+    {
+      "benchmark": "qasper",
+      "architecture": "A_qasper",
+      "item_index": 51,
+      "score": 0.0,
+      "question": "Do they use pretrained embeddings?",
+      "recalled_exemplars": [
+        "Which dataset do they use?",
+        "Which models/frameworks do they compare to?",
+        "What traditional linguistics features did they use?",
+        "What are the network's baseline features?",
+        "How large is the corpus?",
+        "What experiments are conducted?",
+        "where did they obtain the annotated clinical notes from?",
+        "Do they employ their indexing-based method to create a sample of a QA Wikipedia dataset?"
+      ],
+      "output": null
+    }
+  ]
+}

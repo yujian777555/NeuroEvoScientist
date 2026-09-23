@@ -325,6 +325,7 @@ class GSM8KEvaluator:
                     "benchmark": "gsm8k",
                     "item_index": self.start + i,
                     "architecture": genome.describe(),
+                    "model": getattr(self.backend, "model_name", "unknown"),
                     "genome": genome.to_dict(),
                     "memory_enabled": not self.disable_memory,
                     "correct": correct,

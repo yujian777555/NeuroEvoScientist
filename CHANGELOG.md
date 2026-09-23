@@ -1,5 +1,26 @@
 # Changelog
 
+## [Phase-20] structured task-conditioned cognitive co-design validation - 2026-09-23
+
+### Added
+- `results/phase20_selection_lock.json`（holdout 前冻结的每任务代表架构 + 对照）
+- `src/scripts/phase20_holdout.py`（三基准结构化 holdout 运行器，含逐题预测+输出采集）
+- `src/scripts/phase20_statistics.py`（config 键控配对 bootstrap + McNemar）
+- `src/scripts/phase20_mechanism.py` + `src/scripts/phase20_rebuild_predictions.py`
+- `results/phase20_{holdout_results.csv, item_predictions.jsonl, statistics.json, task_transfer.csv, backbone_transfer.csv, mechanism_cases.json}`
+- `docs/phase20_results.md`、`docs/phase20_mechanism_analysis.md`、`docs/phase20_claim_update.md`
+
+### Results
+- 任务条件化选择稳定且 distinct：GSM8K→recency+CoT，PubMedQA→none+direct（3/3 一致），QASPER→retrieval+8 exemplars（预注册预测命中）
+- Holdout 配对统计：C2a 强成立；C2b 仅 GSM8K 成立（+29~71pp, p≈0），PubMedQA/QASPER 自有配置落败于 GSM8K 配置（如实报告）
+- 新发现：记忆贡献随骨干放大；QASPER 检索策略 7B 不迁移；dev 偏好 ≠ holdout 泛化
+- claim_audit.md：C2 细分 C2a/C2b；C3/C5 保持关闭
+- 机制分析 10 案例（item ID + 检索 exemplar + 模型输出）
+
+### Incidents
+- VM 宿主机约 20h 失联，队列在容器内幸存并跑完
+- 预测文件两次缺列（model/config），均通过评估缓存重建，未重跑推理
+
 ## [Phase-20 hotfix] correct structured phenotype semantics and QASPER evaluation - 2026-09-22
 
 ### Fixed（Planner hotfix gate H1–H6，计划见 plans/phase20_hotfix_plan.md）

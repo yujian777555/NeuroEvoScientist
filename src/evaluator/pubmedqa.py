@@ -286,6 +286,7 @@ class PubMedQAEvaluator:
                     "benchmark": "pubmedqa",
                     "item_index": self.start + i,
                     "architecture": genome.describe(),
+                    "model": getattr(self.backend, "model_name", "unknown"),
                     "genome": genome.to_dict(),
                     "memory_enabled": not self.disable_memory,
                     "correct": correct,

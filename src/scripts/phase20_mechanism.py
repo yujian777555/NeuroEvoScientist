@@ -24,9 +24,14 @@ from evaluator.memory import build_memory_controller
 
 _REPO = os.path.join(os.path.dirname(__file__), "..", "..")
 PRED = os.path.join(_REPO, "results", "phase20_item_predictions.jsonl")
+# mechanism runs with captured model outputs take precedence when present
+PRED_WITH_OUTPUTS = os.path.join(_REPO, "results",
+                                 "phase20_predictions_with_outputs.jsonl")
+if os.path.exists(PRED_WITH_OUTPUTS):
+    PRED = PRED_WITH_OUTPUTS
 LOCK = os.path.join(_REPO, "results", "phase20_selection_lock.json")
 OUT = os.path.join(_REPO, "results", "phase20_mechanism_cases.json")
-OUT_MD = os.path.join(_REPO, "..", "docs", "phase20_mechanism_analysis.md")
+OUT_MD = os.path.join(_REPO, "docs", "phase20_mechanism_analysis.md")
 
 SPLIT = {"gsm8k": ("data/gsm8k/test.jsonl", "data/gsm8k/train.jsonl",
                    100, None, 0, 48),
@@ -59,11 +64,12 @@ def main():
     lock = json.load(open(LOCK))
     cfgs = {c["name"]: c for c in lock["configurations"]}
 
-    # predictions: (bench, arch, mem_enabled) -> {item: (score, output)}
+    # predictions: (bench, config_or_arch, mem_enabled) -> {item: ...}
     preds = defaultdict(dict)
     for line in open(PRED):
         r = json.loads(line)
-        preds[(r["benchmark"], r["architecture"],
+        cfg = r.get("config") or r.get("architecture")
+        preds[(r["benchmark"], cfg,
                bool(r.get("memory_enabled", True)))][r["item_index"]] = (
             r["correct"], r.get("output"))
 

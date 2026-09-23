@@ -1,0 +1,9 @@
+config,gsm8k,pubmedqa,qasper
+A_gsm,0.5185,0.4900,0.1878
+A_pubmed,0.0968,0.3725,0.1106
+A_qasper,0.2084,0.5625,0.1379
+fixed_hybrid,0.2116,0.5550,0.1330
+fixed_mamba2,0.2158,0.5975,0.1757
+fixed_recency,0.2289,0.5525,0.1245
+fixed_retrieval,0.1862,0.5725,0.1305
+no_memory,0.5193,0.3625,0.2014

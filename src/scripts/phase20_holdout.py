@@ -59,10 +59,20 @@ def main():
     parser.add_argument("--batch-size", type=int, default=32)
     parser.add_argument("--data-path", type=str, default=None)
     parser.add_argument("--calibration-path", type=str, default=None)
+    parser.add_argument("--limit", type=int, default=None,
+                        help="override holdout size (mechanism runs)")
+    parser.add_argument("--no-cache", action="store_true")
+    parser.add_argument("--out-results", type=str, default=None)
+    parser.add_argument("--out-predictions", type=str, default=None)
+    parser.add_argument("--configs", type=str, default=None,
+                        help="comma-separated subset of locked config names")
     args = parser.parse_args()
 
     lock = json.load(open(LOCK))
     configs = lock["configurations"]
+    if args.configs:
+        wanted = set(args.configs.split(","))
+        configs = [c for c in configs if c["name"] in wanted]
 
     from evaluator.backends import QwenBackend, HFTransformersBackend
     if "qwen" in args.model.lower():
@@ -74,7 +84,15 @@ def main():
 
     rng_holdout = HOLDOUT[args.benchmark]
     model_tag = os.path.basename(str(args.model))
-    done = _done_keys()
+    results_path = args.out_results or RESULTS
+    predictions_path = args.out_predictions or PREDICTIONS
+    if args.no_cache:
+        done = set()
+    else:
+        done = _done_keys() if not args.out_results else (
+            {tuple(r)[:3] for r in csv.reader(open(args.out_results))
+             if r and r[0] != "config"}
+            if os.path.exists(args.out_results) else set())
 
     for cfg in configs:
         name = cfg["name"]
@@ -89,15 +107,16 @@ def main():
         cls = build_evaluator_cls(args.benchmark)
         evaluator = cls(
             backend=backend,
-            start=rng_holdout["start"], limit=rng_holdout["limit"],
+            start=rng_holdout["start"],
+            limit=args.limit or rng_holdout["limit"],
             data_path=args.data_path,
             calibration_path=args.calibration_path,
-            cache_path=os.path.join(
+            cache_path=None if args.no_cache else os.path.join(
                 _REPO, "experiments",
                 "eval_cache_phase20_%s_%s_%s.json"
                 % (args.benchmark, model_tag, name.replace(" ", "_"))),
             disable_memory=disable_memory,
-            predictions_path=PREDICTIONS,
+            predictions_path=predictions_path,
         )
 
         memory = None
@@ -127,8 +146,8 @@ def main():
                "%.1f" % metrics.get("latency_sec", 0.0),
                "%.1f" % wall,
                json.dumps(adaptation_record.get("post_loss"))]
-        new = not os.path.exists(RESULTS)
-        with open(RESULTS, "a", newline="", encoding="utf-8") as f:
+        new = not os.path.exists(results_path)
+        with open(results_path, "a", newline="", encoding="utf-8") as f:
             w = csv.writer(f)
             if new:
                 w.writerow(["config", "benchmark", "model", "architecture",
