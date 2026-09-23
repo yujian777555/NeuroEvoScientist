@@ -1,0 +1,49 @@
+{
+  "protocol": "configs/phase20_protocol.yaml",
+  "source": "Phase-20 structured dev search (post-hotfix), seeds 0-2, enss method",
+  "locked_at": "2026-09-23",
+  "note": "Locked before any holdout inference. No post-hoc substitution. All genomes are normalized StructuredGenome phenotypes.",
+  "configurations": [
+    {
+      "name": "A_gsm",
+      "role": "GSM8K-selected (enss seed2, fit=0.672, dev cap=0.60)",
+      "genome": {"adaptation_enabled": false, "adaptation_steps": null, "context_mode": "full", "exemplar_count": 1, "exemplar_word_budget": null, "hybrid_fraction": null, "input_context_budget": 2048, "mamba_state_size": null, "memory_k": 3, "memory_type": "recency", "quantization": "fp16", "reasoning": "cot", "reasoning_depth": 3, "retrieval_metric": null, "verifier_passes": null}
+    },
+    {
+      "name": "A_pubmed",
+      "role": "PubMedQA-selected (enss seed0, fit=0.627, dev cap=0.44)",
+      "genome": {"adaptation_enabled": false, "adaptation_steps": null, "context_mode": "full", "exemplar_count": 0, "exemplar_word_budget": null, "hybrid_fraction": null, "input_context_budget": 1024, "mamba_state_size": null, "memory_k": 0, "memory_type": "none", "quantization": "fp16", "reasoning": "direct", "reasoning_depth": null, "retrieval_metric": null, "verifier_passes": null}
+    },
+    {
+      "name": "A_qasper",
+      "role": "QASPER-selected (enss seed1, fit=0.362, dev cap=0.222)",
+      "genome": {"adaptation_enabled": false, "adaptation_steps": null, "context_mode": "truncated", "exemplar_count": 8, "exemplar_word_budget": 256, "hybrid_fraction": null, "input_context_budget": 1024, "mamba_state_size": null, "memory_k": 4, "memory_type": "retrieval", "quantization": "fp16", "reasoning": "direct", "reasoning_depth": null, "retrieval_metric": "hashed_bow", "verifier_passes": null}
+    },
+    {
+      "name": "fixed_recency",
+      "role": "fixed baseline",
+      "genome": {"adaptation_enabled": false, "adaptation_steps": null, "context_mode": "full", "exemplar_count": 3, "exemplar_word_budget": null, "hybrid_fraction": null, "input_context_budget": 2048, "mamba_state_size": null, "memory_k": 3, "memory_type": "recency", "quantization": "fp16", "reasoning": "direct", "reasoning_depth": null, "retrieval_metric": null, "verifier_passes": null}
+    },
+    {
+      "name": "fixed_retrieval",
+      "role": "fixed baseline",
+      "genome": {"adaptation_enabled": false, "adaptation_steps": null, "context_mode": "full", "exemplar_count": 3, "exemplar_word_budget": null, "hybrid_fraction": null, "input_context_budget": 2048, "mamba_state_size": null, "memory_k": 3, "memory_type": "retrieval", "quantization": "fp16", "reasoning": "direct", "reasoning_depth": null, "retrieval_metric": "tfidf", "verifier_passes": null}
+    },
+    {
+      "name": "fixed_mamba2",
+      "role": "fixed baseline",
+      "genome": {"adaptation_enabled": false, "adaptation_steps": null, "context_mode": "full", "exemplar_count": 3, "exemplar_word_budget": null, "hybrid_fraction": null, "input_context_budget": 2048, "mamba_state_size": 64, "memory_k": 3, "memory_type": "mamba2", "quantization": "fp16", "reasoning": "direct", "reasoning_depth": null, "retrieval_metric": null, "verifier_passes": null}
+    },
+    {
+      "name": "fixed_hybrid",
+      "role": "fixed baseline",
+      "genome": {"adaptation_enabled": false, "adaptation_steps": null, "context_mode": "full", "exemplar_count": 3, "exemplar_word_budget": null, "hybrid_fraction": null, "input_context_budget": 2048, "mamba_state_size": null, "memory_k": 3, "memory_type": "hybrid", "quantization": "fp16", "reasoning": "direct", "reasoning_depth": null, "retrieval_metric": "tfidf", "verifier_passes": null}
+    },
+    {
+      "name": "no_memory",
+      "role": "ablation baseline (A_gsm phenotype with exemplars disabled)",
+      "genome": {"adaptation_enabled": false, "adaptation_steps": null, "context_mode": "full", "exemplar_count": 1, "exemplar_word_budget": null, "hybrid_fraction": null, "input_context_budget": 2048, "mamba_state_size": null, "memory_k": 3, "memory_type": "recency", "quantization": "fp16", "reasoning": "cot", "reasoning_depth": 3, "retrieval_metric": null, "verifier_passes": null},
+      "disable_memory": true
+    }
+  ]
+}
