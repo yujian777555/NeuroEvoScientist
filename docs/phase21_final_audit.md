@@ -25,7 +25,8 @@
 
 ## Phase-21 各任务状态
 
-- [x] Task 1 任务感知表型规范化（实现 + 测试 79 全过；敏感度重跑进行中）
+- [x] Task 1 任务感知表型规范化（实现 + 测试 79 全过；敏感度重跑完成，
+  **C2a 稳健**：PubMedQA 逐基因一致、GSM8K 同族，见 docs/phase21_sensitivity.md）
 - [x] Task 2 记忆消融解释修正（文档 + 受控消融数据：PubMedQA +18.0pp, QASPER +1.5pp）
 - [x] Task 3 QASPER-7B 诊断（提取/格式失配，含 raw output 证据）
 - [x] Task 4 机制案例补全（14 案例，含 QASPER 双骨干配对失效）

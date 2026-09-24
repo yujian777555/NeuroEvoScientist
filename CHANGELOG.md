@@ -17,6 +17,8 @@
 - QASPER-7B"崩溃"定性为**答案提取/格式失配**（marker 1.00、F1(extracted)=0、F1(whole)>0.1），非能力缺失
 - 受控记忆消融：PubMedQA +18.0pp（1.5B 显著）、QASPER +1.5pp（弱）
 - 机制案例补全至 14（含 QASPER 双骨干配对失效，raw output 齐全）
+- **敏感度审计：C2a 稳健**——任务感知去重未改变收敛架构族（PubMedQA 逐基因一致，GSM8K 同族；docs/phase21_sensitivity.md）
+- 共享环境 kernels 故障绕行：强制 naive Mamba2 路径（与历史执行路径一致）
 
 ### Fixed
 - Task 1 实现过程中的类结构错误（compat 方法被吞进函数体）已修复并有测试守护
