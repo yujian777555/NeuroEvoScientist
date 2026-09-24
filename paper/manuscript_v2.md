@@ -38,8 +38,9 @@ token 成本、延迟；目标为 per-task 前沿刻画而非全局最优点。
   holdout 上输给 GSM8K 配置（显著；同来源）。
 - **R4 记忆贡献受控且随骨干放大**：同基因消融 1.5B 无差异 → 7B −12.6pp；
   PubMedQA 受控消融 +18.0pp（`phase21_ablation` 结果）。
-- **R5 任务-骨干交互**：QASPER 7B"崩溃"经诊断为答案提取/格式失配
-  （`docs/phase21_qasper7b_diagnostic.md`），非能力缺失。
+- **R5 任务-骨干交互**：QASPER 7B 的表面性能坍塌经诊断主要来自
+  答案格式/提取失配（`docs/phase21_qasper7b_diagnostic.md`），因此不能解释为
+  7B 主干能力下降；它体现的是 backbone–prompt/extraction interaction。
 
 ## 7. Audit and Negative Results
 
@@ -60,5 +61,6 @@ PubMedQA、QASPER 双骨干配对失效（raw output + 提取答案 + 检索 exe
 ## 10. Conclusion
 
 认知架构选择实质影响 agent 的能力-成本行为；自动协同设计能暴露清晰的
-任务条件化偏好，但这些偏好会过拟合小搜索集并与骨干规模强烈交互。
+任务条件化偏好，但这些偏好可能过拟合小搜索集，并与骨干、提示及答案提取
+协议发生显著交互。
 严谨的 holdout 审计是把"搜索侧特化"与"可泛化架构优势"区分开的必要条件。
