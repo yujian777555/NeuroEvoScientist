@@ -24,6 +24,24 @@ except ImportError:  # transformers < 4.43 (e.g. the CPU dev box)
     _HAS_MAMBA2 = False
 
 
+def _force_naive_mamba2_path():
+    """Disable lazy hub-kernel loading for Mamba2 (use the naive fallback).
+
+    The shared A800 conda env's kernels package intermittently fails
+    ``lazy_load_kernel("causal-conv1d")`` with a hard ValueError (offline
+    mode + missing kernel metadata), crashing Mamba2Model construction
+    instead of falling back. All previous phases used the naive path, so
+    forcing it keeps results consistent and environment-independent.
+    """
+    if not _HAS_MAMBA2:
+        return
+    try:
+        from transformers.models.mamba2 import modeling_mamba2 as _m2
+        _m2.lazy_load_kernel = lambda *args, **kwargs: None
+    except Exception:
+        pass
+
+
 class MambaMemory(nn.Module):
     """Mamba-2 episodic memory substrate.
 
@@ -42,6 +60,7 @@ class MambaMemory(nn.Module):
                 "(Mamba2Model). Refusing to substitute a placeholder under "
                 "the Mamba name (Phase-17 semantics rule)."
             )
+        _force_naive_mamba2_path()
         # Mamba-2 config constraint: hidden*expand == num_heads*head_dim.
         expand = 2
         intermediate = hidden_size * expand
