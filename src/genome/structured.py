@@ -114,3 +114,38 @@ class StructuredGenome:
         active = {k: v for k, v in d.items()
                   if v is not None and k != "quantization"}
         return " ".join("%s=%s" % (k, v) for k, v in sorted(active.items()))
+
+
+# ---------------------------------------------------------------------------
+# Task-aware effective phenotype (Phase-21 Task 1)
+#
+# input_context_budget only changes computation on long-document tasks
+# (QASPER). On GSM8K/PubMedQA it is behaviorally inert, so genomes differing
+# only in that field are the SAME effective architecture there and must hash
+# identically (no duplicate phenotypes across the dedup boundary).
+# ---------------------------------------------------------------------------
+
+LONG_CONTEXT_BENCHMARKS = {"qasper"}
+
+
+def effective_genome_for_task(genome: StructuredGenome,
+                              benchmark: str) -> StructuredGenome:
+    """Normalized genome as seen by a specific benchmark.
+
+    All conditional normalization from ``normalize()`` still applies; on
+    non-long-context tasks ``input_context_budget`` is additionally removed.
+    """
+    g = genome.normalize()
+    if benchmark not in LONG_CONTEXT_BENCHMARKS:
+        g = StructuredGenome(**{
+            **asdict(g),
+            "input_context_budget": None,
+        })
+    return g
+
+
+def task_phenotype_hash(genome: StructuredGenome, benchmark: str) -> str:
+    """Deterministic phenotype hash in the context of one benchmark."""
+    g = effective_genome_for_task(genome, benchmark)
+    payload = json.dumps(asdict(g), sort_keys=True)
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:16]

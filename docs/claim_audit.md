@@ -8,7 +8,7 @@ Holdout：GSM8K test[100:1319]、PubMedQA samples[100:500]（与搜索/校准均
 | C1 | 自动协同设计发现优于简单固定基线的配置 | **supported（限定措辞）** | GSM8K holdout：+33.8pp/+14.8pp，p≈0（`results/phase19_statistics.json`）。PubMedQA 1.5B 上固定 retrieval 基线 capability 更高（−3.5pp n.s.）——允许措辞："在某些任务上大幅改进固定基线，在其他任务上产生有竞争力的能力-成本权衡"，禁止"普遍能力优越" |
 | C2 | 不同任务偏好不同认知架构 | **partially supported（Phase-20 细分）** | C2a（搜索侧分布差异）强成立：三任务收敛到不同基因，PubMedQA 三 seed 一致选 none+direct，QASPER 预注册预测（retrieval 最优）命中（`results/phase20_selection_lock.json`）；C2b（自有任务 holdout 占优）仅 GSM8K 成立（+29~71pp, p≈0），PubMedQA/QASPER 上自有配置输给 GSM8K 配置（`results/phase20_statistics.json`） |
 | C3 | ENSS 样本效率优于随机搜索 | **unsupported（永久关闭）** | Phase-18 oracle 审计决定性证据；Phase-19 不重开 |
-| C4 | 情景记忆选择实质影响能力/成本 | **supported** | holdout 消融退化持续且显著：GSM8K +9.4/+11.2pp（p≈0）、PubMedQA 7B +5.5pp（p=0.017）；注意区分"有示例信息"与"特定记忆基底更优"——本文只主张前者 |
+| C4 | 情景记忆选择实质影响能力/成本 | **supported（仅同基因受控消融处主张）** | 受控证据：Phase-19 协议下 GSM8K +9.4/+11.2pp（p≈0）、PubMedQA 7B +5.5pp（p=0.017）；Phase-20 `A_gsm vs no_memory` 为同基因受控比较（1.5B 无差异、7B +12.6pp）。Phase-21 新增同基因 ±memory 消融（PubMedQA/QASPER，`results/phase21_ablation_lock.json`）。**注意：A_pubmed/A_qasper vs no_memory 的比较混杂了 reasoning/context 差异，不得用于记忆因果主张** |
 | C5 | Mamba 提升性能 | **unsupported（永久关闭，负结果保留）** | Phase-17 stop condition 触发；允许措辞见 phase18_plan Task 5 |
 | C6 | 权重继承改善适应效率 | **partially → 附录机制** | n=20 配对：post-loss 20/20 改善、capability 0/20 无差异（`phase18_inheritance_pairs.csv`） |
 | C7 | 上下文策略能力-成本权衡 | **supported** | holdout 真实 token 计数（`phase19_holdout_results.csv`） |

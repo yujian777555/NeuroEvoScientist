@@ -29,7 +29,8 @@ import tempfile
 import time
 from collections import Counter
 
-from .memory import build_memory_controller, format_exemplar
+from .memory import (_effective_to_dict,
+                     build_memory_controller, format_exemplar)
 from .metrics import compute_metrics
 from .prompts import reasoning_prompt
 
@@ -71,6 +72,7 @@ def qa_f1(prediction, gold):
 
 
 class QasperEvaluator:
+    BENCHMARK = "qasper"
     """Real QASPER evaluator; same interface as GSM8KEvaluator."""
 
     def __init__(self, backend=None, split="test", limit=None,
@@ -99,7 +101,7 @@ class QasperEvaluator:
     def _cache_key(self, genome, substrate_fingerprint=None):
         model = getattr(self.backend, "model_name", "unknown")
         payload = json.dumps({
-            "genome": genome.to_dict(), "benchmark": "qasper",
+            "genome": _effective_to_dict(genome, self.BENCHMARK), "benchmark": "qasper",
             "start": self.start, "limit": self.limit, "model": str(model),
             "pipeline": "phase20-v4",
             "disable_memory": self.disable_memory,
@@ -272,6 +274,6 @@ class QasperEvaluator:
                     "benchmark": "qasper",
                     "item_index": self.start + i,
                     "architecture": genome.describe(),
-                    "genome": genome.to_dict(),
+                    "genome": _effective_to_dict(genome, self.BENCHMARK),
                     "correct": score,
                 }) + "\n")

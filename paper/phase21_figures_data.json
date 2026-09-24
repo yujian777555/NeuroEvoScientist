@@ -1,0 +1,31 @@
+{
+  "figure_1_framework": {
+    "desc": "Structured genome (M,R,C + sub-genes) -> normalization/task-aware phenotype -> evolution (generation mechanism) -> leakage-safe evaluation -> Pareto objectives",
+    "source": "src/genome/structured.py, configs/phase20_structured_search_space.yaml"
+  },
+  "figure_2_task_gene_distributions": {
+    "desc": "Per-task converged gene distributions across 3 seeds (dev search)",
+    "data": {
+      "gsm8k": {"memory": "recency/none", "reasoning": "cot depth 2-3", "exemplars": "1"},
+      "pubmedqa": {"memory": "none (3/3 seeds)", "reasoning": "direct", "exemplars": "0"},
+      "qasper": {"memory": "retrieval hashed_bow", "reasoning": "direct", "exemplars": "8", "input_budget": 1024}
+    },
+    "source": "results/phase20_selection_lock.json"
+  },
+  "figure_3_holdout_transfer_matrix": {
+    "desc": "Own vs cross-task configurations on holdout (capability), 2 backbones",
+    "source": "results/phase20_holdout_results.csv + results/phase20_statistics.json"
+  },
+  "figure_4_qasper7b_diagnostic": {
+    "desc": "F1(extracted) vs F1(whole) per config at 1.5B/7B; marker compliance bars",
+    "source": "results/phase21_qasper_diag_15b.json, results/phase21_qasper_diag_7b.json"
+  },
+  "figure_5_memory_ablation_scaling": {
+    "desc": "Controlled memory ablation delta across backbones (1.5B vs 7B)",
+    "source": "results/phase20_holdout_results.csv (phase21_ablation rows)"
+  },
+  "figure_6_landscape_pareto": {
+    "desc": "48-point architecture landscape capability vs token cost per benchmark",
+    "source": "results/phase18_pareto_fronts.json"
+  }
+}

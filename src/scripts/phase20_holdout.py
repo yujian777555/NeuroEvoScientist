@@ -66,9 +66,11 @@ def main():
     parser.add_argument("--out-predictions", type=str, default=None)
     parser.add_argument("--configs", type=str, default=None,
                         help="comma-separated subset of locked config names")
+    parser.add_argument("--lock", type=str, default=None,
+                        help="override selection lock path")
     args = parser.parse_args()
 
-    lock = json.load(open(LOCK))
+    lock = json.load(open(args.lock or LOCK))
     configs = lock["configurations"]
     if args.configs:
         wanted = set(args.configs.split(","))

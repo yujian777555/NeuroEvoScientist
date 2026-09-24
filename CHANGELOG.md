@@ -1,5 +1,27 @@
 # Changelog
 
+## [Phase-21] final generalization audit and manuscript lock (in progress) - 2026-09-24
+
+### Added
+- `src/genome/structured.py` — 任务感知表型：`effective_genome_for_task` / `task_phenotype_hash`（input_context_budget 仅在长上下文任务生效）
+- `src/evaluator/memory.py::_effective_to_dict` — 缓存键任务感知化；评估器 BENCHMARK 标识
+- `src/evolution/controller.py` — 代内有效表型去重
+- `src/scripts/phase21_qasper_diagnostic.py` — QASPER-7B 失效诊断（raw output/标记合规/双 F1）
+- `results/phase21_ablation_lock.json` + 受控消融运行（同基因 ±memory）
+- `results/phase21_qasper_diag_{15b,7b}.json`
+- `paper/manuscript_v2.md`、`abstract_v2.md`、`limitations.md`、`phase21_tables.md`、`phase21_figures_data.json`
+- `docs/phase21_qasper7b_diagnostic.md`、`docs/phase21_final_audit.md`
+- `tests/test_phase21.py`（任务感知表型全套）
+
+### Results
+- QASPER-7B"崩溃"定性为**答案提取/格式失配**（marker 1.00、F1(extracted)=0、F1(whole)>0.1），非能力缺失
+- 受控记忆消融：PubMedQA +18.0pp（1.5B 显著）、QASPER +1.5pp（弱）
+- 机制案例补全至 14（含 QASPER 双骨干配对失效，raw output 齐全）
+
+### Fixed
+- Task 1 实现过程中的类结构错误（compat 方法被吞进函数体）已修复并有测试守护
+- 第 4 次 tar|ssh+nohup 操作符优先级事故（教训已写进 status.json）
+
 ## [Phase-20] structured task-conditioned cognitive co-design validation - 2026-09-23
 
 ### Added

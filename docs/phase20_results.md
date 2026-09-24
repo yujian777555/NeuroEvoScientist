@@ -52,8 +52,12 @@ QASPER 预注册预测成立：检索记忆首次成为最优（长上下文任�
    PubMedQA/QASPER 上 GSM8K 选出的 CoT 配置反而更强——小 dev 区间上的
    搜索偏好不等于 holdout 泛化优势。
 3. **记忆的作用随骨干放大**：GSM8K 7B 上 no_memory −12.6pp，1.5B 无差异。
+   （Phase-21 澄清：记忆因果主张仅限同基因 ±memory 比较，即 `A_gsm vs
+   no_memory` 与 Phase-21 受控消融；`A_pubmed/A_qasper vs no_memory` 的比较
+   混杂了 reasoning/context 差异，不作记忆因果证据。）
 4. **QASPER 在 7B 上整体崩溃**（A_qasper −13pp，多个配置趋零）——骨干依赖性
-   真实存在，如实记录。
+   真实存在，如实记录；具体失效模式见 Phase-21 诊断
+   （`docs/phase21_qasper7b_diagnostic.md`）。
 5. C3/C5 保持关闭（未重开）。
 
 ## 产物指针

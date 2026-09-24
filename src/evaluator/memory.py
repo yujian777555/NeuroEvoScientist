@@ -70,6 +70,22 @@ def tfidf_scores(query, docs):
     return scores
 
 
+def _effective_to_dict(genome, benchmark):
+    """Phase-21: benchmark-aware genome dict for cache keys.
+
+    StructuredGenome genomes are canonicalized per benchmark (inert genes
+    removed for that task); flat genomes pass through unchanged.
+    """
+    try:
+        from genome.structured import (StructuredGenome,
+                                       effective_genome_for_task)
+        if isinstance(genome, StructuredGenome):
+            return effective_genome_for_task(genome, benchmark).to_dict()
+    except ImportError:
+        pass
+    return genome.to_dict()
+
+
 class BaseMemory:
     """Experience-bank memory controller interface."""
 

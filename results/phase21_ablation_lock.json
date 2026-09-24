@@ -1,0 +1,34 @@
+{
+  "protocol": "Phase-21 Task 2 pre-specified controlled memory ablation (same frozen genome, memory on vs off; NOT architecture reselection)",
+  "locked_at": "2026-09-24",
+  "configurations": [
+    {
+      "name": "A_pubmed",
+      "role": "reference (memory on)",
+      "genome": {"adaptation_enabled": false, "adaptation_steps": null, "context_mode": "full", "exemplar_count": 0, "exemplar_word_budget": null, "hybrid_fraction": null, "input_context_budget": 1024, "mamba_state_size": null, "memory_k": 0, "memory_type": "none", "quantization": "fp16", "reasoning": "direct", "reasoning_depth": null, "retrieval_metric": null, "verifier_passes": null}
+    },
+    {
+      "name": "A_pubmed_memon",
+      "role": "controlled ablation: same reasoning/context as A_pubmed but memory enabled (recency k=0? no - k=3 to activate bank)",
+      "genome": {"adaptation_enabled": false, "adaptation_steps": null, "context_mode": "full", "exemplar_count": 3, "exemplar_word_budget": null, "hybrid_fraction": null, "input_context_budget": 1024, "mamba_state_size": null, "memory_k": 3, "memory_type": "recency", "quantization": "fp16", "reasoning": "direct", "reasoning_depth": null, "retrieval_metric": null, "verifier_passes": null},
+      "_note": "A_pubmed has exemplar_count=0 (canonical none); the controlled pair is recency-memory-on vs memory-disabled on the SAME recency genome"
+    },
+    {
+      "name": "A_pubmed_memoff",
+      "role": "controlled ablation: A_pubmed_memon with memory disabled",
+      "genome": {"adaptation_enabled": false, "adaptation_steps": null, "context_mode": "full", "exemplar_count": 3, "exemplar_word_budget": null, "hybrid_fraction": null, "input_context_budget": 1024, "mamba_state_size": null, "memory_k": 3, "memory_type": "recency", "quantization": "fp16", "reasoning": "direct", "reasoning_depth": null, "retrieval_metric": null, "verifier_passes": null},
+      "disable_memory": true
+    },
+    {
+      "name": "A_qasper",
+      "role": "reference (memory on)",
+      "genome": {"adaptation_enabled": false, "adaptation_steps": null, "context_mode": "truncated", "exemplar_count": 8, "exemplar_word_budget": 256, "hybrid_fraction": null, "input_context_budget": 1024, "mamba_state_size": null, "memory_k": 4, "memory_type": "retrieval", "quantization": "fp16", "reasoning": "direct", "reasoning_depth": null, "retrieval_metric": "hashed_bow", "verifier_passes": null}
+    },
+    {
+      "name": "A_qasper_memoff",
+      "role": "controlled ablation: A_qasper with memory disabled",
+      "genome": {"adaptation_enabled": false, "adaptation_steps": null, "context_mode": "truncated", "exemplar_count": 8, "exemplar_word_budget": 256, "hybrid_fraction": null, "input_context_budget": 1024, "mamba_state_size": null, "memory_k": 4, "memory_type": "retrieval", "quantization": "fp16", "reasoning": "direct", "reasoning_depth": null, "retrieval_metric": "hashed_bow", "verifier_passes": null},
+      "disable_memory": true
+    }
+  ]
+}

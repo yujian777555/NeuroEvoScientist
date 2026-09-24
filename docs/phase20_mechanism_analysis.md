@@ -1,6 +1,6 @@
-# Phase-20 Mechanism Analysis
+# Phase-20/21 Mechanism Analysis
 
-10 case studies (item IDs + recalled exemplars + outputs).
+14 case studies (item IDs + recalled exemplars + raw outputs).
 
 ## gsm8k / A_gsm / item 103 (score 1.00)
 - Q: A fog bank rolls in from the ocean to cover a city. It takes 10 minutes to cover every 3 miles of the city. If the city is 42 miles across from the oceanfront to the opposite inland edge, how many min
@@ -97,3 +97,28 @@ The study suggests that complete replacement of all dissected tissue is feasible
   - exemplar: What experiments are conducted?
   - exemplar: where did they obtain the annotated clinical notes from?
   - exemplar: Do they employ their indexing-based method to create a sample of a QA Wikipedia dataset?
+
+## qasper / A_qasper / item 58 (score 0.55) [qasper-1.5B success]
+- output: Two datasets are applied to: "Conversations Gone Awry" dataset and in-the-wild moderation of the subreddit ChangeMyView.
+- extracted: Two datasets are applied to: "Conversations Gone Awry" dataset and in-the-wild moderation of the subreddit ChangeMyView.
+
+## qasper / A_qasper / item 50 (score 0.00) [qasper-1.5B failure]
+- output: They test their method on hashtag prediction for social media.
+- extracted: They test their method on hashtag prediction for social media.
+
+## qasper / A_qasper / item 50 (score 0.00) [qasper-7B extraction-mismatch (paired with 1.5B)]
+- output: The paper does not explicitly mention testing their method on other tasks beyond hashtag prediction. Therefore, based on the provided information:
+
+#### <answer>
+- extracted: <answer>
+
+## qasper / A_gsm / item 56 (score 0.55) [qasper-7B A_gsm functional contrast]
+- output: Step 1: Identify the size of the Twitter dataset.
+The paper mentions downloading 1,873 Twitter conversation threads.
+
+Step 2: Determine the total number of tweets in the dataset.
+It states that the dataset consists of roughly 14k tweets.
+
+Step 3: Conclude the size of the Twitter dataset.
+The Twitter
+- extracted: <answer> The Twitter dataset consists of 1,873 conversation threads and approximately 14,000 tweets.

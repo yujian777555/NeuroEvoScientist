@@ -200,6 +200,20 @@ class EvolutionController:
             return a if a.fitness >= b.fitness else b
 
         offspring = []
+        seen_hashes = set()
+        try:
+            from genome.structured import task_phenotype_hash
+            bench_name = getattr(self.evaluator, "BENCHMARK", "")
+            if bench_name:
+                from genome.structured import StructuredGenome
+                seen_hashes = {
+                    task_phenotype_hash(g, bench_name)
+                    for g in self.population
+                    if isinstance(g, StructuredGenome)
+                }
+        except ImportError:
+            seen_hashes = set()
+
         while len(offspring) < self.population_size - self.elite_size:
             parent_a = mate()
             parent_b = mate()
@@ -207,6 +221,19 @@ class EvolutionController:
                                       self.rng)
             if self.rng.random() < self.mutation_rate:
                 child = self.mutate_fn(child, self.search_space, self.rng)
+            # Phase-21: dedup identical effective phenotypes within a
+            # generation (task-aware), so population slots aren't wasted.
+            if seen_hashes:
+                try:
+                    from genome.structured import (StructuredGenome,
+                                                   task_phenotype_hash)
+                    if isinstance(child, StructuredGenome):
+                        h = task_phenotype_hash(child, bench_name)
+                        if h in seen_hashes:
+                            continue
+                        seen_hashes.add(h)
+                except ImportError:
+                    pass
             offspring.append((child, parent_a.genome))
 
         evaluated_offspring = [

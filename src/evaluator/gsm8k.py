@@ -40,7 +40,8 @@ import tempfile
 import time
 import urllib.request
 
-from .memory import build_memory_controller, format_exemplar
+from .memory import (_effective_to_dict,
+                     build_memory_controller, format_exemplar)
 from .metrics import compute_metrics
 from .prompts import reasoning_prompt
 
@@ -88,6 +89,7 @@ PROMPT_TEMPLATES = {
 
 
 class GSM8KEvaluator:
+    BENCHMARK = "gsm8k"
     """Real GSM8K evaluator with a pluggable inference backend.
 
     Args:
@@ -129,7 +131,7 @@ class GSM8KEvaluator:
     def _cache_key(self, genome, substrate_fingerprint=None):
         model = getattr(self.backend, "model_name", "unknown")
         payload = json.dumps({
-            "genome": genome.to_dict(), "split": self.split,
+            "genome": _effective_to_dict(genome, self.BENCHMARK), "split": self.split,
             "start": self.start, "limit": self.limit, "model": str(model),
             "pipeline": "phase20-v4",
             "disable_memory": self.disable_memory,
@@ -326,7 +328,7 @@ class GSM8KEvaluator:
                     "item_index": self.start + i,
                     "architecture": genome.describe(),
                     "model": getattr(self.backend, "model_name", "unknown"),
-                    "genome": genome.to_dict(),
+                    "genome": _effective_to_dict(genome, self.BENCHMARK),
                     "memory_enabled": not self.disable_memory,
                     "correct": correct,
                     "output": (outputs[i][:600] if outputs else None),
