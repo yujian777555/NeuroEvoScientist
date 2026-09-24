@@ -6,16 +6,16 @@ strategy, episodic memory/exemplar policy, and context allocation — above a
 frozen backbone — materially changes capability–cost behavior, and whether
 task-conditioned search generalizes.
 
-We present NeuroEvoScientist, a controlled study over a structured
-48-phenotype family of agent configurations, with leakage-safe calibration
+We present NeuroEvoScientist, a controlled study over a structured,
+hierarchical family of agent configurations, with leakage-safe calibration
 splits, raw multi-objective logging, task-aware phenotype canonicalization,
 pre-registered holdout evaluation, and paired item-level statistics across
 two frozen backbones (Qwen2.5-1.5B / 7B).
 
 Four findings stand out. First, cognitive architecture choices change
 capability–cost behavior materially: on untouched GSM8K holdout, a searched
-configuration outperforms the strongest fixed baseline by +29 to +71
-percentage points (McNemar p<0.001), while a same-genome memory ablation
+configuration outperforms the strongest fixed baseline by +29.0 percentage
+points at 1.5B and +16.7 points at 7B (McNemar p<0.001), while a same-genome memory ablation
 shows memory contributions that grow with backbone scale (0pp at 1.5B,
 −12.6pp at 7B removed). Second, search-side architecture preferences differ
 clearly and stably by task — a long-context scientific-QA task shifts the
