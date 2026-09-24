@@ -1,4 +1,4 @@
-# Claim Audit（Phase-19 holdout 后终版，2026-09-17）
+# Claim Audit（Phase-21 最终锁定版，2026-09-24）
 
 证据基线：仅 Phase-17/18/19 修正 schema 产物。Phase-14/15/16 仅作开发历史。
 Holdout：GSM8K test[100:1319]、PubMedQA samples[100:500]（与搜索/校准均不相交）。
@@ -20,13 +20,15 @@ C2a（任务条件化选择）强成立；C2b（自有任务占优）仅 GSM8K �
 论文框架 = **任务条件化认知协同设计 + 多目标能力-成本刻画 + 负结果审计**
 （narrower paper 路线）。措辞红线：不得把 C2b 写成普遍结论。
 
-## Phase-20 新增发现（docs/phase20_claim_update.md）
+## Phase-20/21 新增发现
 
-- N1：记忆贡献随骨干规模放大（GSM8K no_memory 差距 1.5B 0pp → 7B −12.6pp）
-- N2：QASPER 检索策略在 7B 上不迁移（−13pp，骨干依赖真实存在）
-- N3：dev 区间搜索偏好 ≠ holdout 泛化优势（小样本搜索过拟合警告）
+- N1：受控记忆效应具有任务与骨干依赖性；GSM8K 在 7B 上明显、PubMedQA 受控消融在 1.5B 上明显，QASPER 较弱。
+- N2：QASPER 7B 的表面“崩溃”经 Phase-21 诊断主要来自答案格式/提取失配；不得写成主干能力下降或纯粹的 backbone dependence。
+- N3：dev 区间搜索偏好 ≠ holdout 泛化优势；这是本文最重要的泛化审计发现之一。
+- N4：任务感知表型去重后的 dev 敏感度重跑保持 C2a：PubMedQA 3/3 仍为 none+direct，GSM8K 仍为 CoT 主导的轻记忆架构族。
 
-## 可转移性补充证据
+## 可转移性结论
 
-任务偏好方向在 Qwen2.5-1.5B 与 7B 间一致（无排名反转），支持
-"backbone-independent 的方向性任务偏好"这一辅助观察。
+跨骨干结果应按“task/backbone/prompt/extraction interaction”描述，不再使用
+“backbone-independent preference”这类过强措辞。Phase-21 的最终表述以
+`docs/phase21_final_audit.md` 为准。
