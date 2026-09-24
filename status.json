@@ -1,7 +1,7 @@
 {
   "project": "NeuroEvoScientist",
-  "phase": "Phase-21 DONE (final audit + manuscript lock; per plan Stop Rule, no Phase-22)",
+  "phase": "SUBMISSION READY (experiments frozen; manuscript finalization only)",
   "completed": "All 6 tasks complete. Task1: task-aware phenotype canonicalization implemented + 79 tests; sensitivity dev-rerun done - C2a ROBUST (PubMedQA bit-identical 3/3 seeds none+direct; GSM8K same family CoT-dominant light-memory). Task2: memory-ablation interpretation fixed; controlled same-genome ablation added (PubMedQA +18.0pp 1.5B, QASPER +1.5pp). Task3: QASPER-7B collapse diagnosed = answer-extraction/formatting mismatch (marker 1.00, F1(extracted)=0 vs F1(whole)>0.1), NOT capability failure. Task4: 14 mechanism cases incl. QASPER paired-backbone failures. Task5: final claim lock (docs/phase21_final_audit.md). Task6: manuscript_v2 + abstract_v2 + limitations + phase21_tables + phase21_figures_data. Environmental incident: shared-conda kernels lazy_load failure worked around by forcing naive Mamba2 path (d78f3d1).",
-  "next": "Per Phase-21 Stop Rule: stop experimental development. Next steps are non-experimental: venue targeting, manuscript polishing, figure/table production, submission checklist. Await Planner/user direction.",
-  "issues": "None open. All experiments concluded per plan; claims locked in docs/claim_audit.md + docs/phase21_final_audit.md."
+  "next": "No Phase-22 experimental development. Next: venue targeting, manuscript language polish, final figure/table rendering, bibliography completion, reproducibility appendix, and submission checklist. Use paper/manuscript_v2.md + paper/abstract_v2.md + docs/phase21_final_audit.md as the authoritative evidence set.",
+  "issues": "No open experimental issues. Submission-side caution: preserve locked claims (no ENSS>random, no Mamba benefit, no universal own-task superiority); describe QASPER-7B as a backbone–prompt/extraction interaction rather than capability collapse."
 }
