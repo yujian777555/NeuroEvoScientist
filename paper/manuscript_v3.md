@@ -65,8 +65,8 @@ budgets below full coverage, and we hold out benchmark items that the search
 never sees.
 
 Our findings are deliberately two-sided. On the positive side, architecture
-choices matter enormously: searched configurations beat the strongest fixed
-baseline by up to 71 percentage points on held-out GSM8K, task-specific gene
+choices matter enormously: the searched GSM8K configuration beats the strongest fixed
+baseline by +29.0 percentage points at 1.5B and +16.7 points at 7B, while task-specific gene
 distributions are stable across seeds, and a pre-registered prediction — that
 a long-context task shifts the optimum toward retrieval memory — is
 confirmed. On the negative side, dev-selected task-specific architectures do
@@ -97,7 +97,7 @@ our memory policies manage a calibration-only experience bank and we
 quantify when episodic memory helps, hurts, or is neutral.
 
 Our search draws on evolutionary computation and NAS: regularized evolution
-is a strong NAS baseline, and multi-objective selection follows NSGA-II/III;
+is a strong NAS baseline, and multi-objective selection follows an NSGA-II-style non-dominated-sorting and crowding-distance procedure;
 Bayesian optimization is the standard sample-efficiency reference. Unlike
 NAS over backbone weights, our search operates above a frozen LLM, and we
 audit the search procedure against equal-budget random search on a fully
