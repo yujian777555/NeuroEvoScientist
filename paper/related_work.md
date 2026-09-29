@@ -42,8 +42,7 @@ across tasks and backbones.
 ## Evolutionary computation and NAS
 
 Neural architecture search is surveyed by Elsken et al. (2019); regularized
-evolution is a strong NAS baseline (Real et al., 2019). Multi-objective
-selection follows NSGA-II/III (Deb et al., 2002; Deb & Jain, 2014).
+evolution is a strong NAS baseline (Real et al., 2019). Multi-objective selection follows an NSGA-II-style non-dominated-sorting and crowding-distance procedure (Deb et al., 2002).
 Bayesian optimization is the standard sample-efficiency reference (Shahriari
 et al., 2016). In contrast to NAS over backbone weights, our search operates
 above a frozen LLM, and our audit compares evolutionary search to
