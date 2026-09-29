@@ -36,7 +36,7 @@ SAFE_PREFIXES = ["docs/", "plans/", "issues/"]  # development history
 SAFE_FILES = ["CHANGELOG.md", "README.md", "status.json",
               "paper/submission_checklist.md",  # lists the red lines itself
               "paper/title_candidates.md",      # contains a red-line self-check
-              "paper/references.bib",           # citations, not prose claims
+              "references.bib",                 # citations, not prose claims
               ]
 
 

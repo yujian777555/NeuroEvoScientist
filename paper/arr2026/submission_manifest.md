@@ -3,9 +3,12 @@
 ## Package
 
 - **Main PDF**: `paper/arr2026/main.pdf`
-  - SHA-256: `f3ce5e2e35fa102e9d8803b839d55c392ff53666fc6266634067a92cab011de3`
+  - SHA-256: `3fb5fe1c0ecbfc28fac26ebd72212cdd57be458af93b81b885e66ba672271f00`
   - Pages: 7（含 references；ARR 长文正文 8 页上限内，references 不计）
-  - 构建源 commit：`9f91fbd`（tectonic 编译，干净环境 `paper/arr2026/`）
+  - 构建源 commit：`d1bfb55`（tectonic 编译，干净环境 `paper/arr2026/`
+    `main.tex`；含 e3df66c 的 no-memory 表注澄清）
+  - 变更记录：`9f91fbd` → `d1bfb55`（caption 澄清后按要求重编译，
+    7 页目检与扫描均复核通过）
 - **Anonymous supplementary**: `paper/arr2026/anonymous_supplementary.zip`
   - 116 文件；身份泄漏扫描（编程验证）：零
 
