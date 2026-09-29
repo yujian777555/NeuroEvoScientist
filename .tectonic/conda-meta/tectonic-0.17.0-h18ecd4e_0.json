@@ -1,0 +1,75 @@
+{
+  "build": "h18ecd4e_0",
+  "build_number": 0,
+  "channel": "https://conda.anaconda.org/conda-forge/win-64",
+  "constrains": [],
+  "depends": [
+    "fontconfig",
+    "freetype",
+    "graphite2",
+    "harfbuzz",
+    "icu",
+    "libpng",
+    "openssl",
+    "zlib",
+    "vc >=14.3,<15",
+    "vc14_runtime >=14.44.35208",
+    "ucrt >=10.0.20348.0",
+    "libexpat >=2.8.1,<3.0a0",
+    "libzlib >=1.3.2,<2.0a0",
+    "libpng >=1.6.58,<1.7.0a0",
+    "icu >=78.3,<79.0a0",
+    "libglib >=2.88.2,<3.0a0",
+    "libharfbuzz >=14.2.1",
+    "openssl >=3.5.7,<4.0a0",
+    "fontconfig >=2.18.2,<3.0a0",
+    "fonts-conda-ecosystem",
+    "graphite2 >=1.3.15,<2.0a0",
+    "libfreetype >=2.14.3",
+    "libfreetype6 >=2.14.3"
+  ],
+  "extracted_package_dir": "D:\\anaconda3\\pkgs\\tectonic-0.17.0-h18ecd4e_0",
+  "features": "",
+  "files": [
+    "Library/bin/tectonic.exe",
+    "etc/conda/test-files/tectonic/0/example.tex",
+    ".nonadmin"
+  ],
+  "fn": "tectonic-0.17.0-h18ecd4e_0.conda",
+  "license": "MIT",
+  "license_family": "MIT",
+  "link": {
+    "source": "D:\\anaconda3\\pkgs\\tectonic-0.17.0-h18ecd4e_0",
+    "type": 1
+  },
+  "md5": "0c2f2e330bac43ffec88ef92def31b57",
+  "name": "tectonic",
+  "package_tarball_full_path": "D:\\anaconda3\\pkgs\\tectonic-0.17.0-h18ecd4e_0.conda",
+  "paths_data": {
+    "paths": [
+      {
+        "_path": "Library/bin/tectonic.exe",
+        "path_type": "hardlink",
+        "sha256": "0dafce379e07c7186ed754a2b053cedf913177a130d3ed7a5f489e7f734ebe31",
+        "sha256_in_prefix": "0dafce379e07c7186ed754a2b053cedf913177a130d3ed7a5f489e7f734ebe31",
+        "size_in_bytes": 17346048
+      },
+      {
+        "_path": "etc/conda/test-files/tectonic/0/example.tex",
+        "path_type": "hardlink",
+        "sha256": "c9db8f88a2aea9458fe9f1ae9ae5ca5d97e91e12aff374a6df569b55f20d92ab",
+        "sha256_in_prefix": "c9db8f88a2aea9458fe9f1ae9ae5ca5d97e91e12aff374a6df569b55f20d92ab",
+        "size_in_bytes": 93
+      }
+    ],
+    "paths_version": 1
+  },
+  "requested_spec": "tectonic",
+  "sha256": "c50f33e4574970afd267451c7d03cc04340c274427a522744e1583b4ef2c06bc",
+  "size": 5665373,
+  "subdir": "win-64",
+  "timestamp": 1785125218954,
+  "track_features": "",
+  "url": "https://conda.anaconda.org/conda-forge/win-64/tectonic-0.17.0-h18ecd4e_0.conda",
+  "version": "0.17.0"
+}

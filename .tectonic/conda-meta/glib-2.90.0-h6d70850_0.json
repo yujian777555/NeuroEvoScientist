@@ -1,0 +1,128 @@
+{
+  "build": "h6d70850_0",
+  "build_number": 0,
+  "channel": "https://conda.anaconda.org/conda-forge/win-64",
+  "constrains": [],
+  "depends": [
+    "python *",
+    "packaging",
+    "libglib ==2.90.0 ha564072_0",
+    "glib-tools ==2.90.0 hafa6b35_0",
+    "libintl-devel",
+    "vc >=14.3,<15",
+    "vc14_runtime >=14.44.35208",
+    "ucrt >=10.0.20348.0",
+    "libintl >=0.22.5,<1.0a0"
+  ],
+  "extracted_package_dir": "D:\\anaconda3\\pkgs\\glib-2.90.0-h6d70850_0",
+  "features": "",
+  "files": [
+    "Library/bin/gdbus-codegen",
+    "Library/bin/glib-compile-resources.exe",
+    "Library/bin/glib-genmarshal",
+    "Library/bin/glib-gettextize",
+    "Library/bin/glib-mkenums",
+    "Library/bin/gobject-query.exe",
+    "Library/bin/gtester-report",
+    "Library/lib/glib-2.0/include/glibconfig.h",
+    "etc/conda/test-files/glib/0/test-win.bat",
+    "etc/conda/test-files/glib/0/test.c",
+    ".nonadmin"
+  ],
+  "fn": "glib-2.90.0-h6d70850_0.conda",
+  "license": "LGPL-2.1-or-later",
+  "link": {
+    "source": "D:\\anaconda3\\pkgs\\glib-2.90.0-h6d70850_0",
+    "type": 1
+  },
+  "md5": "d029a1240cbb9ab85bcd881d68e69a47",
+  "name": "glib",
+  "package_tarball_full_path": "D:\\anaconda3\\pkgs\\glib-2.90.0-h6d70850_0.conda",
+  "paths_data": {
+    "paths": [
+      {
+        "_path": "Library/bin/gdbus-codegen",
+        "file_mode": "text",
+        "path_type": "hardlink",
+        "prefix_placeholder": "D:/bld/bld/rattler-build_glib-split_1789478046/h_env",
+        "sha256": "1bf4e383c501cdfddb159b68dd0a993f7a9e1d0449de993980f663238949afde",
+        "sha256_in_prefix": "dda19ef2842f5b27855484759985d8a148140be7cbe3700552fb9b18f6f0140b",
+        "size_in_bytes": 2145
+      },
+      {
+        "_path": "Library/bin/glib-compile-resources.exe",
+        "path_type": "hardlink",
+        "sha256": "1c4b97abae5d22e96b48e7c799928c4bef2e9e20e25bd0dde432abc6d7346df4",
+        "sha256_in_prefix": "1c4b97abae5d22e96b48e7c799928c4bef2e9e20e25bd0dde432abc6d7346df4",
+        "size_in_bytes": 41984
+      },
+      {
+        "_path": "Library/bin/glib-genmarshal",
+        "path_type": "hardlink",
+        "sha256": "882b5cc27074ceb3b492871cd22e9bebfbd4e5f9fb0dcfde0f80042dd1c78701",
+        "sha256_in_prefix": "882b5cc27074ceb3b492871cd22e9bebfbd4e5f9fb0dcfde0f80042dd1c78701",
+        "size_in_bytes": 41107
+      },
+      {
+        "_path": "Library/bin/glib-gettextize",
+        "file_mode": "text",
+        "path_type": "hardlink",
+        "prefix_placeholder": "D:/bld/bld/rattler-build_glib-split_1789478046/h_env",
+        "sha256": "af39d18918166d2a4c1c3bcca2aaccbf46b8301fdf45c2e90aeac4aa0630d25e",
+        "sha256_in_prefix": "f53078c43372a389e04cdb913d2bcd1669ccc18c960fb51fe832dada471fda94",
+        "size_in_bytes": 5601
+      },
+      {
+        "_path": "Library/bin/glib-mkenums",
+        "path_type": "hardlink",
+        "sha256": "6b144d7044beeddcde563f4588cd7e3aed74f4dbc9198af1223b2993de9a9ea5",
+        "sha256_in_prefix": "6b144d7044beeddcde563f4588cd7e3aed74f4dbc9198af1223b2993de9a9ea5",
+        "size_in_bytes": 32278
+      },
+      {
+        "_path": "Library/bin/gobject-query.exe",
+        "path_type": "hardlink",
+        "sha256": "e2abec5f428f98185092f3a50b8c539e21dd4a1e05cf05245b35826f2f1c857c",
+        "sha256_in_prefix": "e2abec5f428f98185092f3a50b8c539e21dd4a1e05cf05245b35826f2f1c857c",
+        "size_in_bytes": 14848
+      },
+      {
+        "_path": "Library/bin/gtester-report",
+        "path_type": "hardlink",
+        "sha256": "cb9915a7a0f58aacccd103f033ccedd125d62ad5df2aa191eb6b7644e51edc87",
+        "sha256_in_prefix": "cb9915a7a0f58aacccd103f033ccedd125d62ad5df2aa191eb6b7644e51edc87",
+        "size_in_bytes": 19094
+      },
+      {
+        "_path": "Library/lib/glib-2.0/include/glibconfig.h",
+        "path_type": "hardlink",
+        "sha256": "2e4e9729ece9ab31c4160b1d3583cfdb4a8b60a3013396144dc90f1a1cb05442",
+        "sha256_in_prefix": "2e4e9729ece9ab31c4160b1d3583cfdb4a8b60a3013396144dc90f1a1cb05442",
+        "size_in_bytes": 6069
+      },
+      {
+        "_path": "etc/conda/test-files/glib/0/test-win.bat",
+        "path_type": "hardlink",
+        "sha256": "0cdc28ffda5170ffa28959f13f066519c83fb44c2617549ea4bf0add73852753",
+        "sha256_in_prefix": "0cdc28ffda5170ffa28959f13f066519c83fb44c2617549ea4bf0add73852753",
+        "size_in_bytes": 1300
+      },
+      {
+        "_path": "etc/conda/test-files/glib/0/test.c",
+        "path_type": "hardlink",
+        "sha256": "0a70e6721a5bd490134537b97c56db1aed8a84e65169987f34b7a289c7751cbd",
+        "sha256_in_prefix": "0a70e6721a5bd490134537b97c56db1aed8a84e65169987f34b7a289c7751cbd",
+        "size_in_bytes": 216
+      }
+    ],
+    "paths_version": 1
+  },
+  "requested_spec": "None",
+  "sha256": "03069b2545dd9da17fc5fd9a60e1c1671fae63190118e51502b955f5244bb00a",
+  "size": 76493,
+  "subdir": "win-64",
+  "timestamp": 1789478046525,
+  "track_features": "",
+  "url": "https://conda.anaconda.org/conda-forge/win-64/glib-2.90.0-h6d70850_0.conda",
+  "version": "2.90.0"
+}

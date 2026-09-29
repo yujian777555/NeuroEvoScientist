@@ -1,0 +1,61 @@
+{
+  "build": "h5728263_4",
+  "build_number": 4,
+  "channel": "https://conda.anaconda.org/conda-forge/win-64",
+  "constrains": [],
+  "depends": [
+    "libiconv >=1.18,<2.0a0",
+    "libintl 0.22.5 h5728263_4"
+  ],
+  "extracted_package_dir": "D:\\anaconda3\\pkgs\\libintl-devel-0.22.5-h5728263_4",
+  "features": "",
+  "files": [
+    "Library/include/libintl.h",
+    "Library/lib/intl.dll.lib",
+    "Library/lib/intl.lib",
+    ".nonadmin"
+  ],
+  "fn": "libintl-devel-0.22.5-h5728263_4.conda",
+  "license": "LGPL-2.1-or-later",
+  "link": {
+    "source": "D:\\anaconda3\\pkgs\\libintl-devel-0.22.5-h5728263_4",
+    "type": 1
+  },
+  "md5": "221ab9cd4a37b69000ada916ce209355",
+  "name": "libintl-devel",
+  "package_tarball_full_path": "D:\\anaconda3\\pkgs\\libintl-devel-0.22.5-h5728263_4.conda",
+  "paths_data": {
+    "paths": [
+      {
+        "_path": "Library/include/libintl.h",
+        "path_type": "hardlink",
+        "sha256": "49456bf1ecad9cd4c8cdde3ec8f8429a4285b430a4b4d6d9c64cbe155ee4187e",
+        "sha256_in_prefix": "49456bf1ecad9cd4c8cdde3ec8f8429a4285b430a4b4d6d9c64cbe155ee4187e",
+        "size_in_bytes": 24588
+      },
+      {
+        "_path": "Library/lib/intl.dll.lib",
+        "path_type": "hardlink",
+        "sha256": "9d64799d4aacaaa32d575418600d4486fc8dbba9d556993c4d33f32686d53c97",
+        "sha256_in_prefix": "9d64799d4aacaaa32d575418600d4486fc8dbba9d556993c4d33f32686d53c97",
+        "size_in_bytes": 9444
+      },
+      {
+        "_path": "Library/lib/intl.lib",
+        "path_type": "hardlink",
+        "sha256": "9d64799d4aacaaa32d575418600d4486fc8dbba9d556993c4d33f32686d53c97",
+        "sha256_in_prefix": "9d64799d4aacaaa32d575418600d4486fc8dbba9d556993c4d33f32686d53c97",
+        "size_in_bytes": 9444
+      }
+    ],
+    "paths_version": 1
+  },
+  "requested_spec": "None",
+  "sha256": "b8d12a5661331ff91da2faff3d62bec2703317b5c4630685a67d657d1570931b",
+  "size": 42414,
+  "subdir": "win-64",
+  "timestamp": 1787841194162,
+  "track_features": "",
+  "url": "https://conda.anaconda.org/conda-forge/win-64/libintl-devel-0.22.5-h5728263_4.conda",
+  "version": "0.22.5"
+}

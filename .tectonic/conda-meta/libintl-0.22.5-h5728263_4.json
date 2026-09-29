@@ -1,0 +1,44 @@
+{
+  "build": "h5728263_4",
+  "build_number": 4,
+  "channel": "https://conda.anaconda.org/conda-forge/win-64",
+  "constrains": [],
+  "depends": [
+    "libiconv >=1.18,<2.0a0"
+  ],
+  "extracted_package_dir": "D:\\anaconda3\\pkgs\\libintl-0.22.5-h5728263_4",
+  "features": "",
+  "files": [
+    "Library/bin/intl-8.dll",
+    ".nonadmin"
+  ],
+  "fn": "libintl-0.22.5-h5728263_4.conda",
+  "license": "LGPL-2.1-or-later",
+  "link": {
+    "source": "D:\\anaconda3\\pkgs\\libintl-0.22.5-h5728263_4",
+    "type": 1
+  },
+  "md5": "36d6e0045173974521fabd42bd5033d6",
+  "name": "libintl",
+  "package_tarball_full_path": "D:\\anaconda3\\pkgs\\libintl-0.22.5-h5728263_4.conda",
+  "paths_data": {
+    "paths": [
+      {
+        "_path": "Library/bin/intl-8.dll",
+        "path_type": "hardlink",
+        "sha256": "19b198c14e5d54f3dd7b966f09458cc31566d9f2406c64ffc13b4386ce92ee6e",
+        "sha256_in_prefix": "19b198c14e5d54f3dd7b966f09458cc31566d9f2406c64ffc13b4386ce92ee6e",
+        "size_in_bytes": 224256
+      }
+    ],
+    "paths_version": 1
+  },
+  "requested_spec": "None",
+  "sha256": "85b50be2209f3b8a873830ec9894477d260f4c7ba9540e65959f5812bf7219f8",
+  "size": 96669,
+  "subdir": "win-64",
+  "timestamp": 1787841116808,
+  "track_features": "",
+  "url": "https://conda.anaconda.org/conda-forge/win-64/libintl-0.22.5-h5728263_4.conda",
+  "version": "0.22.5"
+}

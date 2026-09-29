@@ -1,0 +1,36 @@
+{
+  "build": "h57928b3_0",
+  "build_number": 0,
+  "channel": "https://conda.anaconda.org/conda-forge/win-64",
+  "constrains": [],
+  "depends": [
+    "libharfbuzz-devel 14.5.0 h03b5201_0"
+  ],
+  "extracted_package_dir": "D:\\anaconda3\\pkgs\\harfbuzz-14.5.0-h57928b3_0",
+  "features": "",
+  "files": [
+    ".nonadmin"
+  ],
+  "fn": "harfbuzz-14.5.0-h57928b3_0.conda",
+  "license": "MIT",
+  "license_family": "MIT",
+  "link": {
+    "source": "D:\\anaconda3\\pkgs\\harfbuzz-14.5.0-h57928b3_0",
+    "type": 1
+  },
+  "md5": "51ea6643231286e398b764290e056abe",
+  "name": "harfbuzz",
+  "package_tarball_full_path": "D:\\anaconda3\\pkgs\\harfbuzz-14.5.0-h57928b3_0.conda",
+  "paths_data": {
+    "paths": [],
+    "paths_version": 1
+  },
+  "requested_spec": "None",
+  "sha256": "e3d137e0e40235ffd3b899be7e53a08b8b1bc9dce6e4515904643e153051aed4",
+  "size": 11479,
+  "subdir": "win-64",
+  "timestamp": 1790061956484,
+  "track_features": "",
+  "url": "https://conda.anaconda.org/conda-forge/win-64/harfbuzz-14.5.0-h57928b3_0.conda",
+  "version": "14.5.0"
+}
