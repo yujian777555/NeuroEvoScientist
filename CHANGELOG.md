@@ -1,5 +1,19 @@
 # Changelog
 
+## [Submission] figures + bibliography + reproducibility + checklist - 2026-09-29
+
+### Added
+- `src/scripts/render_figures.py` + `paper/figures/` 六张终版图
+  （基因分布、转移矩阵 ×2 骨干、QASPER 诊断、受控记忆消融、landscape Pareto）
+- `paper/references.bib` — 13 条真实可查证文献（无捏造）
+- `paper/reproducibility_appendix.md` — commit 锚点、环境、协议参数、复现路径、
+  缓存/确定性、结果-证据映射
+- `paper/submission_checklist.md` — venue 建议（ARR 优先、TMLR 备选）与合规红线清单
+
+### Notes
+- Planner 的 4 个 submission 提交（摘要数字、QASPER 措辞、claim 锁定、冻结状态）已核对一致
+- 实验保持冻结；剩余仅语言润色与 LaTeX 排版（非实验）
+
 ## [Phase-21] final generalization audit and manuscript lock (in progress) - 2026-09-24
 
 ### Added
