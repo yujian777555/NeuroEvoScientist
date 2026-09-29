@@ -39,7 +39,7 @@ Supported:
 
 - Cognitive architecture choices materially change capability–cost behavior;
   a searched configuration beats the strongest fixed baseline on untouched
-  GSM8K holdout by +29 to +71 percentage points (McNemar p<0.001).
+  GSM8K holdout by +29.0 percentage points at 1.5B and +16.7 points at 7B (McNemar p<0.001).
 - Search-side architecture preferences differ clearly and stably by task
   (e.g., the long-context task shifts the optimum to retrieval-based memory,
   as pre-registered).
