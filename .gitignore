@@ -4,3 +4,4 @@ experiments/
 data/gsm8k/
 data/pubmedqa/
 data/qasper/
+.tectonic/
