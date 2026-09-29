@@ -7,14 +7,25 @@
   `5ad4b50`（submission freeze）
 - 数据：GSM8K（openai/grade-school-math 官方 JSONL）、PubMedQA pqa_labeled
   （官方 ori_pqal.json）、QASPER（THUDM/LongBench data.zip）
-- 模型：Qwen/Qwen2.5-1.5B-Instruct、Qwen/Qwen2.5-7B-Instruct（HF Hub 快照，
-  sha 见 VM HF_HOME 缓存；`HF_HUB_OFFLINE=1` 可完全离线复现）
+- 模型：HF Hub 快照（精确 revision 见下「环境」节）；`HF_HUB_OFFLINE=1`
+  可完全离线复现
 
 ## 环境
 
 - GPU：1–6 × NVIDIA A800 80GB（单卡即可复现全部实验）
-- python 3.10+，torch 2.5.1+cu121，transformers 5.7.0，PyYAML，pytest
+- python 3.10.20，torch 2.5.1+cu121（CUDA 12.1），transformers 5.7.0，
+  PyYAML，pytest
 - 安装：`pip install -r requirements-a800.txt`
+- 测试基线（投稿时锁定计数）：**79 passed / 11 skipped**（skipped 为
+  mamba2 依赖 GPU 环境的测试，VM 上 85 全过）
+- 模型快照（HF Hub revision）：
+  - Qwen2.5-1.5B-Instruct：`989aa7980e4cf806f80c7fef2b1adb7bc71aa306`
+  - Qwen2.5-7B-Instruct：`a09a35458c702b33eeacc393d103063234e8bc28`
+- 数据集版本：GSM8K（openai/grade-school-math master，`test.jsonl` 1319 行
+  / `train.jsonl` 7473 行，2026-09-15 获取）；PubMedQA（pubmedqa/pubmedqa
+  master，`ori_pqal.json` 1000 条，2026-09-15 获取）；QASPER
+  （THUDM/LongBench `data.zip`，2026-09-22 获取，qasper.jsonl 200 条）。
+  注：这些数据集无官方 checksum；记录的是获取日期与条目数。
 
 ## 关键协议参数
 

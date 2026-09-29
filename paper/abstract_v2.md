@@ -32,6 +32,3 @@ we keep both as audit findings rather than hiding them.
 The work contributes a leakage-safe, falsifiable protocol for agent
 architecture co-design and a careful map of where task-conditioned
 specialization does — and does not — generalize.
-
-（合规自查：无 ENSS>random、无 Mamba 收益、无 LoRA/QLoRA-as-context、
-无全主干 NAS、QASPER-7B 表述为格式/提取交互而非能力崩溃。）

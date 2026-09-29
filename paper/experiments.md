@@ -1,53 +1,67 @@
-# Experimental Protocol（Phase-19 迁移版，对应已执行实验）
+# Experimental Setup (final, Phase-21)
 
-> 本文档描述实际执行的协议。所有数字以 `results/` 与 `docs/` 产物为准；
-> 旧版预期性表述已移除。
+## Research questions
 
-## Research Questions
+- RQ1: Do cognitive architecture choices materially change capability–cost
+  behavior above a frozen backbone?
+- RQ2: Do tasks induce different architecture preferences, and do they
+  survive held-out evaluation?
+- RQ3: How large is the episodic-memory contribution under controlled
+  same-genome ablation?
+- RQ4 (audit): Is evolutionary search more sample-efficient than
+  equal-budget random search in this space?
 
-- RQ1: 自动协同设计能否发现显著优于简单固定基线的 agent 认知配置？
-- RQ2: 不同任务是否偏好不同的认知配置（holdout 上是否存活）？
-- RQ3: 记忆/上下文选择对能力与推理成本的影响有多大？
-- RQ4（审计性）：紧凑离散空间中，进化搜索是否比等预算随机搜索更样本高效？
+## Benchmarks and splits (leakage-safe)
 
-## Frozen Protocol（Phase-19）
+| Benchmark | dev/search | holdout | calibration (memory/adaptation) |
+|---|---|---|---|
+| GSM8K | test[0:100] | test[100:1319] | train split only |
+| PubMedQA | samples[0:100] | samples[100:500] | samples[500:1000] |
+| QASPER | items[0:50] | items[50:150] | items[150:200] |
 
-- 协议与锁定配置：`configs/phase19_protocol.yaml`、
-  `results/phase19_selection_lock.json`（holdout 推理前锁定）。
-- 骨干：Qwen2.5-1.5B-Instruct（主）与 Qwen2.5-7B-Instruct（转移），
-  冻结、贪心解码、max_new_tokens=256。
-- 评估区间（无泄漏）：
-  - GSM8K：开发 test[0:100]（Phase-17/18 搜索用）；holdout test[100:1319]；
-    记忆银行/适应仅用 train split。
-  - PubMedQA：开发 samples[0:100]；holdout samples[100:500]；
-    校准 samples[500:1000]。
-  - 区间两两不相交有单元测试守护（`tests/test_phase19.py`）。
+Pairwise disjointness of search/holdout/calibration ranges is enforced by
+unit tests. Pre-registered selection locks (`results/phase19_selection_lock.json`,
+`results/phase20_selection_lock.json`) were committed before any holdout
+inference.
 
-## Search Space（报告的 48 点离散空间）
+## Backbones
 
-```
-memory:   recency | retrieval | mamba2 | hybrid
-reasoning: direct | cot | verify | planner
-context_policy: full | truncated | answer_only
-quantization: fp16 (fixed, not searched)
-```
+Qwen2.5-1.5B-Instruct (search/selection) and Qwen2.5-7B-Instruct
+(transfer-only; no re-search). Greedy decoding, max 256 new tokens,
+batch size 32, FP16. Exact HF revisions are recorded in the reproducibility
+appendix.
 
-## Methods Compared
+## Protocol layers
 
-- ENSS（Pareto 进化 + 继承 + 固定预算适应）
-- Random Search（等预算、等适应预算）
-- Fixed baselines：recency / retrieval / hybrid / mamba2（Direct+Full）
-- Ablations：no_memory（去除情景记忆）、no_pareto、no_inherit、no_mamba2
+### Compact audit layer (Phase-18)
 
-## Analysis Protocol
+- Exhaustive 48-point landscape per benchmark (capability, efficiency,
+  token cost, latency, adaptation cost), used as the analysis oracle.
+- Search-efficiency audit: online ENSS vs uniform random at budgets
+  {12, 24, 36, 48} x 20 seeds; metrics: best capability, Pareto
+  hypervolume, regret, epsilon-Pareto hits, evaluations-to-threshold, AUC.
 
-- 穷举 48 点 landscape 作为分析 oracle（每基准一张表，含原始目标）；
-- 搜索效率审计：在线策略仅能查询已评估点，预算 {12,24,36,48} × 20 seed，
-  指标为 hypervolume / regret / ε-Pareto 命中 / evaluations-to-threshold / AUC；
-- 继承配对研究：n=20 对，等预算，pre/post loss 与 capability；
-- holdout 统计：逐题预测 + 配对 bootstrap 95% CI（10000 次，固定种子）
-  + McNemar 精确检验。
+### Structured co-design layer (Phase-20/21)
+
+- Structured search on each benchmark's dev slice (population 16,
+  generations 10, seeds 0-2), local mutations and block crossover.
+- Locked per-task representatives, then held-out evaluation on all three
+  benchmarks x both backbones with per-item predictions.
+- Paired statistics: bootstrap 95% CIs (10,000 resamples, fixed seed) and
+  exact McNemar tests on identical items.
+- Controlled same-genome memory ablations (memory on/off, everything else
+  frozen).
+- Diagnostic-only QASPER failure analysis at 7B (raw outputs, marker
+  compliance, extracted vs whole-continuation F1).
+
+## Metrics
+
+Capability = task accuracy (GSM8K numeric match; PubMedQA yes/no/maybe;
+QASPER LongBench-compatible normalized QA F1 on the extracted final answer).
+Cost = measured prompt-token count, latency, parameter footprint. Raw
+objectives are persisted per candidate; no scalar aggregate is used for
+selection or for headline claims.
 
 ## Hardware
 
-1–6 × NVIDIA A800 80GB（共享集群，1 worker/物理卡）。
+1-6 x NVIDIA A800 80GB (single GPU suffices to reproduce).

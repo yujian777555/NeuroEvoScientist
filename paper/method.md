@@ -1,91 +1,96 @@
-# Method: Task-Conditioned Cognitive Architecture Co-Design（Phase-19 迁移版）
+# Method (final, Phase-21)
 
-> 本文方法部分描述的实际机制以 Phase-17 修正实现为准
-> （`src/genome/`、`src/evaluator/memory.py`、`src/evolution/`）。
-> 历史上的 "ENSS / 神经基底进化" 措辞仅指下述机制，不含全主干 NAS。
+> The paper's method operates in two layers. The compact audit layer
+> establishes the landscape reference and the search-efficiency audit; the
+> structured co-design layer is the final search space used for
+> task-conditioned selection and holdout evaluation.
 
 ## 1. Overview
 
 We study whether an LLM agent's cognitive architecture can be automatically
-co-designed per task, above a frozen backbone. The architecture is treated as
+co-designed per task above a frozen backbone. A configuration is treated as
 an evolutionary object:
 
 ```
-Task
- |
- v
-Architecture Genome  G = (M, R, C)
- |
- v
-Evolution Controller (Pareto selection, mutation, crossover)
- |
- v
-Agent Population
- |
- v
-Multi-objective Evaluation (capability, cost)
- |
- v
-Next Generation
+Task -> Genome (normalized, task-aware) -> Evolution Controller
+     -> Agent Population -> Multi-objective Evaluation -> Pareto Selection
+     -> Next Generation
 ```
 
-## 2. Architecture Genome (corrected semantics)
+## 2. Layer 1 — Compact audit space (48 phenotypes)
 
-Each candidate is a genome over three real, activated genes:
+A flat genome over three genes, used for the exhaustive landscape and the
+search-efficiency audit:
 
-- **Memory M** — episodic memory over a leakage-free experience bank built
-  from the benchmark's train/calibration split only:
-  - `recency`: most recent k bank entries enter the prompt;
-  - `retrieval`: TF-IDF similarity top-k selection;
-  - `mamba2`: a real, trainable Mamba-2 substrate (Transformers
-    `Mamba2Model`) integrates the bank as an ordered sequence and scores
-    candidates against the resulting order-dependent memory state;
-  - `hybrid`: retrieval top-(k-1) plus the most recent entry.
-- **Reasoning R** — prompt-level strategy: `direct`, `cot`, `verify`,
-  `planner` (distinct instruction templates).
-- **Context policy C** — exemplar verbosity: `full` / `truncated` /
-  `answer_only`, which changes real prompt-token cost.
+```
+memory:   recency | retrieval | mamba2 | hybrid
+reasoning: direct | cot | verify | planner
+context_policy: full | truncated | answer_only
+quantization: fp16 (fixed; not searched)
+```
 
-Every gene changes real inference behavior; this is enforced by tests
-(e.g., different memory genes provably produce different prompts).
+- **Memory**: an episodic experience bank built only from the benchmark's
+  train/calibration split (leakage-free). `recency` returns the most recent
+  k entries; `retrieval` returns TF-IDF top-k; `mamba2` runs a real,
+  trainable Mamba-2 substrate (Transformers `Mamba2Model`) over the bank as
+  an ordered sequence and scores candidates against the resulting
+  order-dependent memory state; `hybrid` mixes retrieval with the most
+  recent entry.
+- **Reasoning**: distinct instruction templates (direct / chain-of-thought /
+  verify / planner).
+- **Context policy**: exemplar verbosity (full / truncated / answer_only),
+  which changes real prompt-token cost.
 
-## 3. Evolution Operators
+Every gene changes real inference behavior; this is enforced by unit tests.
 
-- **Mutation**: replace one gene with another value in the configured space.
-- **Crossover**: uniform gene-level recombination of two parents.
+## 3. Layer 2 — Structured co-design space (hierarchical, conditional)
+
+The final search space refines each gene with sub-genes that are active only
+where semantically valid:
+
+```
+memory.type: recency | retrieval | mamba2 | hybrid
+memory.k: 1..8                       (exemplar cap)
+memory.retrieval_metric: tfidf | hashed_bow    (retrieval/hybrid only)
+memory.state_size: 32..256                   (mamba2 only)
+memory.hybrid_fraction: 0.25..0.75           (hybrid only)
+reasoning.strategy: direct | cot | verify | planner
+reasoning.depth: 1..4                        (cot/planner only)
+reasoning.verifier_passes: 1..3              (verify only)
+context.mode: full | truncated | answer_only
+context.exemplar_word_budget: 128..1024      (truncated/answer_only only)
+context.exemplar_count: 0..8                 (0 = canonical no-memory)
+input_context.budget: 512..4096 words        (long-document tasks only)
+adaptation.enabled: bool
+adaptation.steps: 0..40                      (enabled + mamba2 only)
+```
+
+Normalization removes inactive sub-genes before hashing/evaluation, so
+duplicate phenotypes are never counted as distinct architectures. A
+task-aware phenotype additionally drops `input_context.budget` outside
+long-context tasks.
+
+## 4. Operators
+
+- **Mutation**: local moves to neighboring values for ordered sub-genes
+  (80% of mutations), categorical re-sampling for type-level genes; type
+  changes re-activate dependent sub-genes consistently.
+- **Crossover**: semantic block swap (memory / reasoning / context /
+  adaptation) followed by normalization.
 - **Selection**: NSGA-style non-dominated sorting with crowding-distance
-  diversity over raw objectives (capability, efficiency, adaptability).
-  Scalar fitness is used for logging only, never as the selection signal.
-- **Weight inheritance (appendix mechanism)**: children sharing a parent's
-  memory substrate inherit the parent's post-adaptation substrate weights;
-  each candidate receives the same fixed adaptation budget
-  (`configs/phase17_adaptation.yaml`) with the backbone frozen.
+  diversity over raw objectives. Scalar fitness is for logging only.
+- **Weight inheritance** (appendix mechanism): children sharing a parent's
+  substrate inherit its post-adaptation weights.
 
-## 4. Multi-Objective Evaluation
+## 5. Candidate adaptation
 
-Objectives (persisted raw per candidate, `history.jsonl` population records):
+For genomes with a trainable substrate (`memory.type=mamba2`), the substrate
+is adapted on the calibration split with a fixed budget (48 samples, 30
+AdamW steps, fixed learning rate and seed). The backbone is never trained.
 
-1. capability — task accuracy on the evaluation slice;
-2. efficiency — parameter-footprint proxy blended with measured
-   prompt-token cost;
-3. adaptability — accuracy on a harder/shifted subset.
+## 6. Relationship to prior paradigms
 
-## 5. Candidate Adaptation
-
-For genomes with a trainable substrate (`mamba2`), the substrate is adapted
-on a fixed calibration split (48 train samples, 30 AdamW steps, fixed
-learning rate and seed) before evaluation. The LLM backbone is never trained.
-
-## 6. Relationship to Prior Paradigms
-
-AlphaEvolve evolves programs; NAS optimizes static networks; agent-workflow
+AlphaEvolve evolves programs; NAS evolves static networks; agent-workflow
 search optimizes cooperation topology. Here the search object is a single
-agent's cognitive configuration (memory/reasoning/context) under multi-objective
-capability–cost criteria.
-
-## 7. Hypothesis (as tested)
-
-Task-adaptive cognitive configurations provide better capability–cost
-tradeoffs than manually designed fixed agent configurations. (Search-algorithm
-superiority over random search is explicitly **not** hypothesized; see
-`paper/experiments.md` and the claim audit.)
+agent's cognitive configuration under multi-objective capability–cost
+criteria, with an explicit audit of the search procedure itself.

@@ -1,24 +1,25 @@
-# Current Plan — Submission Phase (non-experimental)
+# Current Plan — Submission Hardening (final gate)
 
-实验已全部冻结（Phase-21 Stop Rule）。当前为非实验投稿准备阶段。
+依据 `plans/submission_hardening_plan.md` 执行。
 
-## Done（本阶段已完成）
+## Blockers 状态
 
-- [x] 终版图表 6 张（`paper/figures/`，可由 `render_figures.py` 复现）
-- [x] 参考文献 `paper/references.bib`（仅真实文献）
-- [x] 可复现性附录 `paper/reproducibility_appendix.md`
-- [x] 投稿清单与 venue 建议 `paper/submission_checklist.md`
-- [x] Planner submission 提交核对一致
+- [x] 1. manuscript_v3.md 完整英文论文稿
+- [x] 2. related_work.md 真实引用重写（无 first 声明）
+- [x] 3. method/experiments 双层协议同步
+- [x] 4. fig2 真实 seed 分布 + fig6 紧凑空间标注
+- [x] 5. 精确模型/数据/环境版本入附录
+- [x] 6. README 重写为锁定定位
+- [ ] 7. LICENSE —— **需仓库 owner 决定**（Executor 不擅自选择）
+- [x] 8. 合规扫描（paper-facing 0 命中，`compliance_scan.py` 门禁可用）
+- [ ] 9. venue 排版 + 投稿 PDF —— **需 Planner 选定 venue**（ARR acl.cls / TMLR）
 
-## Remaining（需 Planner/人工）
+## Final Gate 自查
 
-- [ ] manuscript 语言润色（母语级英文）
-- [ ] LaTeX 排版（ARR acl.cls 或 TMLR 模板）
-- [ ] 仓库公开就绪（README 更新、LICENSE）
-- [ ] 内审 + 匿名化检查 + 提交
+- 实验冻结 ✓
+- paper-facing 违禁措辞 0 ✓
+- 测试 79 passed / 11 skipped ✓
 
-## 合规红线（全程有效）
+## Next
 
-无 ENSS>random、无 Mamba 收益、无 LoRA/QLoRA-as-context、无全主干 NAS、
-QASPER-7B = backbone–prompt/extraction interaction、dev/holdout 结果分区、
-记忆因果仅限同基因受控消融。
+等 owner 选 LICENSE、Planner 选 venue。其余就绪。

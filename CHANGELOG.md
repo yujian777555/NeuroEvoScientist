@@ -1,5 +1,32 @@
 # Changelog
 
+## [Submission] harden final manuscript and public reproducibility package - 2026-09-29
+
+### Added
+- `paper/manuscript_v3.md` — 完整英文学术论文（12 节，正文无内部仓库指针，
+  数字锚定表/图）
+- `src/scripts/compliance_scan.py` — 违禁措辞扫描器（paper-facing 分类，
+  出口码门禁）
+
+### Changed（对照 plans/submission_hardening_plan.md 逐项修复）
+- `paper/related_work.md` 重写：英文、23 条真实引用、无 first/priority 声明
+  （AgentSquare 元数据经网络核实修正为 ICLR 2025 正确作者与标题）
+- `paper/method.md` / `experiments.md` 重写：双层协议（紧凑审计层 +
+  结构化协同设计层）准确区分
+- `render_figures.py`：fig2 改为真实 seed 级基因频率（末代种群分布），
+  fig6 标注为 Phase-18 紧凑空间穷举 landscape
+- `paper/reproducibility_appendix.md`：精确 HF 快照 revision、Python/torch/CUDA
+  版本、数据集获取日期与条目数、锁定测试计数（79 passed / 11 skipped）
+- `README.md` 重写为锁定科学定位（含支持/负结果、复现命令、冻结锚点）
+- `paper/abstract_v2.md` 移除内部合规自查尾注（进 paper 文本前清理）
+
+### Scan
+- paper-facing 违禁措辞：0 命中（合规扫描器出口码通过）
+
+### 未完成（需决策，非 Executor 可独立做）
+- Blocker 7：LICENSE 选择（需仓库 owner 决定）
+- Blocker 9：venue 模板排版 + 投稿 PDF（需 Planner 选定 venue）
+
 ## [Submission] figures + bibliography + reproducibility + checklist - 2026-09-29
 
 ### Added

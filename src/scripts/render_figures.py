@@ -12,7 +12,7 @@ Run: python src/scripts/render_figures.py
 
 import json
 import os
-from collections import defaultdict
+from collections import Counter, defaultdict
 
 import matplotlib
 matplotlib.use("Agg")
@@ -25,25 +25,53 @@ plt.rcParams.update({"figure.dpi": 300, "font.size": 9})
 
 
 def fig_gene_distributions():
-    lock = json.load(open(os.path.join(_REPO, "results",
-                                       "phase20_selection_lock.json")))
-    reps = {}
-    for c in lock["configurations"][:3]:
-        reps[c["name"].replace("A_", "")] = c["genome"]
-    tasks = list(reps)
+    """True seed-level gene frequencies from the final dev-search
+    populations (Blocker 4 fix): for each task, the distribution over the
+    last generation's population across seeds 0-2."""
     genes = ["memory_type", "reasoning", "context_mode", "exemplar_count",
              "input_context_budget"]
+    benches = ["gsm8k", "pubmedqa", "qasper"]
 
-    fig, ax = plt.subplots(figsize=(6.0, 2.4))
+    freq = {}
+    for bench in benches:
+        gene_vals = {g: [] for g in genes}
+        for s in (0, 1, 2):
+            path = os.path.join(
+                _REPO, "experiments",
+                "p20_enss_%s_Qwen2.5-1.5B-Instruct_seed%d"
+                % (bench, s), "history.jsonl")
+            if not os.path.exists(path):
+                continue
+            last = json.loads(open(path).readlines()[-1])
+            for ind in last.get("population", []):
+                g = ind["genome"]
+                for gene in genes:
+                    v = g.get(gene)
+                    gene_vals[gene].append("None" if v is None else str(v))
+        freq[bench] = gene_vals
+
+    # render as frequency table: rows = genes, cols = tasks, cell = top
+    # value (with share)
+    fig, ax = plt.subplots(figsize=(6.4, 2.6))
     ax.axis("off")
-    cell_text = [[reps[t][g] for t in tasks] for g in genes]
-    table = ax.table(cellText=cell_text,
-                     rowLabels=genes, colLabels=tasks,
-                     cellLoc="center", loc="center")
+    cell_text = []
+    for gene in genes:
+        row = []
+        for bench in benches:
+            vals = freq[bench][gene]
+            if not vals:
+                row.append("n/a")
+                continue
+            top, cnt = Counter(vals).most_common(1)[0]
+            row.append("%s (%.0f%%)" % (top, 100.0 * cnt / len(vals)))
+        cell_text.append(row)
+    table = ax.table(cellText=cell_text, rowLabels=genes,
+                     colLabels=benches, cellLoc="center", loc="center")
     table.auto_set_font_size(False)
     table.set_fontsize(8)
     table.scale(1.0, 1.4)
-    ax.set_title("Converged genes per task (dev search, 3 seeds)", pad=12)
+    ax.set_title("Final-generation gene distribution per task (3 seeds)",
+                 pad=12)
     fig.tight_layout()
     fig.savefig(os.path.join(OUT, "fig2_gene_distributions.png"))
     plt.close(fig)
@@ -156,7 +184,8 @@ def fig_landscape_pareto():
         ax.set_title(bench)
         ax.legend(fontsize=7)
     axes[0].set_ylabel("capability")
-    fig.suptitle("Architecture landscape: capability vs token cost")
+    fig.suptitle("Phase-18 compact-space exhaustive landscape: "
+                 "capability vs token cost")
     fig.tight_layout()
     fig.savefig(os.path.join(OUT, "fig6_landscape_pareto.png"))
     plt.close(fig)
