@@ -1,7 +1,7 @@
 {
   "project": "NeuroEvoScientist",
-  "phase": "ARR PACKAGING (route locked: ARR Oct 2026 -> NAACL 2027; fallback COLING 2027)",
-  "completed": "ARR packaging tasks done: Task1 consistency (NSGA-II-style wording everywhere, +29.0/+16.7 fixed-baseline numbers, +71pp only as cross-task); Task2 paper/arr2026/main.tex full LaTeX manuscript with acl.sty (review mode/double-blind), real tables A-C (main/transfer/ablation/diagnostic), figures 2-6 inserted, Limitations + Reproducibility/Ethics sections; Task3 anonymous supplementary archive built (116 files, zero identity leaks verified programmatically); Task4 figure audit done visually (fig2 true seed distributions, fig6 labeled Phase-18 compact landscape, no color-only meaning); Task5 citation audit clean (22/22 resolve, NSGA-III background entry removed from the LaTeX package per plan).",
-  "next": "Task7 final PDF gate: tectonic installing in isolated dir .tectonic/; when ready compile paper/arr2026/main.tex -> main.pdf, inspect every page, anonymity grep, record PDF SHA-256 + source commit in submission_manifest.md. Remaining owner/Planner decisions: LICENSE choice (still pending owner).",
-  "issues": "None. Tectonic install via conda-forge in progress."
+  "phase": "READY TO SUBMIT — ARR October 2026 / NAACL 2027 target (review PDF gate passed)",
+  "completed": "ARR package complete: paper/arr2026/main.pdf (7 pages, SHA-256 f3ce5e2e..., built from commit 9f91fbd) + anonymous_supplementary.zip (116 files, zero identity leaks) + submission_manifest.md. All gates green: clean tectonic compile, 7/7 pages visually inspected, 22/22 citations resolve, zero internal paths in prose, zero author metadata in PDF, anonymity grep clean, compliance scan clean, experiments frozen. All 9 hardening blockers resolved except LICENSE (owner decision) which the plan allows to trail public release.",
+  "next": "Human/Planner items before the 2026-10-12 deadline: OpenReview profiles for all authors + ORCID/conflicts/DBLP links; ARR service-contributor registration by 2026-10-14; owner LICENSE choice (Apache-2.0 recommended) before public repo release; re-check official ARR dates page before submission.",
+  "issues": "Repo history still contains a one-commit .tectonic/ toolchain blob (untracked after 9f91fbd; harmless for review, purge before public release if desired)."
 }
