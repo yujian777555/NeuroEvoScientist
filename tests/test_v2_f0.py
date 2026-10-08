@@ -56,3 +56,48 @@ def test_confirmation_independence_documented():
     assert "SVAMP" in conf and "5e0bf1e5" in conf
     # the inspected V1 holdouts must be explicitly excluded from confirmation
     assert "exploratory" in conf.lower() or "never evaluated" in conf
+
+
+def test_planner_f1_baselines_distinct_on_each_task():
+    """Normalized genomes must not waste F1 GPU budget on duplicate phenotypes."""
+    import sys
+    import json
+    sys.path.insert(0, os.path.join(REPO, "src"))
+    from genome.structured import StructuredGenome, task_phenotype_hash
+    conf = json.loads(_read("v2_quality/fasttrack/baselines_f1.json"))
+    b = conf["baselines"]
+    assert set(b) == {"B0", "B1", "B2", "B3", "B4", "B5", "REF"}
+    genomes = {k: StructuredGenome(**{**conf["common"], **v}) for k,v in b.items()}
+    for task in ("gsm8k", "qasper"):
+        keys = [task_phenotype_hash(g, task) for g in genomes.values()]
+        assert len(set(keys)) == len(keys), (task, dict(zip(genomes, keys)))
+    assert b["B4"]["exemplar_count"] > 0
+    assert b["B4"]["context_mode"] != b["B1"]["context_mode"]
+    assert b["B5"]["reasoning"] != b["B0"]["reasoning"] or b["B5"]["exemplar_count"] != b["B0"]["exemplar_count"]
+
+
+def test_planner_f1_matrix_exact_15_cells_and_budget():
+    import json
+    rows = list(csv.DictReader(open(os.path.join(REPO,
+        "v2_quality/fasttrack/run_matrix.csv"), encoding="utf-8")))
+    b = json.loads(_read("v2_quality/fasttrack/baselines_f1.json"))["baselines"]
+    assert len(rows) == 15
+    assert all(r["baseline"] in b for r in rows)
+    proto = _read("v2_quality/fasttrack/protocol_f0.md")
+    budget = _read("v2_quality/fasttrack/compute_budget.md")
+    assert "F1 <= 1.5" in proto.replace("≤", "<=")
+    assert "1.5" in budget and "12 GPU-hours" in budget
+    assert all(r["split"].startswith("dev") for r in rows)
+
+
+def test_legacy_tables_are_flagged_as_inconsistent():
+    doc = _read("paper/phase21_tables.md")
+    assert "NUMERICALLY UNRELIABLE" in doc
+    csv_path = os.path.join(REPO,"results/phase20_holdout_results.csv")
+    rows = list(csv.DictReader(open(csv_path, encoding="utf-8")))
+    hit = next(r for r in rows if r["benchmark"] == "gsm8k"
+               and r["config"] == "A_qasper"
+               and "7B" in r["model"])
+    assert abs(float(hit["capability"]) - 0.693) > 0.1
+    erratum = _read("v2_quality/fasttrack/archival_discrepancies.md")
+    assert "MATERIAL NUMERIC ERRORS" in erratum
