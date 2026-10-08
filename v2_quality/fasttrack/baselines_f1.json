@@ -1,6 +1,6 @@
 {
   "schema_version": "v2-f1-planner-2026-10-08",
-  "note": "All values are full structured genome fields for configured comparison. REF is copied from locked A_gsm; verify exact match before GPU. All configurations share QASPER input_context_budget=2048 and FP16.",
+  "note": "All values are full structured genome fields for configured comparison. REF is copied from locked A_gsm; verify exact match before GPU. All configurations share QASPER input_context_budget=2048 and FP16. B3 retrieval_metric uses the repository's historical enum 'tfidf' but underlying similarity implementation is term-frequency cosine only, without IDF.",
   "common": {
     "adaptation_enabled": false,
     "adaptation_steps": null,
@@ -49,8 +49,7 @@
       "reasoning": "cot",
       "reasoning_depth": 3,
       "context_mode": "full",
-      "exemplar_word_budget": null,
-      "metadata_retrieval_algorithm": "term-frequency cosine (legacy config token tfidf is a MISNOMER; no IDF)"
+      "exemplar_word_budget": null
     },
     "B4": {
       "memory_type": "recency",
