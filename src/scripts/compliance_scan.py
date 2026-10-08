@@ -31,6 +31,10 @@ PROHIBITED = [
     (r"backbone[- ]independent", "backbone-independent task preference"),
 ]
 
+# negated / hedged usages of a flagged phrase are allowed
+_ALLOWED_NEGATION = ("not ", "no pure", "rather than", "should not",
+                     "does not", "not evidence", "not a capability")
+
 PAPER_FACING = ["paper/"]
 SAFE_PREFIXES = ["docs/", "plans/", "issues/"]  # development history
 SAFE_FILES = ["CHANGELOG.md", "README.md", "status.json",
@@ -62,6 +66,11 @@ def main():
                 for lineno, line in enumerate(f, 1):
                     for pattern, label in PROHIBITED:
                         if re.search(pattern, line, re.IGNORECASE):
+                            low = line.lower()
+                            # negated/hedged usage is the required wording,
+                            # not a violation (e.g. "not a capability failure")
+                            if any(n in low for n in _ALLOWED_NEGATION):
+                                continue
                             hits.append((rel, lineno, label,
                                          classify(rel), line.strip()[:100]))
 

@@ -31,7 +31,7 @@ quantization: fp16 (fixed; not searched)
 
 - **Memory**: an episodic experience bank built only from the benchmark's
   train/calibration split (leakage-free). `recency` returns the most recent
-  k entries; `retrieval` returns TF-IDF top-k; `mamba2` runs a real,
+  k entries; `retrieval` returns top-k by term-frequency cosine over sparse lexical vectors (no inverse-document-frequency weighting, so we do not call it TF-IDF); `mamba2` runs a real,
   trainable Mamba-2 substrate (Transformers `Mamba2Model`) over the bank as
   an ordered sequence and scores candidates against the resulting
   order-dependent memory state; `hybrid` mixes retrieval with the most
@@ -51,7 +51,7 @@ where semantically valid:
 ```
 memory.type: recency | retrieval | mamba2 | hybrid
 memory.k: 1..8                       (exemplar cap)
-memory.retrieval_metric: tfidf | hashed_bow    (retrieval/hybrid only)
+memory.retrieval_metric: tf_cosine | hashed_bow (sparse lexical / hashed bag-of-words; no IDF)
 memory.state_size: 32..256                   (mamba2 only)
 memory.hybrid_fraction: 0.25..0.75           (hybrid only)
 reasoning.strategy: direct | cot | verify | planner

@@ -16,12 +16,19 @@ objectives with a frozen backbone.
 Most closely related are automated agent-design frameworks: ADAS (Hu et al.,
 2024) searches over agent programs expressed in code, and AgentSquare (Shang
 et al., 2025, ICLR) searches a modular design space of planning, reasoning,
-tool-use, and memory modules. Both optimize for performance alone. We differ
+tool-use, and memory modules. MaAS performs query-dependent multi-agent
+architecture search through an agentic supernet and explicitly considers
+inference resources (Zhang et al., 2025, ICML). In contrast, our search target
+is the internal cognitive configuration of a single frozen-backbone agent —
+reasoning policy, episodic memory, and context allocation — and our main
+emphasis is the gap between search-side specialization and held-out
+generalization under a commit-locked protocol. These frameworks optimize for
+performance alone. We differ
 in three respects: (i) our search object is a per-task cognitive
 configuration with real memory substrates rather than workflow topology;
 (ii) we evaluate under multiple raw objectives (capability, prompt-token
 cost, latency, adaptation cost) rather than a single score; and (iii) we run
-a pre-registered held-out audit with paired statistics, reporting where
+a pre-specified, commit-locked held-out audit with paired statistics, reporting where
 task-conditioned specialization does and does not generalize.
 
 ## Prompt and reasoning strategy optimization
@@ -34,7 +41,9 @@ one gene among several, jointly searched with memory and context policy.
 ## Episodic and retrieval memory for agents
 
 Retrieval-augmented generation grounds LLMs in external evidence (Lewis et
-al., 2020). Our memory policies (recency, retrieval, hybrid, and a trainable
+al., 2020). Recent work studies continually evolving or self-updating agent memory (e.g., Evo-Memory, Wei et al., 2025). Our setting differs: memory is not evolved online during deployment; instead, memory policy is one component of a task-conditioned cognitive configuration searched using a fixed calibration-only experience bank.
+
+Our memory policies (recency, retrieval via term-frequency cosine or hashed bag-of-words cosine — neither uses IDF — and a trainable
 Mamba-2 substrate) manage an experience bank built strictly from calibration
 splits, and we quantify when episodic memory helps, hurts, or is neutral
 across tasks and backbones.

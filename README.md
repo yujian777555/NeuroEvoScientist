@@ -42,9 +42,9 @@ Supported:
   GSM8K holdout by +29.0 percentage points at 1.5B and +16.7 points at 7B (McNemar p<0.001).
 - Search-side architecture preferences differ clearly and stably by task
   (e.g., the long-context task shifts the optimum to retrieval-based memory,
-  as pre-registered).
+  as pre-specified and commit-locked).
 - Controlled same-genome memory ablations show memory contributions that
-  grow with backbone scale (0pp at 1.5B, −12.6pp at 7B on GSM8K;
+  are task- and scale-dependent (GSM8K: ~0pp at 1.5B, +12.6pp at 7B;
   +18.0pp on PubMedQA at 1.5B).
 
 Negative / bounded findings (kept, not hidden):
@@ -55,7 +55,7 @@ Negative / bounded findings (kept, not hidden):
 - Dev-selected task-specific architectures do not universally generalize on
   holdout (PubMedQA/QASPER are beaten by the GSM8K-selected configuration).
 - A QASPER "collapse" at 7B is a backbone–prompt/extraction interaction,
-  not a capability failure (diagnosed in `docs/phase21_qasper7b_diagnostic.md`).
+  a backbone–prompt/extraction interaction with a substantial extraction component (diagnosed in `docs/phase21_qasper7b_diagnostic.md`).
 
 ## Reproduce
 

@@ -20,7 +20,7 @@
 | QASPER | items[0:50] | items[50:150] | items[150:200] |
 
 Pairwise disjointness of search/holdout/calibration ranges is enforced by
-unit tests. Pre-registered selection locks (`results/phase19_selection_lock.json`,
+unit tests. Pre-specified, commit-locked selection locks (`results/phase19_selection_lock.json`,
 `results/phase20_selection_lock.json`) were committed before any holdout
 inference.
 
@@ -47,8 +47,10 @@ appendix.
   generations 10, seeds 0-2), local mutations and block crossover.
 - Locked per-task representatives, then held-out evaluation on all three
   benchmarks x both backbones with per-item predictions.
-- Paired statistics: bootstrap 95% CIs (10,000 resamples, fixed seed) and
-  exact McNemar tests on identical items.
+- Paired statistics: bootstrap 95% CIs (10,000 resamples, fixed seed) for all tasks;
+  exact McNemar tests for binary GSM8K/PubMedQA outcomes;
+  a two-sided exact paired sign test over non-tied differences for
+  continuous QASPER item-level F1.
 - Controlled same-genome memory ablations (memory on/off, everything else
   frozen).
 - Diagnostic-only QASPER failure analysis at 7B (raw outputs, marker
