@@ -35,7 +35,7 @@ Locked GSM8K holdout numbers (verified against `phase20_holdout_results.csv`):
 
 Verified readings:
 
-1. **At 1.5B, CoT alone explains the entire margin.** A_gsm minus memory
+1. **At 1.5B, the CoT-style no-memory configuration accounts for the observed margin in this comparison, but component-specific attribution needs matched Direct/CoT controls.** A_gsm minus memory
    (same CoT prompt, no exemplars) already reaches 0.5193 ≈ A_gsm 0.5185
    with ~3x fewer prompt tokens. The searched-memory contribution at 1.5B is
    null (−0.08pp, p=1.0 in the paired test).
@@ -59,21 +59,21 @@ CANNOT claim: (a) that the margin demonstrates evolutionary search value
 gain (paired ablation is null there); (c) that the margin survives a
 CoT-matched fixed preset — that is exactly what V2-1 must test.
 
-## 4. Fair-baseline design for V2-1 (definitions only; no execution)
+## 4. Fair-baseline design for V2 F1 — Planner correction
 
-| ID | memory | reasoning | context | purpose |
+Authoritative versioned baseline definitions are in `v2_quality/fasttrack/baselines_f1.json`. Original F0 proposal accidentally duplicated B0/B5 (Direct/no-memory), and B1/B4 were behaviorally identical because both lacked exemplars. The new controls are distinct:
+
+| ID | memory | reasoning | context | distinguishing comparison |
 |---|---|---|---|---|
-| B0 | none | direct | full | historical reference (descriptive only) |
-| B1 | none | cot d3 | full | strongest honest preset; ≈ A_gsm − memory |
-| B2 | recency k=3 | cot d3 | full | ≈ A_gsm itself (CoT-matched memory-on) |
-| B3 | retrieval tfidf k=3 | cot d3 | full | retrieval under CoT |
-| B4 | none | cot d3 | answer_only exemplars | CoT under reduced token budget |
-| B5 | none | direct | full | low-token strong preset (cost reference) |
-| REF | A_gsm frozen | cot d3 | full | V1 reference, never retuned |
+| B0 | none / 0 exemplars | direct | full | Direct with zero memory |
+| B1 | none / 0 exemplars | CoT d3 | full | CoT vs B0; memory off vs REF |
+| B2 | recency k3 / 3 exemplars | CoT d3 | full | exemplar count vs REF |
+| B3 | TF-cosine retrieval k3 / 1 exemplar | CoT d3 | full | memory type vs REF |
+| B4 | recency k3 / 1 exemplar | CoT d3 | answer_only, 128-word exemplar limit | context verbosity vs REF |
+| B5 | recency k3 / 1 exemplar | direct | full | reasoning strategy vs REF |
+| REF | recency k3 / 1 exemplar | CoT d3 | full | V1 locked A_gsm |
 
-All prompts must share the same CoT template (reasoning_prompt with
-depth=3); exemplar-free presets inject nothing; memory presets draw only
-from the calibration bank.
+Prompt-hash and canonical phenotype-identity checks are mandatory before GPU. `B1` is a pre-defined strong CoT preset, not a pre-proven strongest CoT baseline; winner claims require transparent selection and independent confirmation.
 
 ## 5. Interaction design (V2-2, pre-specified cells)
 
@@ -90,3 +90,7 @@ interaction effects with CIs. No "single-gene" language for mixed changes.
    Any parser change must be a versioned sensitivity study over ALL configs.
 3. PubMedQA's ceiling limits separation; V2-1 primary task = GSM8K, with
    QASPER as the structurally different second task.
+
+## 7. Corrected archival warning
+
+The initial F0 archival audit incorrectly claimed `paper/phase21_tables.md` matches locked Phase-20 CSV. This is false. See `v2_quality/fasttrack/archival_discrepancies.md`: several GSM8K and PubMedQA entries differ materially, including GSM8K 7B A_qasper legacy 0.693 vs locked 0.1961. Use frozen CSV, not historical markdown tables, for new comparisons.
