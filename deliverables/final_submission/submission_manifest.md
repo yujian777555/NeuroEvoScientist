@@ -5,7 +5,7 @@
 - **Main PDF**: `paper/arr2026/main.pdf`
   - SHA-256: `e42191b0502f4b1ca7f7ed2bdd6b8b735ab0755294e185d2cd83156d22ae931d`
   - Pages: 8（含 references；ARR 长文正文 8 页上限内，references 不计）
-  - 构建源 commit：本次提交（paper-only hotfix；含统计命名、QASPER-7B 措辞降级、
+  - 构建源 commit：`8fa8945`（paper-only hotfix；含统计命名、QASPER-7B 措辞降级、
     TF-IDF 命名修正、pre-specified/commit-locked 措辞、GSM8K 种子稳定性修正、
     Figure 2 caption、MaAS + Evo-Memory 相关工作、目标精确定义、章节顺序调整）
   - 变更链：`9f91fbd` → `d1bfb55`（caption 澄清）→ 本次（paper-only hotfix）
@@ -15,8 +15,8 @@
 ## Gate 核验（全部通过）
 
 - [x] 干净环境编译（tectonic，acl.sty review 模式）
-- [x] 逐页目检（7/7 页）：无裁切、无 ??、无溢出
-- [x] 引用全解析（22/22）；references 全部出现
+- [x] 逐页目检（8/8 页）：无裁切、无 ??、无溢出
+- [x] 引用核对（24/24 引用键均在 BibTeX 中有匹配条目；编译通过）
 - [x] 正文无内部仓库路径
 - [x] PDF 属性无作者身份元数据
 - [x] LaTeX 源匿名 grep：零命中
