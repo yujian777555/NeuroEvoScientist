@@ -1,0 +1,86 @@
+{
+  "schema_version": "v2-f1-planner-2026-10-08",
+  "note": "All values are full structured genome fields for configured comparison. REF is copied from locked A_gsm; verify exact match before GPU. All configurations share QASPER input_context_budget=2048 and FP16.",
+  "common": {
+    "adaptation_enabled": false,
+    "adaptation_steps": null,
+    "hybrid_fraction": null,
+    "mamba_state_size": null,
+    "quantization": "fp16",
+    "input_context_budget": 2048,
+    "verifier_passes": null
+  },
+  "baselines": {
+    "B0": {
+      "memory_type": "none",
+      "memory_k": 0,
+      "exemplar_count": 0,
+      "retrieval_metric": null,
+      "reasoning": "direct",
+      "reasoning_depth": null,
+      "context_mode": "full",
+      "exemplar_word_budget": null
+    },
+    "B1": {
+      "memory_type": "none",
+      "memory_k": 0,
+      "exemplar_count": 0,
+      "retrieval_metric": null,
+      "reasoning": "cot",
+      "reasoning_depth": 3,
+      "context_mode": "full",
+      "exemplar_word_budget": null
+    },
+    "B2": {
+      "memory_type": "recency",
+      "memory_k": 3,
+      "exemplar_count": 3,
+      "retrieval_metric": null,
+      "reasoning": "cot",
+      "reasoning_depth": 3,
+      "context_mode": "full",
+      "exemplar_word_budget": null
+    },
+    "B3": {
+      "memory_type": "retrieval",
+      "memory_k": 3,
+      "exemplar_count": 1,
+      "retrieval_metric": "tfidf",
+      "reasoning": "cot",
+      "reasoning_depth": 3,
+      "context_mode": "full",
+      "exemplar_word_budget": null,
+      "metadata_retrieval_algorithm": "term-frequency cosine (legacy config token tfidf is a MISNOMER; no IDF)"
+    },
+    "B4": {
+      "memory_type": "recency",
+      "memory_k": 3,
+      "exemplar_count": 1,
+      "retrieval_metric": null,
+      "reasoning": "cot",
+      "reasoning_depth": 3,
+      "context_mode": "answer_only",
+      "exemplar_word_budget": 128
+    },
+    "B5": {
+      "memory_type": "recency",
+      "memory_k": 3,
+      "exemplar_count": 1,
+      "retrieval_metric": null,
+      "reasoning": "direct",
+      "reasoning_depth": null,
+      "context_mode": "full",
+      "exemplar_word_budget": null
+    },
+    "REF": {
+      "memory_type": "recency",
+      "memory_k": 3,
+      "exemplar_count": 1,
+      "retrieval_metric": null,
+      "reasoning": "cot",
+      "reasoning_depth": 3,
+      "context_mode": "full",
+      "exemplar_word_budget": null
+    }
+  }
+}
