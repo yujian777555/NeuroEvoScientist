@@ -1,7 +1,22 @@
 {
   "project": "NeuroEvoScientist",
-  "phase": "READY TO SUBMIT — ARR October 2026 / NAACL 2027 target (paper-only scientific hotfix verified)",
+  "phase": "V2 QUALITY UPGRADE — PHASE V2-0 PLANNED / WAITING FOR EXECUTOR AUDIT",
   "completed": "Paper-only scientific correctness hotfix 8fa8945 verified. Final PDF paper/arr2026/main.pdf: 8 pages, SHA-256 e42191b0502f4b1ca7f7ed2bdd6b8b735ab0755294e185d2cd83156d22ae931d. No experiments rerun; numerical results frozen. QASPER continuous F1 now described with exact paired sign test, binary tasks with exact McNemar; QASPER extraction interpretation appropriately qualified; retrieval naming corrected; protocol described as pre-specified/commit-locked; GSM8K seed convergence narrowed; MaAS/Evo-Memory added; objective proxies defined. LaTeX has 24 unique citation keys, all present in BibTeX. Paper and delivery manifests aligned with this PDF.",
-  "next": "Submit ARR October 2026 review PDF and anonymous supplementary after all-author OpenReview profile/service registration and conflicts/reviewer-capacity requirements. Submission deadline 2026-10-12; all-author reviewer registration deadline 2026-10-14. Public repository license remains owner decision.",
-  "issues": "No remaining identified manuscript/packaging discrepancies. Submission itself and administrative eligibility have not been verified. 8-page PDF visual, anonymity, and compliance passes reported by Executor; no independent binary PDF visual re-render in this audit."
+  "next": "Kimi: follow plans/v2_kimi_executor_prompt.md and plans/v2_quality_upgrade_plan.md. Complete V2-0 only, push audit/protocol/budget/independent-confirm plan and gate0_decision.md; stop before running GPU and request Planner review.",
+  "issues": "Baseline fairness: V1 searched GSM8K config uses CoT while all four fixed baselines use Direct. Old Phase-20 holdout has been repeatedly inspected, so new V2 hypotheses require independent locked confirmation or must be clearly exploratory. Legacy paper/phase21_tables.md contains stale conflicting values; audit archival/supplement inclusion. No October ARR deadline pressure.",
+  "v1_frozen": {
+    "status": "READY TO SUBMIT (not submitted by Planner), preserved and locked",
+    "review_pdf": "paper/arr2026/main.pdf",
+    "pdf_sha256": "e42191b0502f4b1ca7f7ed2bdd6b8b735ab0755294e185d2cd83156d22ae931d",
+    "science": "Phase17–21 results frozen; no historical changes"
+  },
+  "v2_quality": {
+    "plan": "plans/v2_quality_upgrade_plan.md",
+    "executor_prompt": "plans/v2_kimi_executor_prompt.md",
+    "active_stage": "V2-0 baseline fairness audit and protocol freeze",
+    "gate": "GATE0_PENDING",
+    "experiments_started": false,
+    "allowed_now": "audit code and locked outputs, design strong CoT baselines, independent confirmation/data registry, tests; no GPU",
+    "future_stages": "V2-1 strong fixed baselines; conditional V2-2 interaction; conditional V2-3 structured search audit; conditional V2-4 external confirmation; V2-5 paper"
+  }
 }
