@@ -1,9 +1,6 @@
 # Phase-21 Paper Tables
 
-> **SUPERSEDED (V2-0 audit, 2026-10-08)**: presentation superseded by
-> `paper/arr2026/main.tex` tables. Values here were verified identical to the
-> locked CSVs within rounding (`v2_quality/fasttrack/archival_discrepancies.md`).
-> Retained read-only for history.
+> **SUPERSEDED / NUMERICALLY UNRELIABLE (Planner audit 2026-10-08).** This legacy table contains material mismatches against locked `results/phase20_holdout_results.csv` (e.g. GSM8K 7B A_qasper 0.693 vs 0.1961). Do not cite or copy its numbers. Historical entries preserved unmodified; see `v2_quality/fasttrack/archival_discrepancies.md` and use the locked CSV and `paper/arr2026/main.tex` instead.
 
 ## Table A: 主结果（holdout capability，锁定配置 × 双骨干）
 
