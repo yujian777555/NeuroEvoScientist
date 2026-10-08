@@ -1,0 +1,16 @@
+cell_id,baseline,benchmark,backbone,split,n_items,seeds,purpose,est_min_per_run
+F1-01,B1,gsm8k,qwen2.5-1.5b,dev test[0:100],100,1,primary comparison,1.5
+F1-02,B2,gsm8k,qwen2.5-1.5b,dev test[0:100],100,1,memory-on CoT,1.6
+F1-03,B3,gsm8k,qwen2.5-1.5b,dev test[0:100],100,1,retrieval CoT,1.6
+F1-04,B4,gsm8k,qwen2.5-1.5b,dev test[0:100],100,1,reduced-token CoT,1.2
+F1-05,B5,gsm8k,qwen2.5-1.5b,dev test[0:100],100,1,cost reference,0.6
+F1-06,B0,gsm8k,qwen2.5-1.5b,dev test[0:100],100,1,historical descriptive,0.6
+F1-07,REF,gsm8k,qwen2.5-1.5b,dev test[0:100],100,1,V1 reference,1.5
+F1-08,B1,qasper,qwen2.5-1.5b,dev items[0:50],50,1,second task,2.5
+F1-09,B2,qasper,qwen2.5-1.5b,dev items[0:50],50,1,second task memory,2.8
+F1-10,B3,qasper,qwen2.5-1.5b,dev items[0:50],50,1,second task retrieval,2.8
+F1-11,REF,qasper,qwen2.5-1.5b,dev items[0:50],50,1,V1 reference,2.5
+F1-12,B1,gsm8k,qwen2.5-7b,dev test[0:100],100,1,transfer shortlist,4.5
+F1-13,REF,gsm8k,qwen2.5-7b,dev test[0:100],100,1,transfer reference,4.5
+F1-14,B1,qasper,qwen2.5-7b,dev items[0:50],50,1,transfer shortlist,7.5
+F1-15,REF,qasper,qwen2.5-7b,dev items[0:50],50,1,transfer reference,7.5

@@ -1,5 +1,10 @@
 # Phase-21 Paper Tables
 
+> **SUPERSEDED (V2-0 audit, 2026-10-08)**: presentation superseded by
+> `paper/arr2026/main.tex` tables. Values here were verified identical to the
+> locked CSVs within rounding (`v2_quality/fasttrack/archival_discrepancies.md`).
+> Retained read-only for history.
+
 ## Table A: 主结果（holdout capability，锁定配置 × 双骨干）
 
 来源：`results/phase20_holdout_results.csv`
