@@ -1,9 +1,9 @@
 {
   "project": "NeuroEvoScientist",
-  "phase": "V2 QUALITY UPGRADE — PHASE V2-0 PLANNED / WAITING FOR EXECUTOR AUDIT",
+  "phase": "V2 FAST-TRACK — F0 AUDIT PENDING / EARLIEST DEFENSIBLE SUBMISSION",
   "completed": "Paper-only scientific correctness hotfix 8fa8945 verified. Final PDF paper/arr2026/main.pdf: 8 pages, SHA-256 e42191b0502f4b1ca7f7ed2bdd6b8b735ab0755294e185d2cd83156d22ae931d. No experiments rerun; numerical results frozen. QASPER continuous F1 now described with exact paired sign test, binary tasks with exact McNemar; QASPER extraction interpretation appropriately qualified; retrieval naming corrected; protocol described as pre-specified/commit-locked; GSM8K seed convergence narrowed; MaAS/Evo-Memory added; objective proxies defined. LaTeX has 24 unique citation keys, all present in BibTeX. Paper and delivery manifests aligned with this PDF.",
-  "next": "Kimi: follow plans/v2_kimi_executor_prompt.md and plans/v2_quality_upgrade_plan.md. Complete V2-0 only, push audit/protocol/budget/independent-confirm plan and gate0_decision.md; stop before running GPU and request Planner review.",
-  "issues": "Baseline fairness: V1 searched GSM8K config uses CoT while all four fixed baselines use Direct. Old Phase-20 holdout has been repeatedly inspected, so new V2 hypotheses require independent locked confirmation or must be clearly exploratory. Legacy paper/phase21_tables.md contains stale conflicting values; audit archival/supplement inclusion. No October ARR deadline pressure.",
+  "next": "Kimi: read plans/v2_fasttrack_kimi_prompt.md and active fasttrack plan; execute F0 only, push strong CoT-matched baseline protocol/limited run matrix/data isolation and GPU budget; stop before F1 GPU, request Planner gate. Do not automatically start all V2 research.",
+  "issues": "V1 fixed-baseline confounding (A_gsm CoT vs fixed Direct), stale historical table, already inspected V1 holdout cannot become independent V2 confirm; deadline tradeoff: October 12 is last NAACL 2027/COLING 2027 ARR cycle, so new V2 track may target other cycle/venue.",
   "v1_frozen": {
     "status": "READY TO SUBMIT (not submitted by Planner), preserved and locked",
     "review_pdf": "paper/arr2026/main.pdf",
@@ -13,10 +13,15 @@
   "v2_quality": {
     "plan": "plans/v2_quality_upgrade_plan.md",
     "executor_prompt": "plans/v2_kimi_executor_prompt.md",
-    "active_stage": "V2-0 baseline fairness audit and protocol freeze",
-    "gate": "GATE0_PENDING",
+    "active_stage": "F0 targeted fair-baseline and independent-validation feasibility audit",
+    "gate": "F0_PENDING_PLANNER_APPROVAL",
     "experiments_started": false,
     "allowed_now": "audit code and locked outputs, design strong CoT baselines, independent confirmation/data registry, tests; no GPU",
-    "future_stages": "V2-1 strong fixed baselines; conditional V2-2 interaction; conditional V2-3 structured search audit; conditional V2-4 external confirmation; V2-5 paper"
+    "future_stages": "V2-1 strong fixed baselines; conditional V2-2 interaction; conditional V2-3 structured search audit; conditional V2-4 external confirmation; V2-5 paper",
+    "active_plan": "plans/v2_fasttrack_submission_plan.md",
+    "active_executor_prompt": "plans/v2_fasttrack_kimi_prompt.md",
+    "extended_optional_plan": "plans/v2_quality_upgrade_plan.md",
+    "schedule_priority": "submit as early as scientifically defensible; focused 10–21 calendar-day path instead of unconditional 7–10 week program",
+    "deadline_choice": "Owner has NOT requested automatic October 12 ARR submission; V1 preserved and available if human explicitly chooses deadline-first submission"
   }
 }
