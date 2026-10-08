@@ -1,9 +1,9 @@
 {
   "project": "NeuroEvoScientist",
-  "phase": "V2 FAST-TRACK — F0 AUDIT COMPLETE, GATE0 PENDING PLANNER REVIEW",
-  "completed": "F0 audit done with no GPU and no result changes. Verified against locked CSVs: V1 GSM8K baselines all Direct-reasoning vs A_gsm CoT (confound confirmed); 1.5B memory effect null (0.5193 vs 0.5185, ~3x fewer tokens); 7B memory +12.6pp. Delivered v2_quality/: audit_baseline_fairness.md, fasttrack/protocol_f0.md, run_matrix.csv (15 cells), compute_budget.md (F1 cap 1.5 GPU-h, total 3.0, stop 4.0), confirmation_dataset.md (SVAMP HF sha 5e0bf1e5 verified + MATH fallback), archival_discrepancies.md (phase21_tables verified CONSISTENT and marked SUPERSEDED; supplementary clean), gates/gate0_decision.md (proposal: GO). tests/test_v2_f0.py 5 passed incl. V1-PDF-sha guard.",
-  "next": "WAITING for Planner Gate-0 review. On GO: F1 runs the 15-cell dev-only matrix (B0-B5+REF, GSM8K+QASPER, 1.5B discovery + 7B shortlist transfer). No GPU started.",
-  "issues": "None blocking. PubMedQA left out of F1 primary (ceiling limits separation); QASPER parser frozen pending any versioned sensitivity study.",
+  "phase": "V2 FAST-TRACK — F1 CONDITIONAL AUTHORIZATION ISSUED",
+  "completed": "Planner independently reviewed F0 e32fb95, confirmed V1 Direct vs CoT confounding. Corrected Executor F0 errors: legacy paper/phase21_tables.md materially disagrees with locked Phase20 CSV, B0/B5 and B1/B4 were behaviorally duplicated, F1 GPU cap inconsistent, and n=100 non-significance cannot establish equivalence. Corrected F1 protocol, unique baseline definitions, archival erratum, 15-cell matrix and 1.5 GPU-hour cap pushed. Added regression tests, NOT YET executed by Planner. F1 conditionally approved after Executor preflight PASS; no new V2 GPU results as of authorization.",
+  "next": "Kimi sync main and read plans/v2_f1_authorized_kimi_prompt.md plus v2_quality/fasttrack/gates/gate0_decision.md. First run tests + deterministic production-prompt uniqueness and frozen-REF consistency checks. If PASS, F1 dev-only 15 cells may run under ≤1.5 aggregate GPU-hours without another approval. Stop and request Planner Gate1 before independent confirmation.",
+  "issues": "Corrected F0 inaccuracies require Executor preflight verification; archival old table is numerically unreliable and cannot be used. Original Phase20 holdout was inspected, new V2 results dev-only/exploratory until independently confirmed. Confirmation dataset HF mirror reachable only, not yet fully locked/validated. V1 artifacts remain frozen.",
   "v1_frozen": {
     "status": "READY TO SUBMIT (not submitted), preserved and locked",
     "review_pdf": "paper/arr2026/main.pdf",
@@ -12,10 +12,16 @@
   },
   "v2_fasttrack": {
     "plan": "plans/v2_fasttrack_submission_plan.md",
-    "executor_prompt": "plans/v2_fasttrack_kimi_prompt.md",
-    "active_stage": "F0 audit and protocol freeze",
-    "gate": "GATE0_GO_PROPOSED_AWAITING_PLANNER",
+    "executor_prompt": "plans/v2_f1_authorized_kimi_prompt.md",
+    "active_stage": "F1 preflight first, then 15 dev-only GPU cells if all checks pass",
+    "gate": "GATE0_CONDITIONAL_GO_F1_PREFLIGHT_REQUIRED",
     "experiments_started": false,
-    "gpu_hours_spent": 0.0
+    "gpu_hours_spent": 0,
+    "f1_cap_gpu_hours": 1.5,
+    "f1_experiments_started": false,
+    "gate0_decision": "v2_quality/fasttrack/gates/gate0_decision.md",
+    "baseline_source": "v2_quality/fasttrack/baselines_f1.json",
+    "protocol": "v2_quality/fasttrack/protocol_f0.md",
+    "budget": "v2_quality/fasttrack/compute_budget.md"
   }
 }
