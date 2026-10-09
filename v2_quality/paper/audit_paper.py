@@ -135,10 +135,69 @@ def main():
         % (a15, a7b, f15, f7b, (a15 - f15) * 100, (a7b - f7b) * 100))
 
     # -- D. format --------------------------------------------------------------
-    rec("D.pages", len(doc) <= 8 + 3, "page count = %d (content+refs; ARR "
-        "8-page content limit applies to ~5 content pages)" % len(doc))
+    # Main-content page bound: ARR excludes Ethics/Limitations/References
+    # from the 8-page content limit. Locate section heading pages in the
+    # extracted text; main content ends where Reproducibility and Ethics
+    # (or Limitations, whichever first) begins.
+    def find_page(needle):
+        for i, p in enumerate(doc):
+            if needle in p.get_text():
+                return i + 1  # 1-based
+        return None
+
+    ethics_pg = find_page("Reproducibility and Ethics")
+    lim_pg = find_page("Limitations")
+    # references heading: first page whose text contains the section start
+    refs_pg = find_page("References")
+    content_end = min(p for p in (ethics_pg, lim_pg, refs_pg) if p)
+    main_content_pages = content_end - 1
+    rec("D.pages", main_content_pages <= 8,
+        "total %d pp; main content ends on page %d (Ethics p%s, "
+        "Limitations p%s, References p%s) -> %d content pages (<=8)"
+        % (len(doc), content_end, ethics_pg, lim_pg, refs_pg,
+           main_content_pages))
+    rec("D.order", ethics_pg and lim_pg and refs_pg
+        and ethics_pg <= lim_pg <= refs_pg,
+        "section order: Reproducibility and Ethics (p%s) -> Limitations "
+        "(p%s) -> References (p%s); Limitations directly before refs"
+        % (ethics_pg, lim_pg, refs_pg))
     rec("D.review", "00" in text and "\\usepackage[review]{acl}" in tex,
         "review mode with line numbers")
+
+    # -- E. Gate-3 hotfix regression guards (deterministic text checks) --------
+    md = open(os.path.join(HERE, "manuscript.md"), encoding="utf-8").read()
+    both = {"main.tex": tex, "manuscript.md": md}
+    forb = {
+        "pre-registered": None, "preregistered": None,
+        "statistically indistinguishable": None,
+        "ties the strongest": None, "ties B2": None,
+        "seven presets": None, "Seven presets": None,
+        "seven CoT-matched": None, "six CoT presets plus": None,
+        "context budget matters more": None,
+        "no foreseeable misuse": None,
+        "10\u00d7": None,  # 10× unicode multiply
+    }
+    for fname, body in both.items():
+        bad = [k for k in forb if k in body]
+        rec("E.forbid.%s" % fname, not bad,
+            "forbidden phrases absent" if not bad else "FOUND: %s" % bad)
+        rec("E.count.%s" % fname, "six predefined baselines" in body,
+            "correct baseline count wording present")
+        rec("E.cost.%s" % fname, "8.3" in body
+            and "10$\\times$" not in body,
+            "8.3x CoT cost wording present; no 10x claim")
+    rec("E.order.tex",
+        tex.index("\\section{Reproducibility and Ethics}")
+        < tex.index("\\section{Limitations}")
+        < tex.index("\\bibliography{references}"),
+        "tex: Ethics < Limitations < bibliography")
+    rec("E.order.md",
+        md.index("## 8. Reproducibility and Ethics")
+        < md.index("## 9. Limitations") < md.index("## References"),
+        "md: Ethics < Limitations < References")
+    rec("E.b4", "causal prioritization" in tex,
+        "B4 downgrade phrasing present in tex; md reports B4 numbers "
+        "without causal ranking claim")
 
     fails = [c for c, s, _ in RESULTS if s == "FAIL"]
     lines = ["# V2 Paper Audit Report",
@@ -149,7 +208,11 @@ def main():
     for cid, status, detail in RESULTS:
         lines.append("| %s | %s | %s |" % (cid, status, detail))
     lines += ["", "**Verdict: %s**" % ("FAIL: " + ", ".join(fails) if fails
-                                        else "PASS"), ""]
+                                        else "PASS"), "",
+              "Scope note: these checks cover only the items listed above "
+              "(anonymity, citation resolution, traced headline statistics, "
+              "format, and the Gate-3 textual guards). They do not "
+              "independently verify every scientific detail of the paper.", ""]
     open(os.path.join(HERE, "audit_report.md"), "w",
          encoding="utf-8").write("\n".join(lines))
     print("\nVERDICT:", "FAIL" if fails else "PASS")

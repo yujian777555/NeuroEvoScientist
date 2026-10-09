@@ -41,12 +41,14 @@ all used direct answering, by +29.0 percentage points at 1.5B and +16.7
 points at 7B---an architecture-matters result that confounds search with
 the CoT-vs-direct gap and cannot be attributed to search alone.
 \textbf{Tier 2} (fair-baseline dev audit): against CoT-matched presets on
-the reused GSM8K dev slice, the search-selected configuration ties the
-strongest preset (60.0\% vs 59.0\%, $p{=}1.0$); its +10-point edge over a
+the reused GSM8K dev slice, the search-selected configuration shows no
+statistically detectable accuracy advantage over the strongest preset
+(60.0\% vs 59.0\%, $+1.0$pp, $p{=}1.0$); its +10-point edge over a
 no-memory CoT control is exploratory ($p{=}0.087$). \textbf{Tier 3}
 (pre-locked cross-benchmark confirmation): on 300 locked SVAMP test items
 never used for search or tuning, the search-selected configuration scores
-70.33\%, statistically indistinguishable from both the strong CoT preset
+70.33\%, with no statistically detectable accuracy difference from either
+the strong CoT preset
 (71.67\%; primary contrast $-1.33$pp, 95\% CI $[-6.00, +3.33]$, exact
 McNemar $p{=}0.67$) and the no-memory control (70.33\%; $0.00$pp,
 $p{=}1.0$)---and the dev-side memory benefit does not replicate. Cost
@@ -97,8 +99,8 @@ used for search, calibration, or tuning.
 
 The findings are two-sided. Configuration choices matter: reasoning
 strategy alone swings GSM8K dev accuracy from 11\% (direct) to 50--60\%
-(CoT), and prompt-token cost varies 10$\times$ across presets with similar
-accuracy. But the search-selected configuration shows no detectable
+(CoT), and CoT variants span ${\sim}8.3\times$ in prompt tokens with
+observed accuracies of 49--60\%. But the search-selected configuration shows no detectable
 advantage over a strong hand-picked CoT preset on either the dev slice or
 the locked SVAMP test; its dev-side +10-point benefit over a no-memory
 control does not replicate cross-benchmark ($0.00$pp, $p{=}1.0$); the
@@ -181,9 +183,10 @@ commit-locked holdout evaluation of task-selected configurations vs four
 fixed baselines (all direct-answering) on GSM8K/PubMedQA/QASPER, plus the
 exhaustive-landscape search-efficiency audit; locked before this paper and
 reported with confounds made explicit.
-\textbf{Tier 2---fair-baseline dev audit.} Seven presets matched to the
-search-selected configuration's reasoning strategy, run on the same dev
-slices the search used (GSM8K test$[0{:}100]$, QASPER items$[0{:}50]$) and
+\textbf{Tier 2---fair-baseline dev audit.} Six predefined baselines (four
+CoT-matched and two Direct controls) matched to the search-selected
+configuration's reasoning strategy, plus the search-selected REF itself,
+run on the same dev slices the search used (GSM8K test$[0{:}100]$, QASPER items$[0{:}50]$) and
 a pre-chosen 7B shortlist; exploratory, with provenance gaps (\S\ref{sec:tier2}).
 \textbf{Tier 3---pre-locked cross-benchmark confirmation.} Three
 configurations (search-selected REF, strongest CoT preset B2, no-memory CoT
@@ -255,8 +258,9 @@ diagnostic does not establish that underlying answer quality is unaffected.
 \section{Tier 2 --- Fair CoT-Matched Baselines on Reused Dev (Exploratory)}
 \label{sec:tier2}
 
-Tier 1's fairness gap motivated presets matched on the searched
-configuration's actual components. We evaluated seven presets plus the
+Tier 1's fairness gap motivated baselines matched on the searched
+configuration's actual components. We evaluated six predefined baselines
+(four CoT-matched: B1--B4; two Direct controls: B0/B5) plus the
 search-selected REF on GSM8K dev ($n{=}100$) and QASPER dev ($n{=}50$) at
 1.5B, with a pre-chosen 7B shortlist (0.16 GPU-hours total;
 Table~\ref{tab:f1}).
@@ -276,19 +280,22 @@ B2 & recency$\times$3 / CoT d3 & 59.0 & 67{,}391 \\
 \textbf{REF} & recency$\times$1 / CoT d3 & \textbf{60.0} & 24{,}391 \\
 \bottomrule
 \end{tabular}
-\caption{GSM8K dev ($n{=}100$, 1.5B), accuracy and prompt-token cost.
-REF ties the strongest CoT-matched preset B2 ($+1.0$pp, exact McNemar
-$p{=}1.0$); REF$-$B1 $= +10.0$pp (95\% CI $[0.0, 20.0]$, $p{=}0.087$,
-exploratory). Direct presets (B0/B5) collapse: the Tier-1 headline
-confounds reasoning strategy with search.}
+\caption{GSM8K dev ($n{=}100$, 1.5B), accuracy and prompt-token cost for
+the six predefined baselines and the search-selected REF. REF shows no
+statistically detectable advantage over the strongest CoT-matched baseline
+B2 ($+1.0$pp, exact McNemar $p{=}1.0$); REF$-$B1 $= +10.0$pp (95\% CI
+$[0.0, 20.0]$, $p{=}0.087$, exploratory). Direct baselines (B0/B5)
+collapse: the Tier-1 headline confounds reasoning strategy with search.}
 \label{tab:f1}
 \end{table}
 
-\paragraph{GSM8K dev.} Among CoT configurations REF is statistically
-indistinguishable from B2 and B3 (REF$-$B3 $+3.0$pp, $p{=}0.63$); only the
-reduced-context preset B4 is clearly below REF ($+11.0$pp, $p{=}0.043$,
-secondary, unadjusted)---context budget matters more than which strong
-preset is picked. The REF$-$B1 gap reflects the memory+exemplar component
+\paragraph{GSM8K dev.} Among CoT configurations REF shows no statistically
+detectable accuracy difference from B2 or B3 (REF$-$B3 $+3.0$pp,
+$p{=}0.63$). The reduced-exemplar-verbosity baseline B4 was lower than REF
+on this exploratory dev slice ($+11.0$pp, unadjusted $p{=}0.043$,
+secondary); a single contrast on reused dev cannot rank factor importance,
+so causal prioritization of context budget over preset choice requires
+further controls. The REF$-$B1 gap reflects the memory+exemplar component
 under CoT, not search; at 7B (dev, secondary, unadjusted) it is $+10.0$pp
 ($p{=}0.041$), directionally consistent with Tier-1's scale-dependent
 memory ablation but exploratory here.
@@ -357,11 +364,12 @@ B1.
 \centering
 \includegraphics[width=\textwidth]{figures/fig1_capability_cost.png}
 \caption{Accuracy vs.\ inference-token cost, separate panels per dataset.
-(a) GSM8K dev (F1, $n{=}100$, prompt tokens): direct presets collapse;
-CoT presets cluster at 49--60\% with $\sim$8$\times$ prompt-token spread;
-REF ties B2 at mid-range cost. (b) Locked SVAMP test (F2, $n{=}300$,
-prompt+completion tokens): B1 attains REF's observed accuracy at the lowest
-cost; B2 is nominally highest in both.}
+(a) GSM8K dev (F1, $n{=}100$, prompt tokens): direct baselines collapse;
+CoT configurations cluster at 49--60\% with ${\sim}8.3\times$ prompt-token
+spread; REF shows no detectable advantage over B2 at mid-range cost. (b)
+Locked SVAMP test (F2, $n{=}300$, prompt+completion tokens): B1 attains
+REF's observed accuracy at the lowest cost; B2 is nominally highest in
+both.}
 \label{fig:scatter}
 \end{figure*}
 
@@ -390,8 +398,9 @@ that the compared configurations are equal.}
 (1) \emph{Cognitive configuration choices materially affect accuracy and
 cost}: direct vs CoT reasoning swings GSM8K dev accuracy 11--13\%
 $\rightarrow$ 49--60\%; the locked holdout gap of the searched CoT
-configuration over direct fixed baselines is +29.0/+16.7pp; token cost
-varies $\sim$10$\times$ among CoT presets with similar accuracy.
+configuration over direct fixed baselines is +29.0/+16.7pp; CoT variants
+span ${\sim}8.3\times$ in prompt tokens with observed accuracies of
+49--60\%, so the cost--accuracy tradeoff is configuration-dependent.
 (2) \emph{Task-conditioned selection is stable and interpretable at the
 family level}: CoT-dominant configurations win on GSM8K across seeds;
 PubMedQA converges to no-memory direct; QASPER shifts toward retrieval
@@ -411,6 +420,22 @@ and scale-dependent; the one pre-locked cross-benchmark test found none.
 (3) \emph{Neural substrate benefit}: the trainable Mamba-2 substrate is
 implemented and searchable but not selected as beneficial.
 
+\section{Reproducibility and Ethics}
+
+All evaluation code, locked protocols, configuration files, per-item
+predictions (900/900 with full raw completions for Tier 3), statistics
+scripts, the read-only forensic verifier, and figure scripts are included
+in the anonymous supplementary. Tier-1 artifacts are frozen at their locked
+commits; Tier 3 was pre-locked before inference and is auditable
+byte-for-byte. Tiers 2--3 together used $<0.25$ GPU-hours. The work uses
+public benchmarks and public models, involves no human subjects, and
+reports negative results and failure modes explicitly. We release no new
+model weights. The public models and benchmarks we use carry known
+limitations---benchmark contamination, annotation noise, and the general
+misuse potential of LLMs---and our released configurations and predictions
+inherit them; we do not claim our audit protocol eliminates these risks,
+and downstream users should scrutinize reused artifacts accordingly.
+
 \section{Limitations}
 
 Single model family (Qwen2.5, 1.5B/7B). SVAMP is a public
@@ -427,19 +452,6 @@ extraction-sensitive (marker placement), which we diagnose but do not claim
 to fix. Our scaffolds are QA-style single-agent configurations; nothing
 here directly addresses interactive tool-use, multi-agent, embodied, or
 long-horizon agents, or backbones outside one family.
-
-\section{Reproducibility and Ethics}
-
-All evaluation code, locked protocols, configuration files, per-item
-predictions (900/900 with full raw completions for Tier 3), statistics
-scripts, the read-only forensic verifier, and figure scripts are included
-in the anonymous supplementary. Tier-1 artifacts are frozen at their locked
-commits; Tier 3 was pre-locked before inference and is auditable
-byte-for-byte. Tiers 2--3 together used $<0.25$ GPU-hours. The work uses
-public benchmarks and public models, involves no human subjects, and
-reports negative results and failure modes explicitly. We release no new
-model weights and see no foreseeable misuse beyond that of the underlying
-public LLMs.
 
 \bibliography{references}
 

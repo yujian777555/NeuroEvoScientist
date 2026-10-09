@@ -22,14 +22,16 @@ holdout, a search-selected chain-of-thought configuration outperformed four
 fixed baselines that all used direct answering, by +29.0 percentage points
 at 1.5B and +16.7 points at 7B — an architecture-matters result that
 confounds search with the CoT-versus-direct gap and cannot be attributed to
-search alone. Tier 2 (fair-baseline dev audit): against CoT-matched presets
-on the reused GSM8K dev slice, the search-selected configuration ties the
-strongest preset (60.0% vs 59.0%, p=1.0); its +10-point edge over a
-no-memory CoT control is exploratory (p=0.087). Tier 3 (pre-registered
+search alone. Tier 2 (fair-baseline dev audit): against CoT-matched
+baselines on the reused GSM8K dev slice, the search-selected configuration
+shows no statistically detectable accuracy advantage over the strongest
+baseline (60.0% vs 59.0%, +1.0pp, p=1.0); its +10-point edge over a
+no-memory CoT control is exploratory (p=0.087). Tier 3 (pre-locked
 cross-benchmark confirmation): on 300 locked SVAMP test items never used
 for search or tuning, the search-selected configuration scores 70.33%,
-statistically indistinguishable from both the strong CoT preset (71.67%;
-primary contrast −1.33pp, 95% CI [−6.00, +3.33], exact McNemar p=0.67) and
+with no statistically detectable accuracy difference from either the
+strong CoT baseline (71.67%;
+primary contrast −1.33pp, 95% CI [−6.00, +3.33], exact McNemar p=0.67) or
 the no-memory control (70.33%; 0.00pp, p=1.0) — and the dev-side memory
 benefit does not replicate. Cost analysis is equally blunt: the no-memory
 control matches the searched configuration's observed accuracy with 1.75×
@@ -76,16 +78,18 @@ headline — a searched configuration beating the strongest fixed baseline by
 but descriptive, because all four fixed baselines used direct answering
 while the searched configuration used chain-of-thought (CoT). The gap
 therefore measures "architecture matters" more than "search helps."
-**Tier 2** repairs the baseline fairness: seven CoT-matched presets
-compared against the search-selected configuration on the same dev slices
+**Tier 2** repairs the baseline fairness: six predefined baselines (four
+CoT-matched and two Direct controls) compared against the search-selected
+configuration on the same dev slices
 the search used (exploratory by construction). **Tier 3** is a
-pre-registered confirmation: three configurations locked before any
+pre-locked confirmation: three configurations locked before any
 inference, evaluated once on the 300-item original SVAMP test split, a
 public benchmark never used for search, calibration, or tuning.
 
 The findings are two-sided. Configuration choices matter: reasoning
 strategy alone swings GSM8K dev accuracy from 11% (direct) to 50–60% (CoT),
-and prompt-token cost varies 10× across presets with similar accuracy. But
+and CoT variants span ~8.3× in prompt tokens with observed accuracies of
+49–60%. But
 the search-selected configuration shows no detectable advantage over a
 strong hand-picked CoT preset on either the dev slice or the locked SVAMP
 test; its dev-side +10-point benefit over a no-memory control does not
@@ -165,9 +169,9 @@ throughout:
   fixed baselines (all direct-answering) on GSM8K/PubMedQA/QASPER, plus the
   exhaustive-landscape search-efficiency audit. Locked before this paper;
   reported here with its confounds made explicit.
-- **Tier 2 — fair-baseline dev audit (F1).** Seven presets matched to the
-  search-selected configuration's reasoning strategy (six CoT presets plus
-  two direct controls), run on the same dev slices the search used
+- **Tier 2 — fair-baseline dev audit (F1).** Six predefined baselines (four
+  CoT-matched: B1–B4; two Direct controls: B0/B5) plus the search-selected
+  REF, all run on the same dev slices the search used
   (GSM8K test[0:100], QASPER items[0:50]) and a pre-chosen 7B shortlist.
   Exploratory: the dev slice influenced selection, and provenance gaps
   apply (§6).
@@ -240,8 +244,9 @@ diagnostic does not establish that underlying answer quality is unaffected.
 
 ## 5. Tier 2 — Fair CoT-Matched Baselines on Reused Dev (Exploratory)
 
-Tier 1's fairness gap motivated presets matched on the searched
-configuration's actual components. We evaluated seven presets plus the
+Tier 1's fairness gap motivated baselines matched on the searched
+configuration's actual components. We evaluated six predefined baselines
+(four CoT-matched: B1–B4; two Direct controls: B0/B5) plus the
 search-selected REF on GSM8K dev (n=100) and QASPER dev (n=50), 1.5B, with
 a pre-chosen 7B shortlist (0.16 GPU-hours total).
 
@@ -251,7 +256,7 @@ recency+direct 13.0%). Among CoT configurations: B1 (no memory) 50.0%, B4
 exemplars) 59.0%, REF (recency, 1 exemplar) 60.0%. Paired: REF−B2 +1.0pp
 (p=1.0); REF−B3 +3.0pp (p=0.63); REF−B4 +11.0pp (p=0.043, secondary,
 unadjusted); REF−B1 +10.0pp (95% CI [0.0, 20.0], p=0.087, primary
-pre-registered contrast). At 7B (dev, secondary, unadjusted): REF−B1 +10.0pp
+pre-specified contrast). At 7B (dev, secondary, unadjusted): REF−B1 +10.0pp
 (p=0.041). The +10pp REF−B1 gap reflects the memory+exemplar component
 under CoT, not search; it is directionally consistent with Tier-1's
 scale-dependent memory ablation but is exploratory here.
@@ -320,8 +325,9 @@ Three claims survive the full audit; three do not.
 1. *Cognitive configuration choices materially affect accuracy and cost.*
    Direct vs CoT reasoning swings GSM8K dev accuracy 11–13% → 49–60%; the
    locked holdout gap of the searched CoT configuration over direct fixed
-   baselines is +29.0/+16.7pp; token cost varies ~10× among CoT presets
-   with similar accuracy (and 3.6× prompt-token spread on SVAMP).
+   baselines is +29.0/+16.7pp; CoT variants span ~8.3× in prompt tokens
+   with observed accuracies of 49–60%, so the cost–accuracy tradeoff is
+   configuration-dependent (and 3.6× prompt-token spread on SVAMP).
 2. *Task-conditioned selection is stable and interpretable at the family
    level.* CoT-dominant configurations win on GSM8K across seeds; PubMedQA
    converges to no-memory direct; QASPER shifts toward retrieval memory
@@ -341,7 +347,24 @@ Three claims survive the full audit; three do not.
 3. *Neural substrate benefit.* The trainable Mamba-2 substrate is
    implemented and searchable but not selected as beneficial.
 
-## 8. Limitations
+## 8. Reproducibility and Ethics
+
+All evaluation code, locked protocols, configuration files, per-item
+predictions (900/900 with full raw completions for Tier 3), statistics
+scripts, the read-only forensic verifier, and figure scripts are included
+in the anonymous supplementary. Tier-1/V1 artifacts are frozen at their
+locked commits; Tier-3 was pre-locked before inference and is auditable
+byte-for-byte. Experiments used <0.25 GPU-hours for Tiers 2–3 combined. The
+work uses public benchmarks (GSM8K, SVAMP, PubMedQA, QASPER/LongBench) and
+public models, involves no human subjects, and reports negative results and
+failure modes explicitly. We release no new model weights. The public
+models and benchmarks we use carry known limitations — benchmark
+contamination, annotation noise, and the general misuse potential of
+LLMs — and our released configurations and predictions inherit them; we do
+not claim our audit protocol eliminates these risks, and downstream users
+should scrutinize reused artifacts accordingly.
+
+## 9. Limitations
 
 Single model family (Qwen2.5, 1.5B/7B); SVAMP is a public benchmark —
 pretraining contamination cannot be ruled out, and it is not
@@ -357,19 +380,6 @@ extraction-sensitive (marker placement), which we diagnose but do not claim
 to fix. Our scaffolds are QA-style single-agent configurations; nothing
 here directly addresses interactive tool-use, multi-agent, embodied, or
 long-horizon agents, or backbones outside one family.
-
-## 9. Reproducibility and Ethics
-
-All evaluation code, locked protocols, configuration files, per-item
-predictions (900/900 with full raw completions for Tier 3), statistics
-scripts, the read-only forensic verifier, and figure scripts are included
-in the anonymous supplementary. Tier-1/V1 artifacts are frozen at their
-locked commits; Tier-3 was pre-locked before inference and is auditable
-byte-for-byte. Experiments used <0.25 GPU-hours for Tiers 2–3 combined. The
-work uses public benchmarks (GSM8K, SVAMP, PubMedQA, QASPER/LongBench) and
-public models, involves no human subjects, and reports negative results and
-failure modes explicitly. We release no new model weights and see no
-foreseeable misuse beyond that of the underlying public LLMs.
 
 ## References
 
