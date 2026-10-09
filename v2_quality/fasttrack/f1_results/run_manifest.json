@@ -1,0 +1,55 @@
+{
+  "git_sha": "unknown",
+  "model": "Qwen/Qwen2.5-7B-Instruct",
+  "cells": [
+    {
+      "cell_id": "F1-12",
+      "baseline": "B1",
+      "benchmark": "gsm8k",
+      "backbone": "Qwen2.5-7B-Instruct",
+      "capability": "0.7500",
+      "prompt_tokens_total": 8091,
+      "latency_sec": "67.1",
+      "wall_time_sec": "67.2",
+      "cache": "f1_gsm8k_Qwen2.5-7B-Instruct_B1.json",
+      "seed": 0
+    },
+    {
+      "cell_id": "F1-13",
+      "baseline": "REF",
+      "benchmark": "gsm8k",
+      "backbone": "Qwen2.5-7B-Instruct",
+      "capability": "0.8500",
+      "prompt_tokens_total": 24391,
+      "latency_sec": "32.6",
+      "wall_time_sec": "32.7",
+      "cache": "f1_gsm8k_Qwen2.5-7B-Instruct_REF.json",
+      "seed": 0
+    },
+    {
+      "cell_id": "F1-14",
+      "baseline": "B1",
+      "benchmark": "qasper",
+      "backbone": "Qwen2.5-7B-Instruct",
+      "capability": "0.1607",
+      "prompt_tokens_total": 143323,
+      "latency_sec": "56.4",
+      "wall_time_sec": "56.7",
+      "cache": "f1_qasper_Qwen2.5-7B-Instruct_B1.json",
+      "seed": 0
+    },
+    {
+      "cell_id": "F1-15",
+      "baseline": "REF",
+      "benchmark": "qasper",
+      "backbone": "Qwen2.5-7B-Instruct",
+      "capability": "0.1783",
+      "prompt_tokens_total": 144623,
+      "latency_sec": "58.2",
+      "wall_time_sec": "58.5",
+      "cache": "f1_qasper_Qwen2.5-7B-Instruct_REF.json",
+      "seed": 0
+    }
+  ],
+  "aggregate_gpu_seconds": 215.04822826385498
+}

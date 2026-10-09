@@ -1,0 +1,16 @@
+cell_id,baseline,benchmark,backbone,capability,prompt_tokens_total,latency_sec,wall_time_sec,cache
+F1-01,B1,gsm8k,Qwen2.5-1.5B-Instruct,0.5000,8091,54.5,54.5,f1_gsm8k_Qwen2.5-1.5B-Instruct_B1.json
+F1-08,B1,qasper,Qwen2.5-1.5B-Instruct,0.1841,143323,49.5,49.8,f1_qasper_Qwen2.5-1.5B-Instruct_B1.json
+F1-12,B1,gsm8k,Qwen2.5-7B-Instruct,0.7500,8091,67.1,67.2,f1_gsm8k_Qwen2.5-7B-Instruct_B1.json
+F1-02,B2,gsm8k,Qwen2.5-1.5B-Instruct,0.5900,67391,27.1,27.3,f1_gsm8k_Qwen2.5-1.5B-Instruct_B2.json
+F1-09,B2,qasper,Qwen2.5-1.5B-Instruct,0.1922,146323,34.6,34.8,f1_qasper_Qwen2.5-1.5B-Instruct_B2.json
+F1-13,REF,gsm8k,Qwen2.5-7B-Instruct,0.8500,24391,32.6,32.7,f1_gsm8k_Qwen2.5-7B-Instruct_REF.json
+F1-03,B3,gsm8k,Qwen2.5-1.5B-Instruct,0.5700,27683,26.9,27.1,f1_gsm8k_Qwen2.5-1.5B-Instruct_B3.json
+F1-10,B3,qasper,Qwen2.5-1.5B-Instruct,0.1879,144851,34.6,34.9,f1_qasper_Qwen2.5-1.5B-Instruct_B3.json
+F1-04,B4,gsm8k,Qwen2.5-1.5B-Instruct,0.4900,14491,28.3,28.3,f1_gsm8k_Qwen2.5-1.5B-Instruct_B4.json
+F1-14,B1,qasper,Qwen2.5-7B-Instruct,0.1607,143323,56.4,56.7,f1_qasper_Qwen2.5-7B-Instruct_B1.json
+F1-05,B5,gsm8k,Qwen2.5-1.5B-Instruct,0.1300,23091,22.8,22.9,f1_gsm8k_Qwen2.5-1.5B-Instruct_B5.json
+F1-11,REF,qasper,Qwen2.5-1.5B-Instruct,0.1667,144623,34.8,35.1,f1_qasper_Qwen2.5-1.5B-Instruct_REF.json
+F1-06,B0,gsm8k,Qwen2.5-1.5B-Instruct,0.1100,6791,6.2,6.2,f1_gsm8k_Qwen2.5-1.5B-Instruct_B0.json
+F1-07,REF,gsm8k,Qwen2.5-1.5B-Instruct,0.6000,24391,27.7,27.7,f1_gsm8k_Qwen2.5-1.5B-Instruct_REF.json
+F1-15,REF,qasper,Qwen2.5-7B-Instruct,0.1783,144623,58.2,58.5,f1_qasper_Qwen2.5-7B-Instruct_REF.json

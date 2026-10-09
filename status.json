@@ -1,9 +1,9 @@
 {
   "project": "NeuroEvoScientist",
-  "phase": "V2 FAST-TRACK — F1 CONDITIONAL AUTHORIZATION ISSUED",
-  "completed": "Planner independently reviewed F0 e32fb95, confirmed V1 Direct vs CoT confounding. Corrected Executor F0 errors: legacy paper/phase21_tables.md materially disagrees with locked Phase20 CSV, B0/B5 and B1/B4 were behaviorally duplicated, F1 GPU cap inconsistent, and n=100 non-significance cannot establish equivalence. Corrected F1 protocol, unique baseline definitions, archival erratum, 15-cell matrix and 1.5 GPU-hour cap pushed. Added regression tests, NOT YET executed by Planner. F1 conditionally approved after Executor preflight PASS; no new V2 GPU results as of authorization.",
-  "next": "Kimi sync main and read plans/v2_f1_authorized_kimi_prompt.md plus v2_quality/fasttrack/gates/gate0_decision.md. First run tests + deterministic production-prompt uniqueness and frozen-REF consistency checks. If PASS, F1 dev-only 15 cells may run under ≤1.5 aggregate GPU-hours without another approval. Stop and request Planner Gate1 before independent confirmation.",
-  "issues": "Corrected F0 inaccuracies require Executor preflight verification; archival old table is numerically unreliable and cannot be used. Original Phase20 holdout was inspected, new V2 results dev-only/exploratory until independently confirmed. Confirmation dataset HF mirror reachable only, not yet fully locked/validated. V1 artifacts remain frozen.",
+  "phase": "V2 FAST-TRACK — F1 COMPLETE, GATE1 PENDING PLANNER REVIEW",
+  "completed": "F1 executed within budget: 15/15 dev-only cells (7 baselines x GSM8K/QASPER dev, 1.5B discovery + B1/REF 7B transfer). Preflight passed all Planner hard checks (7 distinct phenotypes on both tasks, prompt-hash distinctness B0/B5 + B1/B4 + B1/REF, REF==A_gsm, isolated V2 caches). Key results: REF 0.600 vs best CoT-matched preset B2 0.590 (+1pp, p=1.0) on GSM8K dev - NO search advantage; REF vs B1 (no-memory CoT) +10pp (p=0.087 1.5B / p=0.041 7B) - the gap is the memory component; QASPER dev REF slightly below presets. Aggregate GPU 0.16 h of 1.5 h cap. Deliverables: f1_preflight.md, f1_results/ (summary CSV + 15 prediction files + manifest), f1_results.md, gates/gate1_decision.md (proposal: no search advantage; pivot to 'configurations matter; search superiority unsupported'; F2 shortlist REF/B2/B1 + SVAMP confirm proposal).",
+  "next": "WAITING for Planner Gate-1 review. On GO: F2 = single-shot SVAMP confirmation of the locked 3-config shortlist (<=1.0 GPU-h), then F3 writing. No further GPU without authorization.",
+  "issues": "QASPER B4/REF prompt-hash coincidence on one probe item documented in f1_preflight.md (semantically correct, task-aware hashes differ). VM checkout lacks .git so manifest git_sha recorded as unknown; code version = commit 7a35430.",
   "v1_frozen": {
     "status": "READY TO SUBMIT (not submitted), preserved and locked",
     "review_pdf": "paper/arr2026/main.pdf",
@@ -13,15 +13,9 @@
   "v2_fasttrack": {
     "plan": "plans/v2_fasttrack_submission_plan.md",
     "executor_prompt": "plans/v2_f1_authorized_kimi_prompt.md",
-    "active_stage": "F1 preflight first, then 15 dev-only GPU cells if all checks pass",
-    "gate": "GATE0_CONDITIONAL_GO_F1_PREFLIGHT_REQUIRED",
-    "experiments_started": false,
-    "gpu_hours_spent": 0,
-    "f1_cap_gpu_hours": 1.5,
-    "f1_experiments_started": false,
-    "gate0_decision": "v2_quality/fasttrack/gates/gate0_decision.md",
-    "baseline_source": "v2_quality/fasttrack/baselines_f1.json",
-    "protocol": "v2_quality/fasttrack/protocol_f0.md",
-    "budget": "v2_quality/fasttrack/compute_budget.md"
+    "active_stage": "F1 strong CoT baselines (done)",
+    "gate": "GATE1_GO_PROPOSED_AWAITING_PLANNER",
+    "experiments_started": true,
+    "gpu_hours_spent": 0.16
   }
 }
