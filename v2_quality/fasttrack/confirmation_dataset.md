@@ -1,33 +1,29 @@
-# Independent Confirmation Dataset Feasibility (F0)
+# SVAMP Confirmation Dataset — Gate 1 Corrected Registry
 
-## Requirement
+Date: 2026-10-09; supersedes the inaccurate F0 description.
 
-Phase-20 holdouts are inspected material. V2 needs either a genuinely
-independent confirmation set or an explicit exploratory label.
+## Actual verified source
 
-## Candidates verified available (HF mirror, 2026-10-08)
+- Dataset: Hugging Face `ChilleD/SVAMP`.
+- F0-pinned repository revision: `5e0bf1e5e7c0e9c4bc39180d224f41f3f801b7e` (must resolve to a reproducible exact dataset snapshot before running).
+- Dataset card reports **700 train rows and 300 test rows**, totaling 1000, **not 700 test rows**.
+- Required source fields: `ID`, `Body`, `Question`, `Equation`, `Answer`, `Type`, `question_concat`. Prediction input MUST come from `Body` + `Question` only, never `Equation` or `Answer`.
+- HF dataset card reports **MIT** license, **not Apache-2.0**. Confirm file-level notices before redistribution.
+- Original SVAMP authors' challenge set includes 1000 items; the ChilleD mirror is split into 700 train/300 test. The source's 300-row test split is the intended V2 confirmation partition. No mixing of train/test.
+- This is a separate public math-word-problem **benchmark**, not an independent same-distribution GSM8K holdout and not evidence of immunity to pretraining contamination.
+- References: https://huggingface.co/datasets/ChilleD/SVAMP and https://github.com/arkilpatel/SVAMP
 
-| Dataset | Source | HF revision (sha) | Items | Relation to V1 tasks | License |
-|---|---|---|---|---|---|
-| SVAMP | ChilleD/SVAMP | `5e0bf1e5e7c0e9c4bc39180d224f41f3f801b7e` (mirror API) | ~700 test-style arithmetic word problems | same domain as GSM8K but different construction (variation perturbations of ASDiv problems) | Apache-2.0 per dataset card — verify before redistribution |
-| MATH (algebra) | qwedsacf/competition_math | `e839825f9ec5c6cfa585c654a5` (mirror API) | ~12.5k problems | competition math, harder than GSM8K | MIT per upstream repo — verify before redistribution |
+## Confirmation lock before ANY model inference or gold read
 
-Feasibility: **viable**. Recommended primary: SVAMP (closest in style to
-GSM8K, fully untouched by all V1 runs). MATH-algebra as secondary if SVAMP
-proves too easy to separate.
+1. Resolve pinned revision and file sha256, list split names and row counts using metadata/schema access.
+2. Freeze **ALL 300 test IDs** (prefer the whole original test rather than a performance-contingent subset) and exact ordered IDs + file/content hashes in `v2_quality/fasttrack/confirmation_lock.json`; commit and push before running a model.
+3. Independently map `Body + Question` -> `question`, `Answer` -> numeric scoring value, exact `ID` to item_index using a versioned adapter. Equation is NEVER provided to prompt.
+4. Check exact and normalized duplicate texts against V1 GSM8K dev/holdout/calibration before inferencing; duplicates require a pre-registered exclusion rule and should be documented before model outputs. Do not touch the V1 holdout predictions/labels to tune prompts or parser.
+5. Only after the immutable lock is committed, test parser/gold extraction with a separate synthetic fixture (no SVAMP test labels) and run evaluator adapter unit tests.
+6. REF/B1/B2 must use the same old GSM8K calibration-only exemplar bank; keep cross-benchmark transfer protocol clear. No SVAMP train labels as memory.
+7. If validation fails, **STOP** and report, no automatic switch to MATH after observing scores; changing confirmation benchmark requires Planner approval and a new pre-inference lock.
+8. All V2 runs require a fully versioned manifest with actual runner source SHA (if VM lacks .git, record the exact source archive SHA256 or immutable GitHub commit mapped to copied script), model weight revision(s), dataset artifact sha, per-cell prompt+completion token totals, GPU device time, cell success/error, seed, cache identity, and complete per-item evidence.
 
-## Contamination caveats (must be stated in the paper)
+## Intended F2 conclusion
 
-- No public benchmark can be guaranteed absent from LLM pretraining.
-- V1 never evaluated or inspected SVAMP/MATH; independence from our
-  *inspection* history is clean.
-- QASPER/PubMedQA have no suitable same-distribution untouched set left
-  (QASPER: 200 items fully partitioned; PubMedQA: all 1000 partitioned).
-  For those tasks, V2 results remain exploratory unless a new source is
-  locked at F1.
-
-## Lock discipline
-
-The confirmation item IDs will be frozen at F1 completion (before any
-confirm read) in `v2_quality/fasttrack/confirmation_lock.json`, recording
-dataset sha + exact indices.
+One-shot cross-benchmark, unseen-to-project SVAMP test set, 3 **prelocked** configurations REF/B2/B1, Qwen2.5-1.5B-Instruct (exact revision). A paired contrast can substantiate relative transfer to SVAMP, **not** prove search algorithm superiority or a universal scale-dependent memory effect. Treat public pretrained contamination as an explicit limitation.
