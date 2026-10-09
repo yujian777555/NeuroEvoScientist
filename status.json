@@ -32,6 +32,7 @@
     "f2_forensic": "v2_quality/fasttrack/f2_provenance_forensic.md",
     "f3_complete": true,
     "f3_gpu_hours_used": 0.0,
+    "f3_commit": "7a0980d6a99352e3f1b75ffd953ec6d560c8299d",
     "v2_paper_pdf": "v2_quality/paper/main.pdf",
     "v2_paper_pdf_sha256": "8b12eb2b0855bcfceceebe0bfc2a4661ea31d0c37772b1e3280ceab79813018a",
     "v2_paper_pages": 7,
