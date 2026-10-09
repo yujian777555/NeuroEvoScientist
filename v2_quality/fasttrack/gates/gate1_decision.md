@@ -1,49 +1,50 @@
-# Gate 1 Decision Proposal — Executor to Planner
+# Gate 1 Planner Review — CONDITIONAL GO to F2 (2026-10-09)
 
-Date: 2026-10-09. Executor: Kimi. Reviewer: Planner (GPT) — pending.
+Executor F1 evidence: commit `451dfa5acd7c108175725f07379abdb0d2dce9d6`.
+Independent Planner review: **accepted numerical F1 evidence**; F2 only after strict dataset/provenance PRE-FLIGHT.
 
-## The Gate-1 question
+## What Planner independently checked
 
-Does search add value over the best pre-fixed CoT preset?
+- GitHub contains 15 per-item predictions files and 15 summary rows.
+- Recomputed matched pairs from committed item-level files:
+  - 1.5B GSM8K REF vs B1: 60/100 vs 50/100; 19 wins / 9 losses; two-sided McNemar p=0.087159.
+  - REF vs B2: 60/100 vs 59/100; 10 wins / 9 losses; p=1.
+  - REF vs B3: 60/100 vs 57/100; 10 wins / 7 losses; p=0.629059.
+  - REF vs B4: 60/100 vs 49/100; 18 wins / 7 losses; p=0.043285.
+  - 7B REF vs B1: 85/100 vs 75/100; 15 wins / 5 losses; p=0.041389.
+  - QASPER REF vs B2: mean 0.1667 vs 0.1922 (50 items), paired non-tie sign p=0.749259.
+- The F1 15-cell aggregate device runtime of ~0.16 GPU hours is plausible from summary wall-time values, but `run_manifest.json` is NOT a complete proof: it contains only four 7B cells and 215 seconds because multiple invocations overwrite the shared manifest.
+- `git_sha: unknown` in runner manifest and exact model revisions not recorded. F1 report cites runner commit `7a35430` but that does NOT independently prove all remote VM files matched; preserve limitation. Reconstruct historical summary metadata only from logs that exist; NEVER invent missing hashes.
+- QASPER predictions log item-level scores but not raw model output in the evaluator; report this evidence limitation (and avoid claiming zero missing raw traces for all cells). No fabrication or rewriting old outputs.
 
-## Answer on the F1 evidence: **NO convincing advantage**
+## Scientific interpretation: restrained
 
-- REF (search-selected A_gsm) vs B2 (strongest CoT-matched preset,
-  recency memory): **+1.0pp, p=1.0** on GSM8K dev; REF slightly **below**
-  B2/B3 on QASPER dev (−2.6pp, n.s.).
-- The only significant gap is REF vs B1 (no-memory CoT): +10pp,
-  p=0.087 (1.5B) / p=0.041 (7B) — attributable to the memory component
-  of the configuration, not to the search procedure.
-- This is consistent with the Phase-18 audit (evolution ≈ random).
+- No **detectable / convincing** improvement of REF over pre-specified, strong CoT-matched B2 on this previously used DEV subset. This does NOT establish statistical equivalence or rule out a modest benefit; n=100 is underpowered.
+- B2 uses 3 memory exemplars, REF uses 1: in DEV REF uses fewer prompt tokens with near-equal accuracy, but cost superiority needs proper multi-objective reporting and fair inference context.
+- REF vs B1 differences combine exemplar presence with memory policy, not a direct algorithmic search effect. Note F1 1.5B and 7B both show +10pp on DEV; **F1 alone does not demonstrate a growing memory effect with scale**. Prior V1 held-out scales differed in memory effect, but are inspected material and cannot support a newly selected universal scaling law.
+- 7B p=0.041 and B4 p=0.043 are secondary/exploratory unadjusted comparisons; not independent or corrected-for-multiple-testing confirmatory proof.
+- Search superiority remains unsupported in audited compact landscape (Phase18) and F1 dev; optimizer-centric superiority claim prohibited.
+- QASPER dev is exploratory and extraction-sensitive; F1 does not unlock new claims about QASPER quality recovery.
+- F1 numerical results are **accepted subject to provenance limitations**, not final paper-grade confirmation.
 
-## Proposed positioning for the V2 paper
+## Critical F2 preflight corrections
 
-"Configurations matter; search superiority unsupported." The manuscript
-should present: strong CoT-matched fixed presets achieve the searched
-configuration's accuracy on dev; the searched configuration's advantage
-over a memory-free CoT preset isolates the memory component; and the
-memory effect grows with backbone scale.
+F0 dataset description was inaccurate. The HF `ChilleD/SVAMP` card reports train 700, test 300 and MIT license (not ~700 test / Apache-2.0). The new authoritative dataset registration is `v2_quality/fasttrack/confirmation_dataset.md`.
 
-## Proposed F2 shortlist (≤3 configurations, locked if Planner approves)
+Before F2 GPU, Executor MUST:
+1. Read `plans/v2_f2_authorized_kimi_prompt.md`, this verdict, and corrected SVAMP registry.
+2. Prove exact dataset revision/artifact SHA and schema from the pinned HF source. Confirm original **test** split has 300 rows; select entire test and freeze IDs/hash, before any model inference/score-driven inspection. Never mix train labels or use Equation in prompts.
+3. Version and test adapter `Body + Question -> question`, `Answer -> numeric gold` with synthetic fixtures. No change to legacy GSM8K evaluator/scorer used by V1.
+4. Validate no exact/normalized overlap with V1 GSM8K questions and F1 cached prompts; report near-duplicate limitations. Avoid peeking labels until lock.
+5. Freeze list `REF, B2, B1` now, model Qwen2.5-1.5B-Instruct; predefine PRIMARY paired contrast (REF vs B2 on SVAMP) and SECONDARY (REF vs B1); report both with CIs and per-cell real prompt/completion tokens. Additional contrasts not primary.
+6. Provenance: per-run executable source commit/hash, exact model revision, dataset revision/hash, prompt/parser version hashes, caching keyed by these and question ID; consolidated manifest must include all 3 F2 cells; record aggregate GPU time.
+7. Verify README/data notices for license; ensure F2 dataset version immutable. Run full tests and synthetic parser tests; commit confirmation_lock.json and preflight before any F2 inference.
+8. If ANY preflight guard fails, STOP and push failure analysis; no silent fallback to MATH and no unauthorized additional test reads.
 
-1. REF (A_gsm) — searched reference.
-2. B2 — strongest CoT-matched preset (memory on).
-3. B1 — CoT without memory (cheapest CoT preset).
+## F2 bounded authorization
 
-Confirmation set: SVAMP primary (HF sha 5e0bf1e5…), per
-`v2_quality/fasttrack/confirmation_dataset.md`; confirmation lock file to
-be written before any confirm read. If Planner judges SVAMP unsuitable,
-V2 confirmation is exploratory-only.
+**CONDITIONAL GO**: After ALL checks pass, run exactly three configurations REF, B2, B1 on SVAMP's locked 300-row test split, **1.5B only**, aggregate F2 cap **≤1.0 GPU-hour**. No search, no parameter tuning, no reusing V1 inspected holdout as confirmation. F2 result classified cross-benchmark confirmation on a PUBLIC benchmark, not truly out-of-pretraining-distribution guarantee.
 
-## What F1 did NOT do (per constraints)
+After F2, commit/push exact predictions, per-cell metrics+tokens, paired statistics and `v2_quality/fasttrack/gates/gate2_decision.md`. STOP; do not draft a new final paper until Planner reviews Gate2.
 
-- No SVAMP/MATH reads; no re-search; no seed fishing; no parser changes;
-- no holdout access; no V1 artifact modified; GPU 0.16 h of 1.5 h cap.
-
-## GO/NO-GO proposal for F2
-
-**GO** for the ≤3-config single-shot confirmation on SVAMP (≤1.0 GPU-h),
-because the current evidence base is dev-only and one independent
-confirmation materially strengthens the paper's claim discipline. The
-confirmation will NOT rescue a search-superiority claim — it answers
-whether REF's memory component replicates on an untouched task family.
+No automatic additional GPU, no benchmark switch upon results, no anonymous upload or venue submission.
