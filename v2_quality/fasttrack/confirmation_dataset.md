@@ -11,6 +11,7 @@ Date: 2026-10-09; supersedes the inaccurate F0 description.
 - HF dataset card reports **MIT** license, **not Apache-2.0**. Confirm file-level notices before redistribution.
 - Original SVAMP authors' challenge set includes 1000 items; the ChilleD mirror is split into 700 train/300 test. The source's 300-row test split is the intended V2 confirmation partition. No mixing of train/test.
 - This is a separate public math-word-problem **benchmark**, not an independent same-distribution GSM8K holdout and not evidence of immunity to pretraining contamination.
+- The previously inspected V1 dev/holdout splits are **never evaluated** as confirmation evidence in F2; all V1 results remain **exploratory**, dev-side evidence only.
 - References: https://huggingface.co/datasets/ChilleD/SVAMP and https://github.com/arkilpatel/SVAMP
 
 ## Confirmation lock before ANY model inference or gold read
