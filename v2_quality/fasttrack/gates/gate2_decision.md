@@ -1,76 +1,58 @@
-# Gate 2 Executor Report — F2 SVAMP Confirmation (2026-10-09)
+# Gate 2 — Planner Independent Audit / GO to F3 (2026-10-09)
 
-Executor: Kimi. Evidence commits: preflight `297d24e`, runner `2644295`.
-This is the Executor's report and Gate-2 **recommendation**; the GO/NO-GO
-decision itself belongs to the Planner.
+Executor F2 commit: `ddd52dfb66bf5005a583d282aceacdd650804518`.
+Pre-inference lock commit: `297d24e18cfaf464680f7e1def8ed829176ebbe3`.
+Runner-source commit: `2644295fa81860737594327bcd5dfa7328545f4d`.
+**Verdict: GO to F3 manuscript work, NO MORE GPU without separate authorization.**
+The scientific result is a valid negative or mixed outcome, not evidence of optimizer superiority.
 
-## Execution verdict: PROTOCOL CLEAN
+## Verified result evidence
 
-All Gate-1 preflight conditions were met before any GPU inference:
+Planner fetched all three committed 300-row prediction files and independently aligned IDs and rescored matched binary pairs. Each row includes full output and adapter score; 300 distinct IDs in each file, all aligned by order, 900/900 adapter_score = correct.
+- REF: 211/300 = 0.703333
+- B2: 215/300 = 0.716667
+- B1: 211/300 = 0.703333
+- PRIMARY REF vs B2: wins 23, losses 27, ties 250, Δ = −1.333pp, two-sided exact McNemar p = 0.671811. Reported bootstrap CI [−6.00,+3.33]pp.
+- SECONDARY REF vs B1: wins 34, losses 34, ties 232, Δ = 0pp, p = 1.000000. Reported CI [−5.33,+5.33]pp.
+- DESCRIPTIVE B2 vs B1: wins 33, losses 29, ties 238, Δ=+1.333pp, p = 0.703537.
+- Full manifest: all three rows, model revision, data revision, source runner SHA, adapter SHA, IDs, seed 0, cache status false, 0 reported errors, total 215.785 seconds ≈0.060 aggregate GPU-hours. The F1 manifest provenance gap is not retroactively fixed.
 
-1. Dataset revision + file SHAs proven (`5e0bf1e5…`; test sha256 `9b5590fc…`).
-2. All 300 test IDs frozen in `confirmation_lock.json` before inference
-   (`test_ids_sha256 4e462b13…`); lock committed at `297d24e`, GPU started
-   only after runner commit `2644295`.
-3. Versioned adapter (`svamp-adapter-v1`) CPU-tested with synthetic fixtures;
-   Body+Question only; Equation/Answer never in prompts.
-4. Overlap vs full GSM8K corpus: 0/300 (normalized exact match); public-
-   benchmark contamination caveat recorded in the lock.
-5. Configs frozen as REF/B2/B1; backbone Qwen2.5-1.5B-Instruct revision
-   `989aa798…` (verified on-VM); primary REF vs B2, secondary REF vs B1.
-6. Consolidated single manifest for all 3 cells: real git SHA, model
-   revision, dataset SHAs, adapter SHA, cache identity, phenotype hashes,
-   seed, per-cell tokens/errors/GPU-seconds. F1 manifest defect fixed.
-7. Full test suite green at preflight (102 passed; one F0 wording test
-   repaired by restoring the explicit V1-holdout exclusion sentence in
-   `confirmation_dataset.md`, no semantic change).
-8. GPU budget: 0.060 GPU·h used of 1.0 h cap. Single shot; no re-runs.
+## Cost / Pareto interpretation (exact tokens from manifest)
 
-## Results (SVAMP locked test, n=300, 1.5B)
+| Config | Accuracy | Prompt tokens | Generated tokens | Prompt+generated |
+|---|---:|---:|---:|---:|
+| REF | 70.33% | 68,017 | 50,049 | 118,066 |
+| B2 | 71.67% | 197,017 | 44,137 | 241,154 |
+| B1 | 70.33% | 19,117 | 48,264 | 67,381 |
 
-- REF 0.7033 (68,017 prompt tok / 50,049 completion tok)
-- B2  0.7167 (197,017 / 44,137)
-- B1  0.7033 (19,117 / 48,264)
-- PRIMARY REF vs B2: −1.33 pp, 95% CI [−6.00, +3.33], McNemar p=0.6718.
-- SECONDARY REF vs B1: 0.00 pp, 95% CI [−5.33, +5.33], McNemar p=1.0.
-- 0/900 adapter-scoring mismatches; 0 cell errors.
+- B2 has nominally 1.33pp higher accuracy but 2.90x REF prompt tokens and 2.04x total tokens.
+- B1 has identical observed accuracy to REF with **3.56x fewer prompt tokens and 1.75x fewer total tokens**. This is IMPORTANT: there is NO cost-performance advantage of REF over B1 on these observed outcomes. Do not hide B1.
+- Lack of statistically significant difference is NOT equivalence or proof of zero memory value. CIs include positive and negative effects. Claim NO DETECTABLE REF advantage over B2 and B1 under the locked SVAMP test.
 
-## Scientific reading (restrained)
+## Correct scientific conclusion
 
-1. **No detectable advantage** of the search-selected REF over the strong
-   CoT-matched preset B2 on unseen-to-project SVAMP — consistent with F1 dev.
-   REF matches B2 accuracy with ~2.9× fewer prompt tokens (68k vs 197k),
-   a cost-side observation only; no superiority claim is supported.
-2. **The F1 dev-side REF-vs-B1 memory benefit (+10 pp) does NOT transfer
-   cross-benchmark (0.00 pp, p=1.0).** The recency-memory benefit is
-   benchmark-specific at 1.5B. This directly supports the V2 thesis that
-   search-side task specialization does not necessarily generalize — and it
-   prohibits any universal "memory helps" or scale-dependent memory claim.
-3. Nothing in F2 supports search-superiority, optimizer-centric, or
-   equivalence claims (n=300 resolution ±~5 pp; absence of evidence, not
-   evidence of exact equivalence).
+F1 (GSM8K 100-item DEV): REF-B1 +10pp (p≈0.087) exploratory. F2 (independent-from-project SVAMP 300-item test): REF-B1 0pp (p=1). It is accurate to say the +10pp exploratory dev estimate was **not replicated on the chosen cross-benchmark evaluation**; it is NOT yet statistically proven that the task × memory treatment interaction differs. Do not write 'significantly more task-dependent' or 'proven non-transfer' based solely on contrasting p-values.
 
-## Exploratory vs externally confirmed — Executor classification
+F2 is independent of the *project's selection/inspection history* according to versioned lock and single-shot report; SVAMP is a public benchmark in a different distribution, so pretraining contamination and dataset-shift caveats apply. Negative result reinforces LIMITED GENERALIZATION, not formal optimization superiority or inferiority. F2 is one model family, 1.5B only.
 
-- **Externally confirmed (cross-benchmark, public benchmark):**
-  - Search-selected REF shows no detectable accuracy advantage over a strong
-    pre-specified CoT baseline on data never used for search or tuning.
-  - Dev-side search preferences (memory benefit) are benchmark-specific and
-    can fail to transfer — a confirmation of the V2 "generalization gap"
-    thesis on independent data.
-- **Remains exploratory:** any nonzero memory/scale effect sizes, all F1
-  dev-side differences, and anything about QASPER or 7B (untouched by F2).
+## Provenance qualification — must resolve during F3, NO NEW EXPERIMENT
 
-## Gate 2 recommendation: **GO (conditional)**
+Found a narrower-than-described source integrity check: `v2_quality/svamp_adapter.py::load_locked_test_rows()` validates only item count and ordered ID hash; it does **not** SHA-256-verify the full source file bytes or the model/source revision at runtime. Preflight/manifest recorded file sha256, but merely recording is not full runtime verification. A modified text/answer with the same IDs would evade that loader. This does not invalidate the independently reproduced paired counts, but means the phrase 'any dataset divergence hard-stops at runtime' is overstated.
 
-F2 is protocol-clean and delivers the cross-benchmark confirmation the
-fast-track plan required. Recommended conditions for F3 (paper revision):
+F3 must execute a POST-HOC read-only forensic provenance audit:
+- Independently recompute SHA256 of committed `v2_quality/fasttrack/data/svamp_test.json`, training artifact as recorded, adapter code, locked ID order, and exact 300-ID overlap with every prediction file; compare against the pre-inference lock and runner manifest.
+- Inspect the actual inference log / source archive provenance and explicitly distinguish observed facts from runtime checks and claimed VM snapshots. Do not modify original F2 evaluator or old results / SHAs; add a SEPARATE versioned integrity validator/test for all subsequent readers, document that the run-time loader did not check full byte hash.
+- If the full file hash differs from frozen lock, STOP F3 scientific claims and return BLOCKED to Planner; do not silently rerun F2 after seeing outcomes.
 
-1. Paper claims limited to: configurations matter; no search superiority;
-   memory benefit benchmark-specific (dev +10 pp → SVAMP 0 pp); cost-side
-   token differences reported descriptively.
-2. Explicit limitations: public-benchmark contamination; n=300 power;
-   single backbone (1.5B); single confirmation benchmark.
-3. V1 artifacts remain frozen; F2 numbers reported as V2 evidence only.
+## F3 scope and deliverables
 
-**STOP point reached. Awaiting Planner Gate-2 decision before any F3 work.**
+F3 is an **evidence-based paper edit**, not a new research experiment.
+- Preserve V1 `paper/arr2026/`, `deliverables/final_submission/`, Phase17–21 results and F2 original result files as read-only. New paper under `v2_quality/paper/`.
+- Make strong CoT-matched baselines, item-level confidence intervals, total token cost and the B1 cheaper equal-observed-accuracy result prominent. DO NOT claim search optimizer, evolutionary method, or memory universal superiority, statistical equivalence, or confirmed task×memory interaction.
+- Separate historic V1 comparisons with Direct-only fixed baselines from F1 reused DEV and F2 independent cross-benchmark confirmation. Honest research story can be 'When does task-conditioned configuration selection generalize? A controlled negative-results and cost audit.'
+- Include correct QASPER paired sign-test labeling and output extraction limitation. Do not create new figures or claims from obsolete `paper/phase21_tables.md` (materially wrong), only locked CSV/JSON.
+- Produce manuscript, updated figures from existing immutable artifacts, references, anonymous supplementary, compiled review PDF, manifest/SHA, method-result trace, limitations; run full tests, ACL/ARR format/anonymity/compliance checks and page-by-page inspection. No fake automated claim of visual inspection.
+- Verify next ACTUAL venue and deadlines before formulating a submission recommendation; no assumption that missing 2026-10-12 window still serves NAACL/COLING 2027.
+- **STOP at Gate3 (paper-ready review); never upload/submit automatically.**
+
+The user's priority remains earliest SCIENTIFICALLY DEFENSIBLE submission. Do not reopen long research phases without a concrete evidence blocker.
