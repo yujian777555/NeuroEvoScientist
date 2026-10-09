@@ -1,9 +1,9 @@
 {
   "project": "NeuroEvoScientist",
-  "phase": "V2 FAST-TRACK — GATE1 CONDITIONAL GO / F2 PREFLIGHT AUTHORIZED",
-  "completed": "Planner independently verified F1 commit 451dfa5 against per-item predictions: GSM8K 1.5B REF 0.60 vs B2 0.59 (p=1), REF 0.60 vs B1 0.50 (p=0.087), 7B REF 0.85 vs B1 0.75 (p=0.041), QASPER REF 0.1667 vs B2 0.1922. No convincing search-specific advantage, not statistical equivalence. F1 report 15/15 cells and 0.16 GPU-h; run_manifest.json contains only last 4 cells and git_sha unknown, so provenance is partial; Executor must document unknowns. Corrected F0 SVAMP card to ChilleD/SVAMP 700 train, 300 test, MIT. Conditional Gate1 verdict and F2 prompt pushed; no F2 GPU started by Planner.",
-  "next": "Kimi sync main, read plans/v2_f2_authorized_kimi_prompt.md, v2_quality/fasttrack/gates/gate1_decision.md and corrected confirmation_dataset.md. Lock original SVAMP 300 test IDs/data artifact SHA and 3 fixed configs REF/B2/B1 before any inference; version and CPU-test Body+Question adapter and numeric scorer, full traceability. Only after preflight PASS, run 3 one-shot SVAMP test cells with Qwen2.5-1.5B-Instruct, ≤1.0 aggregate GPU-hour. Push Gate2 report then STOP for Planner review.",
-  "issues": "F1 differences and p values are exploratory on previously used 100-item DEV; no evidence of search superiority or formal equivalence. F1 provenance git_sha unknown and manifest overwritten; missing QASPER raw outputs. SVAMP dataset mirror card corrected (300 test, MIT) and license/provenance/prompt/scoring must pass preflight; public pretraining contamination cannot be ruled out. V1 frozen artifacts must remain untouched.",
+  "phase": "V2 FAST-TRACK — F2 COMPLETE / GATE2 PENDING PLANNER REVIEW",
+  "completed": "F2 SVAMP cross-benchmark confirmation executed as a protocol-clean single shot: preflight commit 297d24e (300-ID lock + adapter + 5/5 tests), runner commit 2644295. 3/3 cells (REF/B2/B1) x 300 locked SVAMP test items on Qwen2.5-1.5B-Instruct rev 989aa798, 0 errors, 0/900 adapter-scoring mismatches, 0.060 GPU-h of 1.0 cap. Results: REF 0.7033, B2 0.7167, B1 0.7033. PRIMARY REF vs B2 -1.33pp CI95 [-6.0,+3.3] p=0.67; SECONDARY REF vs B1 0.00pp p=1.0. F1 dev-side +10pp REF-vs-B1 memory benefit does NOT transfer to SVAMP (0.00pp): memory benefit is benchmark-specific. Consolidated single manifest with real SHAs fixes the F1 provenance defect.",
+  "next": "STOP for Planner Gate-2 review of v2_quality/fasttrack/gates/gate2_decision.md (Executor recommendation: conditional GO). If approved, F3 = V2 paper revision limited to: configurations matter; no search superiority; memory benefit benchmark-specific; cost-side token reporting descriptive only. No new experiments without Planner authorization.",
+  "issues": "SVAMP is a public benchmark; pretraining contamination cannot be ruled out (cross-benchmark confirmation, not same-distribution holdout). n=300 gives ~5pp CI resolution; no formal equivalence established. F1 provenance remains partially undocumented (git_sha unknown, manifest overwritten) and is reported as a limitation. QASPER raw outputs still missing from F1 logs. V1 frozen artifacts untouched.",
   "v1_frozen": {
     "status": "READY TO SUBMIT (not submitted), preserved and locked",
     "review_pdf": "paper/arr2026/main.pdf",
@@ -12,18 +12,24 @@
   },
   "v2_fasttrack": {
     "plan": "plans/v2_fasttrack_submission_plan.md",
-    "executor_prompt": "plans/v2_f1_authorized_kimi_prompt.md",
-    "active_stage": "F2 SVAMP independent cross-benchmark confirmation: preflight then limited GPU",
-    "gate": "GATE1_CONDITIONAL_GO_F2_PREFLIGHT_REQUIRED",
+    "executor_prompt": "plans/v2_f2_authorized_kimi_prompt.md",
+    "active_stage": "F2 complete; awaiting Planner Gate-2 decision before F3 paper revision",
+    "gate": "GATE2_PENDING_PLANNER_REVIEW",
     "experiments_started": true,
-    "gpu_hours_spent": 0.16,
+    "gpu_hours_spent": 0.22,
     "f1_complete": true,
     "f1_results_commit": "451dfa5acd7c108175725f07379abdb0d2dce9d6",
     "f1_reported_gpu_hours": 0.16,
     "gate1_decision": "v2_quality/fasttrack/gates/gate1_decision.md",
     "f2_executor_prompt": "plans/v2_f2_authorized_kimi_prompt.md",
     "f2_gpu_cap_hours": 1,
-    "f2_started": false,
+    "f2_started": true,
+    "f2_complete": true,
+    "f2_preflight_commit": "297d24e18cfaf464680f7e1def8ed829176ebbe3",
+    "f2_runner_commit": "2644295fa81860737594327bcd5dfa7328545f4d",
+    "f2_gpu_hours_used": 0.06,
+    "f2_results": "v2_quality/fasttrack/f2_results.md",
+    "gate2_report": "v2_quality/fasttrack/gates/gate2_decision.md",
     "confirmation_source": "ChilleD/SVAMP: original test split 300 rows, pinned revision; MIT per HF card"
   }
 }

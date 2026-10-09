@@ -1,0 +1,72 @@
+{
+  "stage": "F2",
+  "git_sha": "2644295fa81860737594327bcd5dfa7328545f4d",
+  "model": "Qwen/Qwen2.5-1.5B-Instruct",
+  "model_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "dataset": "ChilleD/SVAMP",
+  "dataset_hf_revision": "5e0bf1e5e7c0e9c4bc39180d224f41f3f801b7ef",
+  "dataset_files_sha256": {
+    "test.json": "9b5590fce66ea78ecfc7d0fc4a91fb801ffe289340269f8d9d28b21acad04ae6",
+    "train.json": "bb3b4cd2957f07643bbf9f8f8f5faba3bfb47fcb1d9034655b03060a76675e2b"
+  },
+  "test_ids_sha256": "4e462b134a5cf3dd633944804318ec2a48e67fc1e58f6f8e2c329cf9b22bc03f",
+  "n_items": 300,
+  "adapter_version": "svamp-adapter-v1",
+  "adapter_source_sha256": "0869a9e101fc3512755154991dfb126a2cf88a6b295847346d250899af7f369d",
+  "seed": 0,
+  "cells": [
+    {
+      "config": "REF",
+      "phenotype_sha256": "688b45fe75197889dc3c9fd464e4cc4a4e688f4f42ede4f2bad19a98a0a99bb6",
+      "cache": "f2_svamp_Qwen2.5-1.5B-Instruct_REF.json",
+      "predictions": "predictions_f2_REF.jsonl",
+      "seed": 0,
+      "error_count": 0,
+      "errors": [],
+      "n_items": 300,
+      "capability": 0.7033333333333334,
+      "prompt_tokens_total": 68017,
+      "completion_tokens_total": 50049,
+      "latency_sec": 74.27204632759094,
+      "wall_time_sec": 74.47260594367981,
+      "adapter_scoring_mismatches": 0,
+      "cached": false
+    },
+    {
+      "config": "B2",
+      "phenotype_sha256": "845748c58c69a2632d03bb5a7c8c898f7f2bc2f22bcddb98e24a50e6f76a1e9c",
+      "cache": "f2_svamp_Qwen2.5-1.5B-Instruct_B2.json",
+      "predictions": "predictions_f2_B2.jsonl",
+      "seed": 0,
+      "error_count": 0,
+      "errors": [],
+      "n_items": 300,
+      "capability": 0.7166666666666667,
+      "prompt_tokens_total": 197017,
+      "completion_tokens_total": 44137,
+      "latency_sec": 69.78013825416565,
+      "wall_time_sec": 70.11709570884705,
+      "adapter_scoring_mismatches": 0,
+      "cached": false
+    },
+    {
+      "config": "B1",
+      "phenotype_sha256": "6cf221a5692df0e510cc8ed35c9c0e2bd706604614fbee0086ae6c9659ce6fa8",
+      "cache": "f2_svamp_Qwen2.5-1.5B-Instruct_B1.json",
+      "predictions": "predictions_f2_B1.jsonl",
+      "seed": 0,
+      "error_count": 0,
+      "errors": [],
+      "n_items": 300,
+      "capability": 0.7033333333333334,
+      "prompt_tokens_total": 19117,
+      "completion_tokens_total": 48264,
+      "latency_sec": 71.11258721351624,
+      "wall_time_sec": 71.19544339179993,
+      "adapter_scoring_mismatches": 0,
+      "cached": false
+    }
+  ],
+  "aggregate_gpu_seconds": 215.78514504432678,
+  "status": "COMPLETE"
+}

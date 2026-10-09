@@ -1,0 +1,55 @@
+{
+  "dataset": "SVAMP test (300 locked items)",
+  "method": "paired bootstrap 95% CI (n=10000, seed=20260923) + two-sided exact McNemar (binary accuracy)",
+  "primary_contrast": {
+    "name": "REF vs B2",
+    "bootstrap": {
+      "n_items": 300,
+      "score_a": 0.7033,
+      "score_b": 0.7167,
+      "diff_pp": -1.33,
+      "ci95_lo_pp": -6.0,
+      "ci95_hi_pp": 3.33
+    },
+    "mcnemar": {
+      "discordant": 50,
+      "a_wins": 23,
+      "b_wins": 27,
+      "p_exact": 0.671811
+    }
+  },
+  "secondary_contrast": {
+    "name": "REF vs B1",
+    "bootstrap": {
+      "n_items": 300,
+      "score_a": 0.7033,
+      "score_b": 0.7033,
+      "diff_pp": 0.0,
+      "ci95_lo_pp": -5.33,
+      "ci95_hi_pp": 5.33
+    },
+    "mcnemar": {
+      "discordant": 68,
+      "a_wins": 34,
+      "b_wins": 34,
+      "p_exact": 1.0
+    }
+  },
+  "descriptive_B2_vs_B1": {
+    "name": "B2 vs B1 (descriptive only, not pre-registered)",
+    "bootstrap": {
+      "n_items": 300,
+      "score_a": 0.7167,
+      "score_b": 0.7033,
+      "diff_pp": 1.33,
+      "ci95_lo_pp": -3.67,
+      "ci95_hi_pp": 6.33
+    },
+    "mcnemar": {
+      "discordant": 62,
+      "a_wins": 33,
+      "b_wins": 29,
+      "p_exact": 0.703537
+    }
+  }
+}
