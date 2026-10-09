@@ -1,9 +1,9 @@
 {
   "project": "NeuroEvoScientist",
-  "phase": "V2 FAST-TRACK — F2 COMPLETE / GATE2 PENDING PLANNER REVIEW",
-  "completed": "F2 SVAMP cross-benchmark confirmation executed as a protocol-clean single shot: preflight commit 297d24e (300-ID lock + adapter + 5/5 tests), runner commit 2644295. 3/3 cells (REF/B2/B1) x 300 locked SVAMP test items on Qwen2.5-1.5B-Instruct rev 989aa798, 0 errors, 0/900 adapter-scoring mismatches, 0.060 GPU-h of 1.0 cap. Results: REF 0.7033, B2 0.7167, B1 0.7033. PRIMARY REF vs B2 -1.33pp CI95 [-6.0,+3.3] p=0.67; SECONDARY REF vs B1 0.00pp p=1.0. F1 dev-side +10pp REF-vs-B1 memory benefit does NOT transfer to SVAMP (0.00pp): memory benefit is benchmark-specific. Consolidated single manifest with real SHAs fixes the F1 provenance defect.",
-  "next": "STOP for Planner Gate-2 review of v2_quality/fasttrack/gates/gate2_decision.md (Executor recommendation: conditional GO). If approved, F3 = V2 paper revision limited to: configurations matter; no search superiority; memory benefit benchmark-specific; cost-side token reporting descriptive only. No new experiments without Planner authorization.",
-  "issues": "SVAMP is a public benchmark; pretraining contamination cannot be ruled out (cross-benchmark confirmation, not same-distribution holdout). n=300 gives ~5pp CI resolution; no formal equivalence established. F1 provenance remains partially undocumented (git_sha unknown, manifest overwritten) and is reported as a limitation. QASPER raw outputs still missing from F1 logs. V1 frozen artifacts untouched.",
+  "phase": "V2 FAST-TRACK — GATE2 GO / F3 PAPER FINALIZATION AUTHORIZED",
+  "completed": "Planner independent Gate2 audit accepted F2 evidence ddd52df: 900/900 per-item scores align across 300 SVAMP IDs, REF 211, B2 215, B1 211. PRIMARY REF-B2 -1.33pp (wins23/loss27, p=0.671811, CI [-6,+3.33]); REF-B1 0pp (wins34/loss34, p=1, CI [-5.33,+5.33]). F2 cost REF 118066 tokens, B2 241154, B1 67381. Note B1 matches REF observed accuracy with far lower token cost. F1 REF-B1 +10pp exploratory DEV did not replicate on SVAMP; no formal cross-dataset interaction test. Discovered F2 runtime load_locked_test_rows checked only ID hash/count, not full file SHA; F3 independent byte-hash forensic check mandatory. F2 0.060 GPU-h. No new experiments authorized.",
+  "next": "Kimi: fetch main, execute plans/v2_f3_authorized_kimi_prompt.md and plans/v2_f3_paper_finalize_plan.md. Start with read-only forensic F2 full dataset artifact SHA checks and source-to-result integrity. If PASS, create separate v2_quality/paper/ manuscript, review PDF and anonymous supplement; compile and visually inspect; update Gate3 report and status; STOP for Planner review. No GPU/extra tests on held-out data, no overwrite V1, no automatic submission.",
+  "issues": "F2 exact runtime SHA verification was narrower than claimed: original loader checks 300 ordered IDs only, not dataset full bytes. Resolve with independent read-only posthoc checks, not F2 results changes. Cross-benchmark SVAMP does not establish equivalence, optimizer superiority, significant task-by-memory interaction, or pretraining independence. F1 runner provenance partial. V1 paper and historic results frozen.",
   "v1_frozen": {
     "status": "READY TO SUBMIT (not submitted), preserved and locked",
     "review_pdf": "paper/arr2026/main.pdf",
@@ -13,8 +13,8 @@
   "v2_fasttrack": {
     "plan": "plans/v2_fasttrack_submission_plan.md",
     "executor_prompt": "plans/v2_f2_authorized_kimi_prompt.md",
-    "active_stage": "F2 complete; awaiting Planner Gate-2 decision before F3 paper revision",
-    "gate": "GATE2_PENDING_PLANNER_REVIEW",
+    "active_stage": "F3 forensic F2 provenance + V2 manuscript/review PDF build",
+    "gate": "GATE2_GO_F3_AUTHORIZED",
     "experiments_started": true,
     "gpu_hours_spent": 0.22,
     "f1_complete": true,
@@ -30,6 +30,13 @@
     "f2_gpu_hours_used": 0.06,
     "f2_results": "v2_quality/fasttrack/f2_results.md",
     "gate2_report": "v2_quality/fasttrack/gates/gate2_decision.md",
-    "confirmation_source": "ChilleD/SVAMP: original test split 300 rows, pinned revision; MIT per HF card"
+    "confirmation_source": "ChilleD/SVAMP: original test split 300 rows, pinned revision; MIT per HF card",
+    "gate2_review": "v2_quality/fasttrack/gates/gate2_decision.md",
+    "f3_plan": "plans/v2_f3_paper_finalize_plan.md",
+    "f3_executor_prompt": "plans/v2_f3_authorized_kimi_prompt.md",
+    "f3_started": false,
+    "gpu_work_allowed": false,
+    "f2_results_commit": "ddd52dfb66bf5005a583d282aceacdd650804518",
+    "total_reported_gpu_hours": 0.22
   }
 }
