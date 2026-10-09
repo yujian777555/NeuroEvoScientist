@@ -44,3 +44,6 @@ B2 nominally slightly more accurate with 2.04× total tokens vs REF. B1 equals R
 - `v2_quality/fasttrack/f2_provenance_forensic.md`, new CPU verifier/tests, comprehensive `v2_quality/fasttrack/gates/gate3_decision.md`.
 - `status.json` with exact HEAD, source-to-PDF hash, tests, page count, source data, limitations and 'READY FOR PLANNER GATE3 REVIEW', NOT `SUBMITTED`.
 - Commit/push to origin/main, STOP. No further GPU, no silent experiment alteration or deadline promise.
+
+## Official timing note, verified 2026-10-09
+As of the official ARR dates/venue table and ACL 2027 main-conference CFP, 2026-10-12 is the final ARR deadline for NAACL 2027/COLING 2027; ACL 2027 names **2027-01-04** as the latest eligible ARR submission deadline. Links: https://aclrollingreview.org/dates and https://2027.aclweb.org/calls/main/ . This is a venue-specific latest date, not an instruction to wait until January: check newly announced ARR cycles and venue policy before choosing the earliest viable submission. ARR sustainable reviewing and service-contributor requirements also apply: https://aclrollingreview.org/cfp . Do not submit without the owner's action.
