@@ -47,5 +47,19 @@
     "experiments_frozen": true,
     "owner_upload_ready": true,
     "owner_submission_done": false
+  },
+  "phase2_planning": {
+    "status": "DESIGN DOCUMENTS COMPLETE — AWAITING PLANNER REVIEW",
+    "date": "2026-10-14",
+    "direction": "Task-Adaptive Cognitive Configuration Controller (TACC): learn task -> cognitive configuration instead of searching for one global best",
+    "documents": [
+      "plans/phase2_controller_design.md",
+      "plans/phase2_experiment_design.md",
+      "plans/phase2_risk_analysis.md"
+    ],
+    "recommended_learning_approach": "A: supervised utility-labeled controller first; contextual bandit as extension; RL deferred",
+    "gpu_authorized": 0,
+    "next_gate": "Planner review, then pre-Gate-2 routing-literature audit (R5) and Gate-1 variance probe (R1)",
+    "constraints": "No code, no experiments, no GPU this round; V1/V2 paper artifacts frozen and untouched"
   }
 }
