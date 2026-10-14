@@ -31,7 +31,8 @@ def rec(cid, ok, detail):
 
 def main():
     import fitz
-    doc = fitz.open(os.path.join(HERE, "main.pdf"))
+    pdf_path = os.environ.get("PAPER_PDF", os.path.join(HERE, "main.pdf"))
+    doc = fitz.open(pdf_path)
     text = "\n".join(p.get_text() for p in doc)
     meta = doc.metadata
 

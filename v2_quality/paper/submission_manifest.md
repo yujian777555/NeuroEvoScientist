@@ -1,4 +1,4 @@
-# V2 Submission Manifest — NeuroEvoScientist F3 (2026-10-09, Gate-3 final hotfix)
+# V2 Submission Manifest — NeuroEvoScientist F3 (2026-10-14, final refinement)
 
 **Status: READY FOR OWNER UPLOAD DECISION — NOT SUBMITTED.**
 
@@ -6,14 +6,30 @@
 
 | Item | Path | SHA-256 |
 |---|---|---|
-| Final review PDF (7 pp; 4 content + Ethics/Limitations + refs) | `main.pdf` | `4d20ab6ecf0cd53e37766f091d55fe81b93f81259923a6bd6ac49649cd8613ab` |
-| LaTeX source | `main.tex` | `e1ea7810e4259d7687c3a8494da99aab949d42835c65ad9f5cbc7122a2bc4c21` |
-| Editable manuscript | `manuscript.md` | `28c99a6d5ae1f56e87dadaec9f15ba8126b35a255041816c21ccb4194309f9ca` |
-| Anonymous supplementary | `anonymous_supplementary.zip` (106 files) | `041a096da9befa93b929a45a1772f5c575583d173ae46749d35ce6cb30c1f900` |
+| Final review PDF (8 pp; 5 content + Ethics/Limitations + refs) | `main.pdf` | `f68fe5e0cb7133cf636441b24b17c583ef884d32e7a94f82104ad931d6c7c0f1` |
+| LaTeX source | `main.tex` | `1f6c456ae905d735f0de06f169eb0e5773372c866c0a4d38646fa5ac2b5cbb36` |
+| Editable manuscript | `manuscript.md` | `71968a8ff506c1bdea9b3e98fd8258093cdc7175b7c48d2474c99e89a25d8e00` |
+| Anonymous supplementary | `anonymous_supplementary.zip` (110 files) | `1c52d897aa7cebfdfdf5986eb0b85d73fada89bfd7be43c655a4dbd95b83dbca` |
 | Bibliography | `references.bib` (22 entries, all cited) | — |
-| Figures + script | `figures/`, `make_figures.py` | — |
+| Figures + script | `figures/` (fig0 pipeline, fig1 cost, fig2 paired diffs), `make_figures.py` | — |
 | Audit report | `audit_report.md` (28/28 PASS, incl. Gate-3 textual guards) | — |
 | Build scripts | `build_supplementary.py`, `audit_paper.py` | — |
+
+Final refinement round (2026-10-14, paper-only, owner-directed) on top of
+the Gate-3 hotfix:
+(1) Introduction rewritten into three scientific findings + one
+methodological contribution (fair evaluation / reasoning-scaffold
+confound; limited cross-benchmark transfer; joint accuracy–cost analysis;
+auditable protocol).
+(2) Related Work closes with an explicit research-gap statement.
+(3) New Figure 1: audit-pipeline overview (configuration space →
+evolutionary search → three-tier audit → generalization + cost analysis).
+(4) Mamba-2 explicitly framed as one candidate configuration family, not a
+contribution.
+(5) All negative results preserved verbatim (search ≈ random; REF vs B2;
+memory non-replication; B1 cost advantage).
+(6) Claim-strength scan clean: no proves/demonstrates/superior/optimal/
+always outside negated or Unsupported contexts.
 
 Gate-3 final hotfix applied to BOTH `main.tex` and `manuscript.md`
 (Planner verdict `v2_quality/fasttrack/gates/gate3_decision.md`):
@@ -67,12 +83,14 @@ Nothing was taken from `paper/phase21_tables.md` (known numerical errors).
 - `v2_quality/paper/audit_paper.py`: 28/28 PASS — anonymity (text +
   metadata), 22/22 citations defined and cited, all printed statistics
   traced to locked sources, V1 holdout recomputed from frozen CSV, real
-  main-content page count from compiled PDF (4 ≤ 8), section order
+  main-content page count from compiled PDF (5 ≤ 8 after refinement),
+  section order
   (Ethics → Limitations → References), and all Gate-3 textual regression
   guards. Scope note: listed items only, not every scientific detail.
-- PDF: 7 pages rendered and visually inspected page-by-page after the
-  Gate-3 hotfix rebuild (title, figures, tables, section order,
-  references).
+- PDF: all pages rendered and visually inspected page-by-page after the
+  Gate-3 hotfix rebuild and again after the final refinement rebuild
+  (8/8 pages: title, abstract, pipeline figure, both tables, all figures,
+  section order, references).
 - Full CPU test suite: 111/111 PASS (including `tests/test_v2_paper_text.py`
   deterministic hotfix guards and `tests/test_v2_f2_forensic.py`).
 - V1 frozen artifacts untouched: `paper/arr2026/main.pdf` SHA-256

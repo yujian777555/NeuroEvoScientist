@@ -71,7 +71,7 @@ questions we ask are already sharp there, and because leakage-safe paired
 evaluation is feasible at that scale.
 
 We organize the evidence into three tiers with explicitly different
-epistemic status. **Tier 1** is a previously locked holdout study
+epistemic status (Figure 1). **Tier 1** is a previously locked holdout study
 (Phase-17–21 of the underlying project, frozen before this paper): its
 headline — a searched configuration beating the strongest fixed baseline by
 +29.0 percentage points at 1.5B and +16.7 at 7B on GSM8K holdout — is real
@@ -86,20 +86,28 @@ pre-locked confirmation: three configurations locked before any
 inference, evaluated once on the 300-item original SVAMP test split, a
 public benchmark never used for search, calibration, or tuning.
 
-The findings are two-sided. Configuration choices matter: reasoning
-strategy alone swings GSM8K dev accuracy from 11% (direct) to 50–60% (CoT),
-and CoT variants span ~8.3× in prompt tokens with observed accuracies of
-49–60%. But
-the search-selected configuration shows no detectable advantage over a
-strong hand-picked CoT preset on either the dev slice or the locked SVAMP
-test; its dev-side +10-point benefit over a no-memory control does not
-replicate cross-benchmark (0.00pp, p=1.0); the cheapest control matches its
-observed SVAMP accuracy with 1.75× fewer total tokens; and, in the compact
-space where we enumerated the full landscape, equal-budget evolutionary
-search does not outperform random search. We report all of this, including
-the negative results, as the contribution: a protocol that makes
-configuration-search claims falsifiable, and a precise map of which claims
-survived it.
+**Contributions.** We report three scientific findings and one
+methodological contribution. (1) *Apparent search gains can be largely
+explained by reasoning-scaffold differences.* The locked +29.0/+16.7pp
+holdout gap appears only against direct-answering baselines; once baselines
+are CoT-matched, the search-selected configuration shows no statistically
+detectable accuracy advantage (60.0% vs 59.0% on reused dev; 70.33% vs
+71.67% on the locked SVAMP test). (2) *Task-conditioned configurations show
+limited cross-benchmark transfer.* The dev-side memory benefit of the
+GSM8K-selected configuration (+10.0pp, exploratory) does not replicate on
+the pre-locked SVAMP test (0.00pp): configuration optimization is
+task-dependent, and dev-side selection signals are not self-certifying.
+(3) *Accuracy improvements must be analyzed jointly with inference cost.*
+On the locked SVAMP test, the no-memory control matches the searched
+configuration's observed accuracy (70.33%) with 1.75× fewer total tokens;
+accuracy-only reporting would miss this cost structure entirely.
+(4) *An auditable evaluation protocol.* CoT-matched baselines, item-level
+paired statistics with pre-specified contrasts, byte-hashed pre-locked
+cross-benchmark evaluation, and full prompt+completion token accounting — a
+checklist that makes configuration-search claims falsifiable. Throughout, we
+keep the negative results on the record: equal-budget evolutionary search
+does not outperform random search on the enumerated landscape, and a
+trainable Mamba-2 memory substrate is not selected as beneficial.
 
 ## 2. Related Work
 
@@ -142,7 +150,12 @@ trainable memory substrate was built; that substrate is implemented and
 searchable but, as we report, not selected as beneficial.
 
 **Evaluation.** We use GSM8K, SVAMP, PubMedQA, and QASPER (in its LongBench
-form) with frozen Qwen2.5-Instruct backbones. We claim no priority over any
+form) with frozen Qwen2.5-Instruct backbones. Across these lines of work,
+evaluation typically centers on the search distribution itself; whether
+discovered configurations yield transferable cognitive improvements or
+benchmark-specific specialization — and at what inference cost — remains
+insufficiently studied. Our audit targets exactly this gap. We claim no
+priority over any
 of the above; the contribution is the audit protocol and its two-sided
 findings.
 
@@ -155,6 +168,10 @@ exemplar bank) / a trainable Mamba-2 substrate / hybrid, with recall width
 and exemplar count sub-genes; (ii) *reasoning strategy* — direct,
 chain-of-thought (with depth), verify, planner; (iii) *context policy* —
 full, truncated, or answer-only exemplar verbosity with word budgets.
+The trainable Mamba-2 substrate is included as one candidate configuration
+family among several, allowing us to test whether architectural memory
+mechanisms provide measurable benefits; it is not itself a contribution of
+this paper.
 Normalization removes semantically inactive sub-genes before hashing so
 duplicate phenotypes are never double-counted. A compact audit layer
 (memory × reasoning × context = 48 configurations) is fully enumerated per

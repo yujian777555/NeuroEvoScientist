@@ -113,8 +113,57 @@ def fig2():
     plt.close(fig)
 
 
+def fig0():
+    """Overview: configuration space -> search -> three-tier audit."""
+    fig, ax = plt.subplots(figsize=(7.6, 2.9))
+    ax.axis("off")
+
+    def box(x, y, w, h, lines, fc="#f4f6fb", ec="#4a6fa5", fs=7.6,
+            weight="normal"):
+        ax.add_patch(plt.Rectangle((x, y), w, h, facecolor=fc,
+                                   edgecolor=ec, lw=1.1, zorder=2))
+        ax.text(x + w / 2, y + h / 2, "\n".join(lines), ha="center",
+                va="center", fontsize=fs, zorder=3, weight=weight)
+
+    def arrow(x0, y0, x1, y1):
+        ax.annotate("", xy=(x1, y1), xytext=(x0, y0),
+                    arrowprops=dict(arrowstyle="-|>", color="#333",
+                                    lw=1.2), zorder=1)
+
+    box(0.00, 0.45, 0.20, 0.42, ["Configuration space",
+                                 "reasoning | memory", "context policy"],
+        weight="bold")
+    box(0.26, 0.45, 0.17, 0.42, ["Evolutionary", "search", "(ENSS)"])
+    box(0.49, 0.62, 0.22, 0.30, ["Tier 1: locked descriptive",
+                                 "holdout (frozen)"], fc="#fdf6ec",
+        ec="#b07a2a")
+    box(0.49, 0.24, 0.22, 0.30, ["Tier 2: fair baselines",
+                                 "(4 CoT + 2 Direct,", "reused dev)"],
+        fc="#fdf6ec", ec="#b07a2a")
+    box(0.77, 0.45, 0.22, 0.42, ["Tier 3: pre-locked cross-",
+                                 "benchmark test", "(SVAMP, n=300)"],
+        fc="#eef7ee", ec="#3d7a3d")
+    box(0.49, -0.06, 0.50, 0.20, ["Generalization + token-cost analysis",
+                                  "(paired CIs, exact tests, no-equivalence)"],
+        fc="#f0eef7", ec="#6a5a9e")
+
+    arrow(0.20, 0.66, 0.26, 0.66)
+    arrow(0.43, 0.66, 0.49, 0.77)
+    arrow(0.43, 0.66, 0.49, 0.39)
+    arrow(0.71, 0.77, 0.83, 0.87)  # tier1 into tier3 area top
+    arrow(0.71, 0.39, 0.77, 0.55)
+    arrow(0.60, 0.62, 0.60, 0.46)
+    arrow(0.88, 0.45, 0.88, 0.14)
+    ax.set_xlim(-0.02, 1.02)
+    ax.set_ylim(-0.10, 1.0)
+    fig.tight_layout()
+    fig.savefig(os.path.join(FIG, "fig0_pipeline.png"), dpi=200)
+    plt.close(fig)
+
+
 if __name__ == "__main__":
     os.makedirs(FIG, exist_ok=True)
+    fig0()
     fig1()
     fig2()
     print("figures written to", FIG)
