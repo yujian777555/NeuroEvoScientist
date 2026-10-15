@@ -2,7 +2,7 @@
   "project": "NeuroEvoScientist",
   "phase": "V2 FINAL REFINEMENT COMPLETE — READY FOR OWNER UPLOAD",
   "completed": "Planner final Gate3 GO recorded (gate3_planner_final_acceptance.md). After that, owner directed one final paper-only refinement round: Introduction rewritten as 3 scientific findings + 1 protocol contribution; Related Work research-gap statement; new Figure 1 audit-pipeline overview; Mamba-2 framed as one candidate configuration family; all negative results preserved; claim-strength scan clean. Rebuilt main.pdf (8 pages, 5 content pages, SHA f68fe5e0...), rebuilt supplementary (SHA 1c52d897...), submission_manifest.md updated. Paper audit 28/28 PASS; tests 111/111 PASS; 8/8 pages visually inspected; V1 PDF hash unchanged. No experiments, no result artifacts modified, no claim changes.",
-  "next": "OWNER ONLY: verify complete author OpenReview profiles, qualified designated service contributor and responsible NLP checklist; select October 12 2026 ARR cycle if eligible, upload exact V2 main.pdf and anonymous_supplementary.zip per manifest. No automatic submission occurred. If October eligibility not met, choose next eligible ARR cycle, verify ACL 2027 Jan 4 2027 cutoff.",
+  "next": "Owner submission state from V2 is unchanged. Separate Phase2 track: Kimi read plans/phase2_r5_g1_kimi_prompt.md and plans/phase2_planner_review_r0.md; conduct only R5 novelty audit and G1 protocol redesign; push docs; stop. No GPU until specific later pilot authorization.",
   "issues": "Remaining submission requirements are administrative and owner-specific (author accounts/ORCID/COIs, service-contributor eligibility, responsible NLP checklist and actual OpenReview submission). Planner verified GitHub text source and prior F2 raw pairs but did not independently render or binary-hash final PDF/ZIP. Scientific limitations disclosed in paper remain.",
   "v1_frozen": {
     "status": "READY TO SUBMIT (not submitted), preserved and locked",
@@ -49,7 +49,7 @@
     "owner_submission_done": false
   },
   "phase2_planning": {
-    "status": "DESIGN DOCUMENTS COMPLETE — AWAITING PLANNER REVIEW",
+    "status": "PLANNER CONDITIONAL GO: R5 LITERATURE + G1 DESIGN ONLY",
     "date": "2026-10-14",
     "direction": "Task-Adaptive Cognitive Configuration Controller (TACC): learn task -> cognitive configuration instead of searching for one global best",
     "documents": [
@@ -59,7 +59,20 @@
     ],
     "recommended_learning_approach": "A: supervised utility-labeled controller first; contextual bandit as extension; RL deferred",
     "gpu_authorized": 0,
-    "next_gate": "Planner review, then pre-Gate-2 routing-literature audit (R5) and Gate-1 variance probe (R1)",
-    "constraints": "No code, no experiments, no GPU this round; V1/V2 paper artifacts frozen and untouched"
+    "next_gate": "Kimi completes R5 related-work collision matrix and corrected learnability G1 protocol, pushes and stops for Planner review",
+    "constraints": "No code, no experiments, no GPU this round; V1/V2 paper artifacts frozen and untouched",
+    "reviewed_commit": "c8c7206aa428dc2ab24b7701e7e32ac52e3b90e8",
+    "planner_review": "plans/phase2_planner_review_r0.md",
+    "executor_prompt": "plans/phase2_r5_g1_kimi_prompt.md",
+    "decision": "Design concept merits limited originality and learnability preflight, not implementation approval",
+    "blockers": [
+      "Direct novelty overlaps: within-model adaptive CoT/retrieval/prompt routing pre-exists (NAACL Findings 2025, AAAI 2024, Route to Reason 2025)",
+      "Previously inspected SVAMP F2 test cannot be treated as a fresh Phase2 confirmation set",
+      "GSM8K train controller-label and retrieval memory bank must be disjoint to avoid answer leakage",
+      "Per-item argmax variance is not proof of predictable positive routing value; oracle hindsight is optimistic",
+      "Utility lambda and controller overhead, B1 strong cost baseline, and task-ID baseline must be corrected"
+    ],
+    "authorized_now": "Literature review and document/protocol revision only; no new experiment, code, GPU or evaluation on new holdout",
+    "implementation_authorized": false
   }
 }
