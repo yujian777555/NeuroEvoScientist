@@ -49,7 +49,7 @@
     "owner_submission_done": false
   },
   "phase2_planning": {
-    "status": "R5+G1 DESIGN COMPLETE — PIVOT RECOMMENDED — AWAITING PLANNER REVIEW",
+    "status": "PLANNER R1 REVIEW: R5 PIVOT ACCEPTED; G1 NOT PILOT-READY; DOCUMENT REPAIR ONLY",
     "date": "2026-10-21",
     "direction": "Task-Adaptive Cognitive Configuration Controller (TACC): learn task -> cognitive configuration instead of searching for one global best",
     "documents": [
@@ -60,29 +60,36 @@
     ],
     "recommended_learning_approach": "A: supervised utility-labeled controller first; contextual bandit as extension; RL deferred",
     "gpu_authorized": 0,
-    "next_gate": "Planner review of R5/G1 documents; then decision on 0.5 GPU-h train-only learnability pilot",
+    "next_gate": "Kimi fixes R5/G1 documents per plans/phase2_g1_pilot_repair_prompt.md, commits/pushes, then stops for Planner R2; no pilot until explicit authorization",
     "constraints": "No code, no experiments, no GPU this round; V1/V2 paper artifacts frozen and untouched",
     "reviewed_commit": "c8c7206aa428dc2ab24b7701e7e32ac52e3b90e8",
     "planner_review": "plans/phase2_planner_review_r0.md",
     "executor_prompt": "plans/phase2_r5_g1_kimi_prompt.md",
     "decision": "Design concept merits limited originality and learnability preflight, not implementation approval",
     "blockers": [
-      "Direct novelty overlaps: within-model adaptive CoT/retrieval/prompt routing pre-exists (NAACL Findings 2025, AAAI 2024, Route to Reason 2025)",
-      "Previously inspected SVAMP F2 test cannot be treated as a fresh Phase2 confirmation set",
-      "GSM8K train controller-label and retrieval memory bank must be disjoint to avoid answer leakage",
-      "Per-item argmax variance is not proof of predictable positive routing value; oracle hindsight is optimistic",
-      "Utility lambda and controller overhead, B1 strong cost baseline, and task-ID baseline must be corrected"
+      "R5 matrix omitted BudgetMem (arXiv:2602.06025), a close query-aware memory budget-tier routing method with reasoning/inference-behavior strategy; direct comparison required",
+      "R5 matrix omitted Gated-Memory Routing (arXiv:2609.00237), a cost-aware joint memory-write/retrieval, routing, and halting method; scope distinction required",
+      "R5 matrix omitted Adaptive LLM Routing under Budget Constraints (Findings EMNLP 2025) and needs a targeted selective-prediction/reject-option/pairwise-utility audit for DEFLECT",
+      "G1 VAL is assigned both model/threshold selection and D2 evaluation/CI; requires nested or cross-fitted train-side evaluation",
+      "G1 utility equation is ambiguous between per-example and aggregate tokens; define per-example utility and mean aggregation",
+      "G1 pilot estimate conflicts with stated throughput: 12,000 generations at 55 seconds per 100 item-config implies about 110 minutes or 1.83 GPU-hours, not 35-55 minutes or 0.5 GPU-hours",
+      "R5 claim says 10 full-text papers, but Adaptive-RAG row records abstract/known content; reconcile coverage and code availability"
     ],
-    "authorized_now": "Literature review and document/protocol revision only; no new experiment, code, GPU or evaluation on new holdout",
+    "authorized_now": "Document-only literature expansion and protocol repair; no code, GPU, training, inference, or holdout access",
     "implementation_authorized": false,
-    "r5_verdict": "PIVOT: plain embedding+MLP TACC collides with Forge (2609.34358), ARC (2602.11574), RTR (WWW 2026), Chen NAACL-Findings 2025; residual defensible novelty = episodic-memory-axis joint routing with token-costed utility",
+    "r5_verdict": "PIVOT accepted for plain embedding+MLP TACC; MEMROUTE and DEFLECT remain unproven novelty hypotheses",
     "candidate_mechanisms": [
       "M1 DEFLECT: pairwise utility-difference prediction + shift-aware deferral to B1 cost floor",
       "M2 MEMROUTE: joint reasoning x episodic-memory policy routing"
     ],
     "g1_protocol": "plans/phase2_g1_revised_protocol.md (disjoint BANK/LABEL/VAL hash-locked partitions; SVAMP retired as fresh confirmation; MATH-500 candidate requiring pre-inference lock; utility/lambda locked; D1/D2 learnability diagnostics)",
     "gpu_requested_pending_approval": 0.5,
-    "pilot_status": "DESIGNED, NOT AUTHORIZED, NOT EXECUTED",
-    "last_commit": "22fb439b9960b9b800631365fadc11037c8386aa"
+    "pilot_status": "NOT AUTHORIZED — G1 protocol and R5 literature audit require repairs",
+    "last_commit": "22fb439b9960b9b800631365fadc11037c8386aa",
+    "planner_review_r1": "plans/phase2_planner_review_r1.md",
+    "executor_prompt_r1": "plans/phase2_g1_pilot_repair_prompt.md",
+    "planner_review_commit": "558ad904ddac2ef2f6b1ffcda429d3892fa2cd03",
+    "executor_prompt_commit": "0ef7914317a799526c2faa97c08e3c77b28e3dcb",
+    "reviewed_executor_deliverable_commit": "8af0a58 (as reported by Executor; exact HEAD must be verified in the next executor report)"
   }
 }
