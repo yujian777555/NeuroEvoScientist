@@ -49,49 +49,65 @@
     "owner_submission_done": false
   },
   "phase2_planning": {
-    "status": "R1 REPAIRS COMPLETE — AWAITING PLANNER R2 REVIEW",
+    "status": "R2 REVIEW: R1 REPAIRS SUBSTANTIALLY ACCEPTED; G1 NOT PILOT-READY",
     "date": "2026-10-21",
-    "direction": "Task-Adaptive Cognitive Configuration Controller (TACC): learn task -> cognitive configuration instead of searching for one global best",
+    "direction": "Task-Adaptive Cognitive Configuration Controller (TACC): learn per-question cognitive configuration for a frozen LLM; original embedding+MLP TACC is PIVOT and M1/M2 novelty is not cleared",
     "documents": [
       "plans/phase2_r5_related_work_gap.md",
       "plans/phase2_r5_overlap_matrix.csv",
       "plans/phase2_g1_revised_protocol.md",
-      "plans/phase2_g1_preflight_decision.md"
+      "plans/phase2_g1_preflight_decision.md",
+      "plans/phase2_planner_review_r2.md",
+      "plans/phase2_g1_pilot_repair_prompt_r2.md"
     ],
-    "recommended_learning_approach": "A: supervised utility-labeled controller first; contextual bandit as extension; RL deferred",
+    "recommended_learning_approach": "Supervised utility-difference predictor remains a candidate only; no implementation authorization",
     "gpu_authorized": 0,
-    "next_gate": "Kimi fixes R5/G1 documents per plans/phase2_g1_pilot_repair_prompt.md, commits/pushes, then stops for Planner R2; no pilot until explicit authorization",
-    "constraints": "No code, no experiments, no GPU this round; V1/V2 paper artifacts frozen and untouched",
-    "reviewed_commit": "c8c7206aa428dc2ab24b7701e7e32ac52e3b90e8",
-    "planner_review": "plans/phase2_planner_review_r0.md",
-    "executor_prompt": "plans/phase2_r5_g1_kimi_prompt.md",
-    "decision": "Design concept merits limited originality and learnability preflight, not implementation approval",
+    "next_gate": "Kimi completes document-only R2.1 repairs from plans/phase2_g1_pilot_repair_prompt_r2.md, pushes, and stops for Planner R3. No CPU preflight, dataset access, GPU, training, or inference until separately authorized.",
+    "constraints": "Document-only repairs; no GPU, code implementation, training, inference, dataset loading, partition-lock generation, MATH-500 access, or edits to frozen V1/V2 artifacts and historical F1/F2 results.",
+    "reviewed_commit": "7f46cf2fd10b0021e8935d80303ca4a224a292b8",
+    "planner_review": "plans/phase2_planner_review_r2.md",
+    "executor_prompt": "plans/phase2_g1_pilot_repair_prompt_r2.md",
+    "decision": "R1 repairs substantially accepted; G1 not pilot-ready. The pilot is not authorized.",
     "blockers": [
-      "R5 matrix omitted BudgetMem (arXiv:2602.06025), a close query-aware memory budget-tier routing method with reasoning/inference-behavior strategy; direct comparison required",
-      "R5 matrix omitted Gated-Memory Routing (arXiv:2609.00237), a cost-aware joint memory-write/retrieval, routing, and halting method; scope distinction required",
-      "R5 matrix omitted Adaptive LLM Routing under Budget Constraints (Findings EMNLP 2025) and needs a targeted selective-prediction/reject-option/pairwise-utility audit for DEFLECT",
-      "G1 VAL is assigned both model/threshold selection and D2 evaluation/CI; requires nested or cross-fitted train-side evaluation",
-      "G1 utility equation is ambiguous between per-example and aggregate tokens; define per-example utility and mean aggregation",
-      "G1 pilot estimate conflicts with stated throughput: 12,000 generations at 55 seconds per 100 item-config implies about 110 minutes or 1.83 GPU-hours, not 35-55 minutes or 0.5 GPU-hours",
-      "R5 claim says 10 full-text papers, but Adaptive-RAG row records abstract/known content; reconcile coverage and code availability"
+      "D2 pass criterion remains incomplete: random and simple feature baselines are reported/ablated but are not required to be beaten as R1 specified",
+      "Pilot sample plan is ambiguous: 800 FIT+TUNE items lack exact FIT/TUNE counts; the 300-item LEVAL subset selection and hash lock are not specified as concrete artifacts; cross-fitting boundary wording is contradictory",
+      "n=300 precision claim of approximately +/-2-3pp is unsupported without paired discordance and token-variance assumptions",
+      "Budget estimate of 0.97 GPU-hours leaves little margin under the 1.0 GPU-hour cap; clarify timing denominator and whether bank-build/cache overhead is double-counted",
+      "Utility algebra has an incorrect intermediate expression; replace pre-registered wording with pre-specified and commit-locked before LEVAL inference; remove stale VAL references",
+      "Conformal/decision-aware routing scan remains incomplete; compare TMLR 2026 Learning to Defer with an Uncertain Rejector via Conformal Prediction and arXiv:2610.02487 Threshold-Aware Conformal Routing",
+      "status semantics must distinguish latest substantive Executor deliverable commit from the current remote HEAD/status-update commit"
     ],
     "authorized_now": "Document-only literature expansion and protocol repair; no code, GPU, training, inference, or holdout access",
     "implementation_authorized": false,
-    "r5_verdict": "PIVOT (plain TACC). M1 DEFLECT / M2 MEMROUTE narrowed to explicit mechanism-level combinations; NOT cleared novel. BudgetMem/Gated-Memory-Routing/PILOT/selective-prediction lineage added; coverage honesty fixed (12 FULL / 2 ABSTRACT-ONLY / 1 SNIPPET / 1 partial-appendix); code availability re-audited per row",
+    "r5_verdict": "PIVOT for plain TACC. DEFLECT and MEMROUTE are not novelty-cleared.",
     "candidate_mechanisms": [
-      "M1 DEFLECT: pairwise utility-difference prediction + shift-aware deferral to B1 cost floor",
-      "M2 MEMROUTE: joint reasoning x episodic-memory policy routing"
+      "M1 DEFLECT: pairwise utility-difference prediction plus shift-aware deferral to B1 cost floor; novelty not cleared",
+      "M2 MEMROUTE: joint per-question reasoning strategy and static episodic-exemplar policy routing; novelty not cleared"
     ],
-    "g1_protocol": "plans/phase2_g1_revised_protocol.md (disjoint BANK/LABEL/VAL hash-locked partitions; SVAMP retired as fresh confirmation; MATH-500 candidate requiring pre-inference lock; utility/lambda locked; D1/D2 learnability diagnostics)",
-    "gpu_requested_pending_approval": 1.0,
-    "pilot_status": "REDESIGNED, NOT AUTHORIZED, NOT EXECUTED",
+    "g1_protocol": "plans/phase2_g1_revised_protocol.md (proposed BANK/FIT/TUNE/LEVAL partitions; actual sample IDs/hashes remain a future separately authorized CPU-preflight deliverable)",
+    "gpu_requested_pending_approval": 1,
+    "pilot_status": "NOT PILOT-READY — NOT AUTHORIZED — NOT EXECUTED",
     "last_commit": "7f46cf2fd10b0021e8935d80303ca4a224a292b8",
     "planner_review_r1": "plans/phase2_planner_review_r1.md",
     "executor_prompt_r1": "plans/phase2_g1_pilot_repair_prompt.md",
     "planner_review_commit": "558ad904ddac2ef2f6b1ffcda429d3892fa2cd03",
     "executor_prompt_commit": "0ef7914317a799526c2faa97c08e3c77b28e3dcb",
-    "reviewed_executor_deliverable_commit": "8af0a58 (as reported by Executor; exact HEAD must be verified in the next executor report)",
-    "g1_repairs": "B1 VAL leakage fixed via BANK/FIT/TUNE/LEVAL 40/25/15/20 hash-locked partitions with cross-fitting and single-use LEVAL; B2 per-item utility u_i = correct - lambda*(prompt+completion)/10000 with lambda=0.1 labeled exploratory-informed, raw metrics primary; B3 budget corrected from logs: v1 estimate withdrawn, v2 = 5 configs x 1100 items = 5,500 gens ~= 0.84 GPU-h + overhead, revised request <= 1.0 GPU-h",
-    "open_items": "conformal-deferral literature sub-scan UNRESOLVED (mandatory pre-submission re-audit); M1/M2 novelty not cleared"
+    "reviewed_executor_deliverable_commit": "7f46cf2fd10b0021e8935d80303ca4a224a292b8",
+    "g1_repairs": "R1 repairs accepted for utility definition and arithmetic. R2 still requires a complete D2 gate, exact pilot sampling/selection procedure, supported precision analysis, reconciled timing overhead, terminology/formula corrections, and conformal-routing literature comparison.",
+    "open_items": "No novelty GO. No pilot authorization. Complete document-only R2.1 corrections; then Planner R3 review. If approved, CPU-only preflight and GPU Pilot require separate authorization.",
+    "resolved_r1_items": [
+      "Added BudgetMem, Gated-Memory Routing, and PILOT; coverage-depth/code-availability reporting is more honest",
+      "Plain embedding+MLP TACC PIVOT accepted; M1 DEFLECT and M2 MEMROUTE remain novelty hypotheses only",
+      "Per-item utility defined and main budget arithmetic corrected",
+      "Pilot has not been run; no GPU used; MATH-500 untouched"
+    ],
+    "last_commit_semantics": "Latest substantive Executor deliverable commit; not necessarily the latest remote HEAD when Planner/status-only commits follow.",
+    "last_executor_deliverable_commit": "7f46cf2fd10b0021e8935d80303ca4a224a292b8",
+    "remote_head_at_r2_review": "9ca92a30b42b84c10dbe7f905048b4567fe322ac",
+    "status_update_base_head": "d49658c61467b11c2fa59991152ae4e83a89d8a7",
+    "planner_review_r2": "plans/phase2_planner_review_r2.md",
+    "planner_review_r2_commit": "a3f4d6400855bcccd58a990201c9a7cb82b5ccb2",
+    "executor_prompt_r2": "plans/phase2_g1_pilot_repair_prompt_r2.md",
+    "executor_prompt_r2_commit": "d49658c61467b11c2fa59991152ae4e83a89d8a7"
   }
 }
