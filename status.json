@@ -85,7 +85,7 @@
     "g1_protocol": "plans/phase2_g1_revised_protocol.md (disjoint BANK/LABEL/VAL hash-locked partitions; SVAMP retired as fresh confirmation; MATH-500 candidate requiring pre-inference lock; utility/lambda locked; D1/D2 learnability diagnostics)",
     "gpu_requested_pending_approval": 1.0,
     "pilot_status": "REDESIGNED, NOT AUTHORIZED, NOT EXECUTED",
-    "last_commit": "PENDING-SET-AT-END",
+    "last_commit": "7f46cf2fd10b0021e8935d80303ca4a224a292b8",
     "planner_review_r1": "plans/phase2_planner_review_r1.md",
     "executor_prompt_r1": "plans/phase2_g1_pilot_repair_prompt.md",
     "planner_review_commit": "558ad904ddac2ef2f6b1ffcda429d3892fa2cd03",
