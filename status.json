@@ -82,6 +82,7 @@
     ],
     "g1_protocol": "plans/phase2_g1_revised_protocol.md (disjoint BANK/LABEL/VAL hash-locked partitions; SVAMP retired as fresh confirmation; MATH-500 candidate requiring pre-inference lock; utility/lambda locked; D1/D2 learnability diagnostics)",
     "gpu_requested_pending_approval": 0.5,
-    "pilot_status": "DESIGNED, NOT AUTHORIZED, NOT EXECUTED"
+    "pilot_status": "DESIGNED, NOT AUTHORIZED, NOT EXECUTED",
+    "last_commit": "22fb439b9960b9b800631365fadc11037c8386aa"
   }
 }
