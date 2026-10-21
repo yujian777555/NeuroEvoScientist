@@ -1,14 +1,15 @@
 # Phase-2 R5 — Related-Work Originality Audit v2 (TACC)
 
-Date: 2026-10-21 (v2: expanded after Planner R1)
-Authority: `plans/phase2_planner_review_r1.md` §2.
-Coverage honesty statement (replaces v1's overbroad "10 primary sources
-fully read"): **verification depth is per-row in
-`phase2_r5_overlap_matrix.csv`** — 12 sources FULL (full text read), 2
-ABSTRACT-ONLY (Adaptive-RAG; Mozannar & Sontag), 1 SNIPPET (Chow 1970,
-paywalled), 1 FULL with a partially-truncated appendix (PILOT App. D.1).
-Code availability was re-audited per row (YES with URL / NO / LINKED-
-UNRESOLVED / placeholder-repo-NO).
+Date: 2026-10-21 (v3: conformal/decision-aware scan added after Planner R2)
+Authority: `plans/phase2_planner_review_r1.md` §2;
+`plans/phase2_planner_review_r2.md` R2-F.
+Coverage honesty statement: **verification depth is per-row in
+`phase2_r5_overlap_matrix.csv`** — after the v3 extension:
+13 sources FULL (full text read), 2 ABSTRACT-ONLY (Adaptive-RAG;
+Mozannar & Sontag), 1 SNIPPET (Chow 1970, paywalled), 1 PARTIAL
+(Fang & Nalisnick — TMLR abstract + author project page + full repo
+README; OpenReview bot-walled, no arXiv mirror, paper PDF not read),
+1 FULL-minus-appendix (PILOT App. D.1).
 
 ---
 
@@ -66,11 +67,11 @@ defer); **Chow 1970** (reject option).
   routing under a user budget" (PILOT; Chen et al. 2022 lineage);
   "online adaptation to query-distribution shift" (PILOT App. D.1).
 
-**Unresolved audit item (carried, not hidden):** a dedicated scan for
-conformal-prediction-based deferral to cheaper models was not completed
-(one 2026 preprint, arXiv:2610.02487, self-describes decision-aware
-deferral as open; not fully verified). Any future submission requires a
-second targeted pass on this and on exemplar-selection literature.
+**Conformal-scan status (updated in v3):** the previously unresolved
+conformal-deferral item is now closed (§4): Fang & Nalisnick (TMLR 2026)
+and Tan et al. (arXiv:2610.02487) are both DISTINCT from the narrowed
+M1/M2 claims. A final re-audit at submission time (including
+exemplar-selection literature) remains mandatory.
 
 ## 3. Candidate mechanisms (restated with narrowed claims)
 
@@ -98,11 +99,37 @@ Falsifiable tests: utility vs both fixed anchors (B1, REF/B2) with paired
 CIs; memory-axis ablation accounts for the dev→locked-test gap; memory-ON
 rate correlates with a pre-specified feature on train-side data.
 
-## 4. STOP conditions (pre-declared)
+## 4. Conformal / decision-aware routing scan (R2-F — resolved)
 
-- Any located work (incl. the unresolved conformal-deferral scan or a
-  v2+ of Forge/ARC/BudgetMem) covering the narrowed combination → STOP
-  the algorithmic claim; retain Phase-1 audit paper only.
+The v2 audit left the conformal-deferral scan UNRESOLVED. Two targeted
+works are now audited (matrix rows added):
+
+- **Fang & Nalisnick, *Learning to Defer with an Uncertain Rejector via
+  Conformal Prediction* (TMLR 2026)** — conformal deferral sets over a
+  rejector routing between a classifier and a human expert; under shift
+  it escalates to the *expensive* human. **DISTINCT** from DEFLECT:
+  no LLM, no scaffold-config space, no token-cost floor, no pairwise Δu,
+  deferral direction inverted. Cite as L2D-lineage prior art for
+  "the router itself can be uncertain". (Verification: PARTIAL —
+  OpenReview bot-walled; abstract + project page + repo README.)
+- **Tan, Rangwala & Maddix, *Threshold-Aware Conformal Routing*
+  (arXiv:2610.02487, 2026)** — split-conformal surrogate-vs-simulator
+  routing around a fixed decision threshold; no LLM, no config space, no
+  Δu prediction, no shift trigger; deferral goes to the *more* expensive
+  arm. **DISTINCT**; cite as decision-aware routing lineage.
+  (Verification: FULL.)
+
+Neither is a direct collision. DEFLECT's narrowed claim (§3) survives
+this pass, but stays **NOT CLEARED** — the "uncertain router" slogan and
+both halves of the mechanism are prior art (RouteLLM; Liang et al.;
+Fang & Nalisnick), and only the exact combination is unclaimed.
+
+## 5. STOP conditions (pre-declared)
+
+- Any located work (incl. a v2+ of Forge/ARC/BudgetMem) covering the
+  narrowed combination → STOP the algorithmic claim; retain Phase-1 audit
+  paper only. (The conformal-deferral scan is now closed — §4 found no
+  collision; a final re-audit remains mandatory at submission time.)
 - D2 learnability null (G1 protocol §5) → STOP TACC; report the null.
 
 ## 5. Mandatory citation set for any future Phase-2 paper
@@ -110,7 +137,8 @@ rate correlates with a pre-specified feature on train-side data.
 Forge; ARC; Route-to-Reason; Chen et al. 2025; BudgetMem; Gated-Memory
 Routing; FluxMem; Adaptive-RAG; PILOT; RouteLLM; FrugalGPT;
 Adaptive-Solver; Gerych et al.; plus deferral lineage (Chow 1970;
-Mozannar & Sontag 2020; Liang et al. 2024). Comparison framing must be
+Mozannar & Sontag 2020; Liang et al. 2024; Fang & Nalisnick 2026;
+Tan et al. 2026). Comparison framing must be
 mechanism-level (decision timing; query vs execution-state features;
 static exemplar vs runtime/trajectory memory; cost model; deferral
 trigger), as tabulated in `phase2_r5_overlap_matrix.csv`.

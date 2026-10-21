@@ -1,5 +1,11 @@
 # Phase-2 Experiment Design — TACC Evaluation
 
+> **SUPERSEDED (2026-10-21)**: the operative protocol is
+> `plans/phase2_g1_revised_protocol.md` (v3). This document is retained for
+> history; where they conflict, the revised protocol wins. Terminology
+> updated: all gating is "pre-specified and commit-locked before
+> evaluation" (no external preregistration exists).
+
 Date: 2026-10-14
 Status: DESIGN ONLY. No GPU/GPU-hours authorized by this document; execution
 requires Planner gate approval per step.
@@ -122,7 +128,7 @@ locked eval tractable.
 
 ---
 
-## 6. Threats to validity (pre-registered)
+## 6. Threats to validity (pre-specified)
 
 - Dev reuse: GSM8K test[0:100] was exposed to Phase-1 selection — used only
   for controller model selection, never reported as evidence.
