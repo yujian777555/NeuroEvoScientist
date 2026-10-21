@@ -1,203 +1,180 @@
-# Phase-2 G1 — Revised Learnability & Pilot Protocol v3 (DOCUMENT ONLY, 0 GPU)
+# Phase-2 G1 — Learnability & Pilot Protocol v4 (DOCUMENT ONLY, 0 GPU)
 
-Date: 2026-10-21 (v3: repairs after Planner R2; supersedes v2 where they
+Date: 2026-10-21 (v4: repairs after Planner R3; supersedes v3 where they
 conflict)
-Authority: `plans/phase2_planner_review_r2.md` (R2-A…R2-F),
-`plans/phase2_g1_pilot_repair_prompt_r2.md`.
-Nothing here is authorized compute. All partition/sample locks described
-below are **PLANNED, not yet created**: the immutable lock artifacts are a
-future, separately-authorized CPU-preflight deliverable.
+Authority: `plans/phase2_planner_review_r3.md` (R3-A…R3-D),
+`plans/phase2_g1_pilot_repair_prompt_r3.md`.
+Nothing here is authorized compute. All locks described are **PLANNED, not
+yet created**; the immutable artifacts are a future, separately-authorized
+CPU-preflight deliverable.
 
 ---
 
-## 1. Planned partitions and exact pilot subsets (R2-B)
+## 1. Partitions, deterministic algorithms, and pilot subsets (R3-B/D)
 
-GSM8K train (7,473 items) → four disjoint partitions (planned shares):
+### 1.1 Planned partition-generation algorithm (fully defined; NOT executed)
 
-| Partition | Planned share | Planned count | Role |
-|---|---|---|---|
-| `BANK` | 40% | ~2,989 | exemplar bank content ONLY; never labeled, never a target |
-| `FIT` | 25% | ~1,868 | predictor fitting (with k-fold cross-fitting **inside FIT only**) |
-| `TUNE` | 15% | ~1,121 | scalar thresholds (δ, τ), feature-set choice, λ sensitivity |
-| `LEVAL` | 20% | ~1,495 | locked pilot evaluation reserve; touched once, at the end |
+- **ID normalization:** use the dataset's stable source ID field when it
+  exists; otherwise `id = sha256_hex(NFC(question_text))` where the text is
+  NFC-normalized, leading/trailing whitespace stripped, and internal
+  whitespace runs collapsed to a single space. Empty/duplicate IDs cause
+  preflight FAILURE, never silent repair.
+- **Partition assignment (namespace `phase2-partition-v1`):** sort all
+  7,473 GSM8K-train items by
+  `sha256(norm_id || "|partition|" || "phase2-partition-v1")` ascending;
+  assign in order: first 2,989 → `BANK`, next 1,868 → `FIT`, next 1,121 →
+  `TUNE`, remaining 1,495 → `LEVAL`. Counts: 2,989+1,868+1,121+1,495 =
+  **7,473** exactly.
+- **Pilot subsets (namespace `phase2-subset-v1`):** within each partition,
+  sort by `sha256(norm_id || "|subset|" || "phase2-subset-v1")`, take the
+  first n: `FIT_pilot` = **500**, `TUNE_pilot` = **200**, `LEVAL_pilot` =
+  **300**. (TUNE gets 200 not 300 because it selects only scalar thresholds
+  and a feature-set bit — low-dimensional decisions; FIT keeps the larger
+  share because predictor fitting is variance-limited.)
+- **Future lock artifacts (CPU preflight, separately authorized):** source
+  file path + revision + SHA-256; per-partition ordered ID lists + SHA-256;
+  per-subset ordered ID lists + SHA-256; pairwise-intersection proofs (must
+  be empty); exact + normalized near-duplicate checks against all
+  historical evaluation splits (GSM8K test, V1 holdout, F2-locked SVAMP
+  300). All committed before any GPU. **None exist as of this round.**
 
-**Pilot subsets (planned, deterministic):**
+### 1.2 Roles (single, non-overlapping)
 
-- `FIT_pilot`: **500** items, drawn from FIT.
-- `TUNE_pilot`: **200** items, drawn from TUNE. (Justification for
-  500+200 instead of proportional 500+300: TUNE selects only scalar
-  thresholds (δ, τ) and a feature-set bit — low-dimensional decisions for
-  which 200 items give adequate resolution; FIT keeps the larger share
-  because predictor fitting is variance-limited. Budget margin analysis in
-  §8.)
-- `LEVAL_pilot`: **300** items, drawn from the ~1,495-item LEVAL reserve,
-  selected and hash-locked **before any model outputs are generated**.
+| Partition | Role — and ONLY this role |
+|---|---|
+| BANK | exemplar bank content; never labeled, never a target |
+| FIT_pilot | predictor fitting; 5-fold cross-fitting INSIDE FIT_pilot for the predeclared (predictor class, regularization) grid |
+| TUNE_pilot | feature-set choice, scalar thresholds (δ, τ), λ sensitivity — with predictor class/regularization already frozen by FIT |
+| LEVAL_pilot | one-time confirmatory evaluation only |
 
-**Planned deterministic selection algorithm (for the future CPU
-preflight):** normalize IDs (exact source ID string, NFC, stripped) →
-sort each partition by `sha256(normalized_id || "|" || SEED)` with
-`SEED = 20261021` → take the first n. The CPU preflight commits, per
-subset: exact ID list, SHA-256 of the ordered ID list, the partition
-hashes, and the overlap-guard results. None of these artifacts exist yet;
-this round creates none of them.
+Bank rule: labels for any item are collected with the memory bank
+restricted to BANK items only. LEVAL_pilot never participates in fitting,
+tuning, threshold or candidate selection, or resampling.
 
-**Ordered pipeline (ambiguity fix):**
-1. FIT_pilot only: fit predictors; model-class/feature choices by k-fold
-   cross-fitting **inside FIT_pilot**.
-2. TUNE_pilot only: choose δ, τ, λ-sensitivity, feature set.
-3. Best-fixed-config selection: highest cross-fitted utility on
-   FIT_pilot, confirmed on TUNE_pilot; **no LEVAL access at any point**.
-4. One-time evaluation on LEVAL_pilot. No LEVAL-based refitting,
-   threshold adjustment, candidate selection, or result-driven
-   resampling — ever.
+## 2. Single ordered selection procedure (R3-C — all frozen before LEVAL)
 
-Bank rule unchanged: labels for any item are collected with the memory
-bank restricted to BANK items only (self-answer can never be retrieved).
-Overlap guards (exact + normalized near-duplicate) across partitions and
-against all historical evaluation splits are a preflight hard gate.
+**Predeclared candidate grids:**
+- Predictor class: {ridge regression on Δu, logistic regression over
+  best-config label, gradient-boosted trees (max_depth=3, n_est=100)};
+  regularization α ∈ {0.1, 1, 10}.
+- Feature sets: `F0` = {question length, numeric-density};
+  `F1` = F0 + frozen query embedding.
+- Thresholds: δ ∈ {0.0, 0.005, 0.01, 0.02};
+  τ ∈ {TUNE_pilot shift-score percentiles 90/95/99}.
+- λ: primary 0.1; sensitivity {0.05, 0.2} reported on TUNE_pilot only.
 
-## 2. Confirmation-data policy (unchanged)
+**Ordered procedure:**
+1. **FIT_pilot (5-fold cross-fitting):** select (predictor class, α) by
+   mean held-out Δu-prediction R². Feature set is NOT chosen here.
+2. **TUNE_pilot:** with (class, α) frozen, select feature set ∈ {F0, F1}
+   and (δ, τ) by TUNE_pilot utility; produce the λ-sensitivity report.
+3. **BEST-FIXED selection:** the fixed configuration with the highest
+   cross-fitted utility on FIT_pilot — this rule alone selects.
+   TUNE_pilot computes a confirmation ranking that cannot change the
+   selection; any disagreement is reported, not acted on.
+4. **LEVAL_pilot:** evaluated once, per the frozen gate (§3).
+
+**Deterministic tie-breaks everywhere:** prefer lower complexity
+(ridge < logistic < GBT; larger α; F0 < F1; smaller δ; smaller τ), then
+lexicographic order of the grid key. No decision uses LEVAL_pilot.
+
+## 3. D2 gate — complete pre-specified battery (R3-A)
+
+**Frozen before LEVAL_pilot inference:** candidate policy, (class, α),
+feature set, (δ, τ), λ, all seeds, this gate text. No metric, threshold,
+or test may be changed after seeing LEVAL outputs.
+
+**Resampling conventions (global):** bootstrap resample unit = the
+LEVAL_pilot item (n=300, resampled with replacement); 10,000 resamples;
+seed `S0 = 20261021` for the primary stream (control streams derive from
+S0 as below). Ties in utility are exact float ties and flow through the
+bootstrap naturally. Missing values: not expected (every config evaluated
+on every LEVAL item); if any item is missing for any config, that item is
+dropped from ALL contrasts (complete-pair rule), predeclared here.
+
+| # | Contrast | Pre-specified pass rule |
+|---|---|---|
+| 1 | candidate − BEST-FIXED (primary) | paired per-item utility difference; 95% paired-bootstrap CI (10,000 resamples, seed S0) **lower bound > 0** |
+| 2 | candidate vs SHUFFLE | 1,000 shuffles of FIT_pilot labels (seeds S0+1+k), each refit and scored on LEVAL_pilot; pass ⟺ candidate utility ≥ 95th percentile of the shuffled distribution, percentile computed with mid-rank tie handling: `(#{u_shuf < u_cand} + 0.5·#{u_shuf = u_cand}) / 1000 ≥ 0.95` |
+| 3 | candidate vs RANDOM | 1,000 uniform-random per-item config assignments (seeds S0+1001+k) scored on LEVAL_pilot; same 95th-percentile mid-rank rule |
+| 4 | candidate − MAJORITY | MAJORITY = always the most frequent per-item best action on FIT_pilot; paired per-item utility difference on LEVAL_pilot; 95% paired-bootstrap CI (seed S0) **lower bound > 0** |
+| 5 | candidate − SIMPLE-FEAT | SIMPLE-FEAT = identical pipeline restricted to F0 (length + numeric density); paired per-item utility difference on LEVAL_pilot; 95% paired-bootstrap CI (seed S0) **lower bound > 0** |
+
+**Accuracy component:** exact McNemar (candidate vs BEST-FIXED) reported
+secondary to the primary utility gate; never substitutes for it.
+
+**Multiplicity:** intersection–union gate — **D2 PASS ⟺ contrasts 1–5 ALL
+pass.** No per-contrast α adjustment is needed under IUT (each test at
+level 0.05). Secondary/exploratory contrasts are reported unadjusted and
+labeled as such.
+
+## 4. Utility definition (unchanged from v3)
+
+`u_i(c) = correct_i(c) − λ × (prompt_tokens_i(c) + completion_tokens_i(c)) / 10,000`;
+dataset utility = mean over items. λ × 1,000 / 10,000 = 0.1 × 0.1 = 0.01
+= 1pp accuracy. λ = 0.1 is exploratory-informed (Phase-1-spread aware);
+raw accuracy, raw prompt/completion tokens, and the Pareto are primary;
+utility is the secondary decision metric.
+
+## 5. Precision: scenarios, not promises (unchanged from v3)
+
+Unconditional precision claims remain withdrawn. Discordance scenarios
+(q=5/10/20/40% → ±2.5/3.6/5.1/7.2pp accuracy-scale half-width at n=300);
+utility CIs are wider due to token variance. F2 discordance references
+(16.7%/22.7%) are planning-only and transfer-limited. **The pilot is a
+learnability screen with uncertain power**; no detection guarantee.
+
+## 6. Budget, abort rule, and accounting (R3-B — coherent plan)
+
+**Basis (existing logs only; no new benchmark):** 55 s/100 items/config =
+worst observed F1 wall-clock inside `evaluate()` (prompt + batched
+generation + scoring), model loaded once per process, fresh caches (misses
+included), memory-bank build excluded (timed outside; CPU-scale).
+Per-config observed rates (s/100): B0 6.2, B2 27.3, REF 27.7, B3 26.9,
+B1 54.5.
+
+**Planned evaluations: 5,000** = 5 configs × (500 FIT + 200 TUNE + 300
+LEVAL).
+
+- Worst case: 5,000/100 × 55 = 2,750 s = 45.8 min; +15% overhead
+  (bank build + cache effects; incremental, not double-counted) =
+  **52.7 min ≈ 0.88 wall-hours**.
+- Expected (per-config observed rates): ≈ 24 min.
+
+**Coherent guard set (the v3 45-min abort is withdrawn):**
+- **Wall-clock fail-safe: abort at 55 min cumulative**, report INCOMPLETE
+  (no partial averages presented as complete). Margins: worst-case-plus-
+  overhead (52.7) → abort (55): 2.3 min; abort (55) → hard cap (60): 5
+  min. The 2.3-min margin is thin by construction but the 52.7-min figure
+  is itself an all-configs-at-slowest-observed bound; expected usage is
+  ~24 min.
+- **GPU-hour accounting (honest):** F1/F2 never metered GPU-active time;
+  wall-clock is the only reliable legacy proxy. Single-GPU process ⇒
+  GPU-active ≤ wall-clock, so the 55-min wall fail-safe bounds GPU-active
+  ≤ 0.92 GPU·h < 1.0 cap. **Planned instrumentation (not yet run):**
+  pynvml utilization sampling at 10 s intervals with a GPU-second
+  integral in the run manifest; if GPU-active telemetry fails, the
+  wall-clock fail-safe alone enforces the cap. Wall-clock is never
+  reported as GPU-active time.
+
+**Budget request (proposal, NOT authorization): ≤ 1.0 aggregate
+GPU-hour**, hard cap, with the 55-min wall fail-safe and planned GPU-active
+metering.
+
+## 7. Confirmation-data policy (unchanged)
 
 F2 SVAMP 300: retired as fresh confirmation (descriptive only).
-MATH-500: candidate only; untouched until an immutable
-ID/revision/hash lock exists. Not accessed in this round.
+MATH-500: candidate only; untouched until an immutable lock exists.
 
-## 3. Locked candidate configuration set (unchanged)
+## 8. Locked candidate configuration set (unchanged)
 
 B1 (cost floor; deferral target), REF, B2 (dev-selected anchor — never
-"global best"), B3, B0. Best-fixed for the confirmatory contrast is
-selected per §1 step 3.
+"global best"), B3, B0. BEST-FIXED selected per §2 step 3.
 
-## 4. Utility definition (R2-E algebra fix)
-
-Per item i under config c:
-
-```
-u_i(c) = correct_i(c) − λ × (prompt_tokens_i(c) + completion_tokens_i(c)) / 10,000
-```
-
-Dataset utility = mean over items; aggregate token totals are always
-reported separately.
-
-**λ algebra:** 1,000 extra tokens cost `λ × 1,000 / 10,000 = 0.1 × 0.1 =
-0.01` utility = exactly one percentage point of accuracy. So λ = 0.1
-implements "1pp ≙ 1,000 tokens". λ = 0.1 is **exploratory-informed**
-(chosen with awareness of Phase-1 cost spreads, not an independently
-specified deployment price); raw accuracy, raw prompt/completion tokens,
-and the accuracy–token Pareto remain the **primary** metrics; utility is
-a secondary decision metric; λ sensitivity on TUNE_pilot only.
-
-## 5. D2 gate — full pre-specified comparison battery (R2-A)
-
-**Frozen before LEVAL_pilot:** the candidate policy (M1 or M2), all
-thresholds (δ, τ), λ, feature set, all random seeds, and this gate text.
-Nothing is chosen after inspecting LEVAL_pilot.
-
-**Baselines the candidate must beat (all on LEVAL_pilot):**
-1. `BEST-FIXED`: best fixed configuration, selected train-side only
-   (§1 step 3);
-2. `SHUFFLE`: shuffled-label negative control — 1,000 shuffles of the
-   FIT_pilot labels, shuffle seeds derived deterministically from
-   `SEED+1`; candidate must exceed the 95th percentile of the shuffle
-   utility distribution;
-3. `RANDOM`: uniform random config per item, 1,000 policy draws, seeds
-   from `SEED+2`; candidate must exceed the 95th percentile;
-4. `MAJORITY`: action-frequency policy (always the most frequent
-   best-config action on FIT_pilot) — applicable to this discrete action
-   space;
-5. `SIMPLE-FEAT`: predictor using only length + numeric-density features
-   (same training pipeline) — the candidate's full-feature model must beat
-   it.
-
-**Statistics:** primary contrast = candidate vs BEST-FIXED paired
-per-item utility difference on LEVAL_pilot; paired bootstrap 95% CI,
-10,000 resamples, seed `SEED+3`; binary accuracy component additionally
-gets exact McNemar. **Multiplicity:** hierarchical intersection–union
-gate — the primary contrast must have CI excluding 0 **and** each of the
-four control contrasts (2–5) must pass its pre-specified rule; all must
-pass for D2 = PASS. Secondary contrasts are reported unadjusted and
-labeled exploratory.
-
-**D2 PASS ⟺ all five conditions met.** Anything else = pilot null,
-reported as such.
-
-## 6. Precision: scenarios, not promises (R2-C)
-
-The unconditional "n=300 gives ±2–3pp" claim is **withdrawn**. For a
-near-zero paired binary difference, the approximate 95% CI half-width is
-`1.96 × sqrt(q / 300)` where q is the paired discordance rate:
-
-| discordance q | approx. half-width |
-|---|---|
-| 5% | ±2.5pp |
-| 10% | ±3.6pp |
-| 20% | ±5.1pp |
-| 40% | ±7.2pp |
-
-Utility CIs are **wider** than these accuracy-only illustrations because
-token-cost variance enters the difference.
-
-Planning-only reference (transfer-limited, different benchmark, label:
-**hypothesis-generating, not evidence**): the locked F2 SVAMP pairs showed
-discordance 50/300 ≈ 16.7% (REF vs B2) and 68/300 ≈ 22.7% (REF vs B1),
-which under the approximation above correspond to roughly ±4.6pp and
-±5.3pp accuracy-scale half-widths. There is no guarantee GSM8K-train
-discordance is similar.
-
-**Honest characterization:** this pilot is a **learnability screen with
-uncertain power**. If the true LEVAL_pilot discordance is ≈20%, effects
-smaller than ~5pp in accuracy scale cannot be resolved; the screen can
-detect effects of the ~10pp magnitude seen dev-side in Phase-1, and a null
-at that resolution redirects the project (see risk R1). No detection of a
-specific effect size is guaranteed.
-
-## 7. Decoding noise and oracle discipline (unchanged)
+## 9. Standing rules (unchanged)
 
 Greedy deterministic decoding; cached completions reused for pairing;
-hindsight oracle (D1) labeled optimistic/non-deployable, FIT-only.
-
-## 8. Budget reconciliation (R2-D — from existing logs only, no new runs)
-
-**What the 55 s/100 figure includes (verified against
-`f1_results/f1_summary.csv` and runner code `src/scripts/f1_run.py`):**
-
-- It is **per 100 items, per config, wall-clock**, measured inside
-  `evaluate()` (prompt build + batched generation + scoring).
-- It comes from the slowest observed F1 GSM8K 1.5B cell (B1, 54.5 s).
-  Observed per-config rates (s/100 items): B0 6.2, B2 27.3, REF 27.7,
-  B3 26.9, B1 54.5.
-- **Excluded:** memory-bank construction (executed and timed *outside*
-  `evaluate()`; CPU-only retrieval over ≤48 calibration items,
-  subsecond-to-seconds scale).
-- **Included:** first-run cache misses (F1/F2 used fresh caches).
-- **Accounting gap (stated, not hidden):** wall-clock vs GPU-active time
-  was not separately metered in F1/F2. The pilot must add GPU-active
-  metering; until then, wall-clock is the conservative upper proxy.
-
-**Arithmetic (planned 5,000 generations = 5 configs × (500 FIT + 200 TUNE
-+ 300 LEVAL)):**
-
-- Worst case (every config at the slowest observed 55 s/100):
-  5,000/100 × 55 = 2,750 s ≈ 45.8 min ≈ **0.76 GPU·h**; +15% for
-  bank-build/cache effects (incremental, **not** double-counted, since
-  bank build is outside the 55 s figure) ≈ **0.88 GPU·h**.
-- Expected (per-config observed rates): ≈ 1,420 s ≈ 24 min ≈
-  **0.40 GPU·h**.
-
-**Margin judgment:** worst-case 0.88 h leaves ~7 min under a 1.0 h cap —
-thin but workable **only with** an instrumented early-abort rule: abort at
-45 min cumulative wall-clock, report INCOMPLETE (no partial averages).
-The v2 design (5,500 gens, 0.97 h worst case, ~2 min margin) is judged
-**not to leave adequate margin** and is superseded by the 5,000-gen
-design above.
-
-**Budget request (NOT authorized): ≤ 1.0 aggregate GPU-hour, hard cap,
-with GPU-active metering and the 45-min abort rule.** All figures are
-estimates from existing logs; nothing here is an execution permission.
-
-## 9. Historical-data classification (unchanged)
-
-V1/F1/F2 numbers are descriptive/hypothesis-generating only. Frozen V1/V2
-artifacts untouched. Terminology: all gating language is **"pre-specified
-and commit-locked before LEVAL inference"**; no external preregistration
-exists or is claimed.
+hindsight oracle (D1) optimistic/non-deployable, FIT-only. V1/F1/F2
+numbers are descriptive/hypothesis-generating only; frozen V1/V2 artifacts
+untouched. All gating is **"pre-specified and commit-locked before LEVAL
+inference"**; no external preregistration exists or is claimed.
