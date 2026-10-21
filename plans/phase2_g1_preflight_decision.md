@@ -1,107 +1,59 @@
-# Phase-2 G1 Preflight Decision — Executor Report (2026-10-21)
+# Phase-2 G1 Preflight Decision v2 — Executor Report (2026-10-21)
 
-Authority: `plans/phase2_planner_review_r0.md`, `plans/phase2_r5_g1_kimi_prompt.md`.
-Scope executed: document-only. **0 GPU, 0 training, 0 inference, no
-controller code, no modification of V1/V2 frozen artifacts.**
+Authority: `plans/phase2_planner_review_r1.md`,
+`plans/phase2_g1_pilot_repair_prompt.md`.
+Scope executed: document/literature only. **0 GPU, 0 training, 0
+inference, no controller code, V1/V2 frozen artifacts untouched, MATH-500
+untouched.**
 
-## 1. Papers audited and direct novelty collisions
+## R1 issue-by-issue resolution
 
-10 primary sources fully read (fact sheets + comparison matrix in
-`plans/phase2_r5_overlap_matrix.csv`; gap analysis in
-`plans/phase2_r5_related_work_gap.md`):
+### R5 expansion (Task A)
 
-- **Direct collisions:**
-  - **Forge** (arXiv 2609.34358, 2026-09-28): per-question joint
-    (evidence form × thinking depth) selection above a *single frozen
-    host*, trained from measured accuracy − λ·token utility. Two of TACC's
-    three axes + the utility form.
-  - **ARC** (arXiv 2602.11574, v5 2026-10-06): per-query joint
-    (workflow × tools × token budget × prompt) over a frozen agent system
-    (RL+SFT).
-  - **RTR / Route to Reason** (WWW 2026): supervised accuracy − λ·token
-    per-question selection with OOD benchmarks (utility-form collision).
-  - **Chen et al. NAACL-Findings 2025**: supervised per-question
-    augmentation-path routing above one frozen LLM (archetype collision).
-- **Partial:** Gerych et al. AAAI 2024 ((model,prompt) confidence
-  routing), Adaptive-Solver IPM 2025 (heuristic escalation), FluxMem 2026
-  (memory-structure selection), Adaptive-RAG NAACL 2024 (retrieval depth),
-  RouteLLM ICLR 2025 + FrugalGPT TMLR 2024 (cost-aware model
-  routing/cascades).
+| R1 requirement | Status | Evidence |
+|---|---|---|
+| Add BudgetMem (2602.06025) | DONE | FULL read; matrix row + gap §2. Contests broad "memory routing under token-costed utility"; runtime pipeline tiers, PPO, multi-capacity; static-exemplar axis survives narrowly |
+| Add Gated-Memory Routing (2609.00237) | DONE | FULL read; matrix row + gap §2. RL trajectory-memory gates (nearest recall-width analog); multi-agent, multi-model; narrows M2 broadly, static pre-inference exemplar routing survives |
+| Add EMNLP-2025 budget routing (PILOT) | DONE | FULL read (App. D.1 extraction truncated — recorded); contextual-bandit LLM routing under token budget; "cost-aware per-query routing" framing owned by PILOT — TACC may not claim it |
+| Audit DEFLECT vs selective-prediction / reject-option / conformal / pairwise-ranking literature | DONE | Scan row-set added (RouteLLM, FrugalGPT, Mozannar & Sontag ICML 2020, Liang et al. TMLR 2024, Chow 1970). M1's two halves are each anticipated (RouteLLM: pairwise-diff + defer-to-cheap between models; Liang: shift-aware abstention for frozen models). Surviving claim narrowed to the exact combination; conformal-deferral sub-scan UNRESOLVED and recorded as a mandatory pre-submission re-audit |
+| Fix "10 primary sources fully read" contradiction | DONE | v2 gap doc carries a per-row coverage statement (12 FULL / 2 ABSTRACT-ONLY / 1 SNIPPET / 1 FULL-minus-appendix); Adaptive-RAG row corrected to ABSTRACT-ONLY |
+| Consistent code-availability audit | DONE | Per-row: RouteLLM YES(URL), FrugalGPT YES(URL), Adaptive-Solver YES(URL), RTR YES(URL), BudgetMem YES(URL + project page), Liang YES(URL), L2D YES(URL); Chen-2025/Gerych/FluxMem/Forge/PILOT NO; ARC LINKED-UNRESOLVED; Gated-Memory-Routing placeholder-repo NO; Chow NO |
 
-## 2. Novelty decision
+**Revised verdicts:** plain TACC PIVOT (unchanged); M1/M2 = plausible
+research hypotheses, **not cleared novel**; narrowed claims written into
+`phase2_r5_related_work_gap.md` §3; STOP conditions pre-declared (§4).
 
-**Original embedding+MLP TACC: PIVOT** (not defensible as a standalone
-algorithmic contribution; "frozen backbone vs model routing" is
-insufficient — Forge/ARC are frozen-backbone).
+### G1 repair (Task B)
 
-**Strongest defensible differentiator (narrow, falsifiable):** joint
-per-question routing that includes the **episodic-memory policy axis**
-(recall width / exemplar count / memory on-off) with a token-costed
-utility, via one of two candidate mechanisms:
+| R1 issue | Status | Fix |
+|---|---|---|
+| B1 — VAL both tunes and evaluates | DONE | Four partitions BANK/FIT/TUNE/LEVAL (40/25/15/20), hash-locked; fitting on FIT, thresholds on TUNE, **LEVAL used exactly once** for the confirmatory contrast; cross-fitting inside FIT∪TUNE; exploratory-vs-confirmatory hierarchy stated (`phase2_g1_revised_protocol.md` §1) |
+| B2 — utility units ambiguous | DONE | Per-item `u_i(c) = correct_i − λ·(prompt_i+completion_i)/10,000`; dataset utility = mean; aggregates reported separately; λ = 0.1 ⟹ 1pp ≙ 1,000 tokens shown algebraically; λ labeled **exploratory-informed** (chosen with awareness of Phase-1 spreads); raw accuracy/tokens/Pareto primary (§4) |
+| B3 — budget arithmetic wrong | DONE | v1 error documented: 55 s is per-100-items-per-config, so 12,000 gens ⇒ 6,600 s ≈ 1.83 GPU·h, not ≤0.5. v2 downsized with precision rationale: 5 configs × (800 FIT+TUNE + 300 LEVAL) = 5,500 gens ⇒ 3,025 s ≈ 0.84 GPU·h + 15% overhead ⇒ **revised request ≤ 1.0 GPU·h** (hard cap); LEVAL n=300 gives ±2–3pp CI, sufficient vs the ~10pp motivating effects (§8) |
+| Best-fixed selection must not see its eval fold | DONE | best fixed = highest cross-fitted FIT∪TUNE utility, selected without LEVAL access; final comparison on LEVAL once (§3, §5) |
+| D2 must beat best fixed + shuffled control | DONE | pass requires BOTH, paired CI excluding 0; beating B1 alone insufficient (§5) |
+| Embedding/controller overhead accounting | DONE | encoder seconds + controller ms reported as separate units, never equated with tokens (§6) |
+| MATH-500 candidate-only | DONE | no fetch/probe/result access before immutable lock (§2) |
+| status.json last_commit stale | DONE | updated to actual HEAD (see below) |
 
-- **M1 DEFLECT** — pairwise utility-*difference* prediction +
-  shift-aware deferral to the B1 cost floor;
-- **M2 MEMROUTE** — joint reasoning × episodic-memory routing, directly
-  extending Phase-1's locked non-transfer finding.
+## Files changed this round
 
-Both are specified with falsifiable tests and ablations in
-`phase2_r5_related_work_gap.md` §4. Neither is claimed novel-by-flat: the
-claim is the combination, verified unclaimed across the audited matrix.
-STOP conditions are pre-declared (§6 of the gap doc).
+- `plans/phase2_r5_overlap_matrix.csv` — 16 rows (was 10), coverage/code
+  fields consistent
+- `plans/phase2_r5_related_work_gap.md` — v2 rewritten (narrowed claims,
+  honest coverage statement)
+- `plans/phase2_g1_revised_protocol.md` — v2 rewritten (B1/B2/B3 repairs)
+- `plans/phase2_g1_preflight_decision.md` — this file
+- `status.json` — `phase2_planning` only
 
-## 3. Leak guards and confirmation-data status
+## What is NOT done (explicit)
 
-- **GSM8K train partition**: disjoint hash-locked BANK / LABEL / VAL
-  (40/40/20) with exact+near-duplicate guards against each other and
-  against all evaluation splits; a labeled item's own answer can never be
-  in its retrieval bank (`phase2_g1_revised_protocol.md` §1).
-- **F2 SVAMP 300: RETIRED as fresh confirmation** (was inspected in F2);
-  future use = descriptive only.
-- **New confirmation candidate: MATH-500** — candidate only; full
-  pre-inference lock (revision, 500 IDs, SHA-256, overlap checks, adapter
-  tests) required before any use; public-benchmark contamination caveat
-  stands.
+- Pilot NOT executed and NOT authorized (request: ≤1.0 GPU·h, pending
+  Planner R2).
+- No controller code, no training, no GPU, no confirmation-data access.
+- Conformal-deferral literature scan: UNRESOLVED (mandatory pre-
+  submission re-audit).
+- No claim in this round is final-novelty-cleared; M1/M2 remain
+  hypotheses pending Planner R2.
 
-## 4. Utility protocol and learnability threshold
-
-- `utility = accuracy − λ·(total_tokens/10,000)`; pilot default λ = 0.10
-  (1pp ≙ 1,000 tokens), derived from deployment framing before outcomes;
-  sensitivity on train-validation only. Controller overhead metered in its
-  own units; raw accuracy + tokens + Pareto always reported.
-- Learnability gate = **D2**: out-of-sample prediction of utility
-  *differences* must beat best-fixed-config utility on VAL with CI
-  excluding 0 and beat shuffled-label controls. D1 hindsight oracle is
-  optimistic-only, never evidence of attainability.
-
-## 5. Pilot design (NOT executed; budget request only)
-
-TRAIN-side-only diagnostic: 5 configs × 2,400 LABEL items ≈ 12,000
-generations on Qwen2.5-1.5B; est. 35–55 min; **budget request ≤ 0.5
-aggregate GPU-hours**; preflight = partition locks + overlap guards +
-config lock + λ lock; stop rules for guard failure, budget breach, or D2
-null. Awaiting Planner authorization — not started.
-
-## 6. GO / PIVOT / NO-GO recommendation
-
-**PIVOT-then-GATE:**
-1. PIVOT the algorithmic claim to M1/M2 as scoped above.
-2. GO to the 0.5 GPU·h train-only learnability pilot *only after* Planner
-   reviews these four documents; pilot outcome decides controller training
-   (D2 pass) or a Phase-1-consistent null report (D2 fail).
-
-**Scientific blockers if ignored:** R1 (no within-task variance) remains
-the project-defining unknown — the pilot exists to measure it. R5 residual
-novelty is narrow; a re-audit is mandatory at submission time.
-
-## 7. Files changed / commits / cleanliness
-
-- Added: `plans/phase2_r5_related_work_gap.md`,
-  `plans/phase2_r5_overlap_matrix.csv`,
-  `plans/phase2_g1_revised_protocol.md`,
-  `plans/phase2_g1_preflight_decision.md` (this file).
-- Modified: `status.json` (`phase2_planning` only; V1/V2 frozen fields
-  untouched).
-- Commit: see `status.json.phase2_planning.last_commit`.
-- Working tree clean; pushed to origin/main.
-
-**STOP point reached. Awaiting Planner review.**
+**STOP point reached. Awaiting Planner R2 review.**

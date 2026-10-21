@@ -49,7 +49,7 @@
     "owner_submission_done": false
   },
   "phase2_planning": {
-    "status": "PLANNER R1 REVIEW: R5 PIVOT ACCEPTED; G1 NOT PILOT-READY; DOCUMENT REPAIR ONLY",
+    "status": "R1 REPAIRS COMPLETE — AWAITING PLANNER R2 REVIEW",
     "date": "2026-10-21",
     "direction": "Task-Adaptive Cognitive Configuration Controller (TACC): learn task -> cognitive configuration instead of searching for one global best",
     "documents": [
@@ -77,19 +77,21 @@
     ],
     "authorized_now": "Document-only literature expansion and protocol repair; no code, GPU, training, inference, or holdout access",
     "implementation_authorized": false,
-    "r5_verdict": "PIVOT accepted for plain embedding+MLP TACC; MEMROUTE and DEFLECT remain unproven novelty hypotheses",
+    "r5_verdict": "PIVOT (plain TACC). M1 DEFLECT / M2 MEMROUTE narrowed to explicit mechanism-level combinations; NOT cleared novel. BudgetMem/Gated-Memory-Routing/PILOT/selective-prediction lineage added; coverage honesty fixed (12 FULL / 2 ABSTRACT-ONLY / 1 SNIPPET / 1 partial-appendix); code availability re-audited per row",
     "candidate_mechanisms": [
       "M1 DEFLECT: pairwise utility-difference prediction + shift-aware deferral to B1 cost floor",
       "M2 MEMROUTE: joint reasoning x episodic-memory policy routing"
     ],
     "g1_protocol": "plans/phase2_g1_revised_protocol.md (disjoint BANK/LABEL/VAL hash-locked partitions; SVAMP retired as fresh confirmation; MATH-500 candidate requiring pre-inference lock; utility/lambda locked; D1/D2 learnability diagnostics)",
-    "gpu_requested_pending_approval": 0.5,
-    "pilot_status": "NOT AUTHORIZED — G1 protocol and R5 literature audit require repairs",
-    "last_commit": "22fb439b9960b9b800631365fadc11037c8386aa",
+    "gpu_requested_pending_approval": 1.0,
+    "pilot_status": "REDESIGNED, NOT AUTHORIZED, NOT EXECUTED",
+    "last_commit": "PENDING-SET-AT-END",
     "planner_review_r1": "plans/phase2_planner_review_r1.md",
     "executor_prompt_r1": "plans/phase2_g1_pilot_repair_prompt.md",
     "planner_review_commit": "558ad904ddac2ef2f6b1ffcda429d3892fa2cd03",
     "executor_prompt_commit": "0ef7914317a799526c2faa97c08e3c77b28e3dcb",
-    "reviewed_executor_deliverable_commit": "8af0a58 (as reported by Executor; exact HEAD must be verified in the next executor report)"
+    "reviewed_executor_deliverable_commit": "8af0a58 (as reported by Executor; exact HEAD must be verified in the next executor report)",
+    "g1_repairs": "B1 VAL leakage fixed via BANK/FIT/TUNE/LEVAL 40/25/15/20 hash-locked partitions with cross-fitting and single-use LEVAL; B2 per-item utility u_i = correct - lambda*(prompt+completion)/10000 with lambda=0.1 labeled exploratory-informed, raw metrics primary; B3 budget corrected from logs: v1 estimate withdrawn, v2 = 5 configs x 1100 items = 5,500 gens ~= 0.84 GPU-h + overhead, revised request <= 1.0 GPU-h",
+    "open_items": "conformal-deferral literature sub-scan UNRESOLVED (mandatory pre-submission re-audit); M1/M2 novelty not cleared"
   }
 }
