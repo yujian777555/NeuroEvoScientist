@@ -83,7 +83,7 @@
     "g1_protocol": "plans/phase2_g1_revised_protocol.md v3 (BANK/FIT/TUNE/LEVAL partitions + deterministic pilot subsets; D2 five-baseline gate; precision scenarios; reconciled budget; pre-specified-and-commit-locked terminology)",
     "gpu_requested_pending_approval": 1,
     "pilot_status": "NOT PILOT-READY — NOT AUTHORIZED — NOT EXECUTED",
-    "last_commit": "PENDING-THIS-ROUND",
+    "last_commit": "bd21c3363b603606cfefa1ee95ade59f9ae0681d",
     "planner_review_r1": "plans/phase2_planner_review_r1.md",
     "executor_prompt_r1": "plans/phase2_g1_pilot_repair_prompt.md",
     "planner_review_commit": "558ad904ddac2ef2f6b1ffcda429d3892fa2cd03",
@@ -98,7 +98,7 @@
       "Pilot has not been run; no GPU used; MATH-500 untouched"
     ],
     "last_commit_semantics": "Latest substantive Executor deliverable commit; not necessarily the latest remote HEAD when Planner/status-only commits follow.",
-    "last_executor_deliverable_commit": "PENDING-THIS-ROUND",
+    "last_executor_deliverable_commit": "bd21c3363b603606cfefa1ee95ade59f9ae0681d",
     "remote_head_at_r2_review": "9ca92a30b42b84c10dbe7f905048b4567fe322ac",
     "status_update_base_head": "d49658c61467b11c2fa59991152ae4e83a89d8a7",
     "planner_review_r2": "plans/phase2_planner_review_r2.md",
