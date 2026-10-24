@@ -49,7 +49,7 @@
     "owner_submission_done": false
   },
   "phase2_planning": {
-    "status": "R4 DOCUMENT REPAIRS COMPLETE — STOP AND WAIT FOR PLANNER R5 REVIEW",
+    "status": "R5 REVIEW: R4 SUBSTANTIALLY ACCEPTED; FINAL REPRODUCIBILITY/COMPARATOR CLARIFICATIONS REQUIRED",
     "date": "2026-10-24",
     "direction": "Task-Adaptive Cognitive Configuration Controller (TACC): learn per-question cognitive configuration for a frozen LLM; original embedding+MLP TACC is PIVOT and M1/M2 novelty is not cleared",
     "documents": [
@@ -60,31 +60,39 @@
       "plans/phase2_planner_review_r2.md",
       "plans/phase2_planner_review_r3.md",
       "plans/phase2_planner_review_r4.md",
+      "plans/phase2_planner_review_r5.md",
       "plans/phase2_g1_pilot_repair_prompt_r2.md",
       "plans/phase2_g1_pilot_repair_prompt_r3.md",
-      "plans/phase2_g1_pilot_repair_prompt_r4.md"
+      "plans/phase2_g1_pilot_repair_prompt_r4.md",
+      "plans/phase2_g1_pilot_repair_prompt_r5.md"
     ],
     "recommended_learning_approach": "Supervised utility-difference predictor remains a candidate only; no implementation authorization",
     "gpu_authorized": 0,
-    "next_gate": "Planner R5 review of the R4 document repairs. Any CPU-only preflight and any GPU Pilot each require separate explicit authorization.",
+    "next_gate": "Kimi performs document-only R5 repairs using plans/phase2_g1_pilot_repair_prompt_r5.md, pushes and stops for Planner R6 review. No CPU preflight, dataset access, embedding generation, or GPU Pilot is authorized.",
     "constraints": "R4 work was document/status only; no GPU, inference, training, controller implementation, dataset loading, partition-lock generation, MATH-500 access, CPU preflight, or edits to frozen V1/V2 artifacts and historical F1/F2 results.",
-    "planner_review": "plans/phase2_planner_review_r4.md",
-    "executor_prompt": "plans/phase2_g1_pilot_repair_prompt_r4.md",
-    "decision": "R4-A through R4-H document repairs complete. Pilot NOT AUTHORIZED. Novelty NOT CLEARED.",
+    "planner_review": "plans/phase2_planner_review_r5.md",
+    "executor_prompt": "plans/phase2_g1_pilot_repair_prompt_r5.md",
+    "decision": "R4-A through R4-H are substantially addressed. Protocol v5 still has an F0 comparator threshold mismatch, ambiguous fallback ID prefixing, unspecified encoder/feature extraction, conditional SHUFFLE null interpretation, unspecified PRNG, majority-frequency tie ambiguity, and unclear CPU-vs-GPU timeout scope. CPU preflight NOT AUTHORIZED. GPU Pilot NOT AUTHORIZED. Novelty NOT CLEARED.",
     "blockers": [
-      "M1/M2 novelty remains NOT CLEARED; submission-time literature re-audit remains mandatory",
-      "Actual partition/subset lock artifacts do not exist and require separate explicit CPU-only preflight authorization",
-      "GPU Pilot remains NOT AUTHORIZED; the <=1.0 GPU-hour request is a proposal, not permission",
-      "Permutation-null runtime has not been measured; the four-CPU-hour timeout is provisional pending an authorized two-replicate smoke test"
+      "SIMPLE-FEAT reuses candidate F1 delta/tau despite F0-specific score and shift-distance spaces; define separate F0 TUNE thresholds",
+      "Fallback ID text ambiguously prefixes q: twice; define exactly one canonical q: prefix and exact fallback hash bytes",
+      "Frozen embedding model/revision/hash, tokenizer/pooling/truncation, question-length and numeric-density features are not fully specified",
+      "SHUFFLE excludes F0-NO-GO replicates; explicitly justify the conditional null and report F0/invalid/valid replicate counts",
+      "Fisher-Yates PRNG algorithm/version is unspecified; distinguish policy-fit invocations from individual estimator fits",
+      "MAJORITY frequency tie rule incorrectly refers to per-item utility tie rules",
+      "Clarify that 55-minute/60-minute limits govern GPU inference/data collection while CPU permutation analysis has a separate provisional timeout",
+      "M1/M2 novelty remains NOT CLEARED; final literature re-audit remains mandatory",
+      "Partition/subset lock artifacts do not exist and require separate explicit CPU-only preflight authorization",
+      "GPU Pilot remains NOT AUTHORIZED; <=1.0 aggregate GPU-hour is a request only"
     ],
-    "authorized_now": "Only Planner R5 review is pending. No CPU preflight, dataset access, partition-lock generation, GPU, inference, training, or implementation is authorized.",
+    "authorized_now": "Only document-only R5 repairs according to plans/phase2_g1_pilot_repair_prompt_r5.md. No CPU preflight, dataset access, embedding generation, partition-lock generation, GPU, inference, training, or implementation.",
     "implementation_authorized": false,
-    "r5_verdict": "PIVOT for plain TACC. DEFLECT and MEMROUTE remain hypotheses; novelty not cleared.",
+    "r5_verdict": "R4 substantially accepted; protocol v5 requires final document-only clarifications before CPU preflight. Plain TACC remains PIVOT; DEFLECT and MEMROUTE novelty remain NOT CLEARED.",
     "candidate_mechanisms": [
       "M1 DEFLECT: pairwise utility-difference prediction plus shift-aware deferral to B1 cost floor; novelty not cleared",
       "M2 MEMROUTE: joint per-question reasoning strategy and static episodic-exemplar policy routing; novelty not cleared"
     ],
-    "g1_protocol": "plans/phase2_g1_revised_protocol.md v5: unified action-utility model selection, F0 early NO-GO, full adaptive permutation replay, consistent utility endpoint, invalid-run policy, canonical IDs, and fully specified bootstrap. Locks remain PLANNED and uncreated.",
+    "g1_protocol": "Protocol v5 is under R5 review. Actual partition/subset locks remain PLANNED and uncreated. No CPU preflight or GPU Pilot is authorized.",
     "gpu_requested_pending_approval": 1,
     "pilot_status": "NOT AUTHORIZED — NOT EXECUTED",
     "planner_review_r1": "plans/phase2_planner_review_r1.md",
@@ -92,14 +100,14 @@
     "planner_review_commit": "558ad904ddac2ef2f6b1ffcda429d3892fa2cd03",
     "executor_prompt_commit": "0ef7914317a799526c2faa97c08e3c77b28e3dcb",
     "g1_repairs": "R1 repairs accepted for utility definition and arithmetic. R2 still requires a complete D2 gate, exact pilot sampling/selection procedure, supported precision analysis, reconciled timing overhead, terminology/formula corrections, and conformal-routing literature comparison.",
-    "open_items": "Planner R5 review. Actual lock artifacts, CPU preflight, and GPU Pilot remain unauthorized and incomplete. Novelty remains unconfirmed.",
+    "open_items": "Resolve R5-A through R5-G in a document-only round, then Planner R6 review. CPU preflight and GPU Pilot each require separate explicit authorization.",
     "resolved_r1_items": [
       "Added BudgetMem, Gated-Memory Routing, and PILOT; coverage-depth/code-availability reporting is more honest",
       "Plain embedding+MLP TACC PIVOT accepted; M1 DEFLECT and M2 MEMROUTE remain novelty hypotheses only",
       "Per-item utility defined and main budget arithmetic corrected",
       "Pilot has not been run; no GPU used; MATH-500 untouched"
     ],
-    "last_commit_semantics": "last_executor_deliverable_commit is the substantive R4 document commit. remote_head_at_r4_repair_start is the observed HEAD before repairs. remote_head_before_r4_status_update is the pushed document commit immediately before the status-only commit. No field self-references the commit containing its final value.",
+    "last_commit_semantics": "Latest substantive Executor deliverable is the R4 protocol/document repair. R5 review/prompt/status commits are Planner commits; current status update is not self-referenced.",
     "last_executor_deliverable_commit": "87c5c106caaa89eda325f3d9a6479abf30591950",
     "r4_repair_deliverable_commit": "87c5c106caaa89eda325f3d9a6479abf30591950",
     "remote_head_at_r4_repair_start": "4ea11810fc187e81a0d30c8576e706625c34db77",
@@ -122,7 +130,7 @@
     "executor_prompt_r3": "plans/phase2_g1_pilot_repair_prompt_r3.md",
     "executor_prompt_r3_commit": "489dfd297563a1ba38b8ad0df1d80cf684b726c3",
     "planner_head_before_status_update": "489dfd297563a1ba38b8ad0df1d80cf684b726c3",
-    "status_provenance_note": "remote_head_at_r4_review_start records the observed main HEAD before R4 review. planner_head_before_r4_status_update records the latest known HEAD before this status-only commit. No field self-references the commit containing its final value.",
+    "status_provenance_note": "remote_head_at_r5_review_start records main HEAD observed before Planner R5 review. planner_head_before_r5_status_update records the latest known HEAD before this status-only commit. Do not self-reference the commit containing this final status.",
     "resolved_r3_items": [
       "R3-A: all five D2 contrasts have explicit numeric pass rules (paired bootstrap CI>0 for BEST-FIXED/MAJORITY/SIMPLE-FEAT; mid-rank 95th-percentile for SHUFFLE/RANDOM with locked seed streams); missing-value complete-pair rule; intersection-union gate",
       "R3-B: 45-min abort contradiction resolved — 55-min wall fail-safe between worst-case-plus-overhead (52.7 min) and the 60-min cap; GPU-active metering planned via pynvml; wall-clock never equated with GPU-hours",
@@ -147,6 +155,13 @@
       "R4-F: canonical source/fallback IDs, namespaces, UTF-8 hashes, and (digest,norm_id) sorting are fully specified",
       "R4-G: percentile 95% CI, 10,000 paired resamples, seed S0, type-7 interpolation, and lower-bound>0 rule are explicit",
       "R4-H: current review/prompt pointers, documents, next gate, and commit provenance updated"
-    ]
+    ],
+    "r5_review": "plans/phase2_planner_review_r5.md",
+    "r5_review_commit": "cef12d07d41a795a5adcf4896d713ea6ab76bc3e",
+    "r5_executor_prompt": "plans/phase2_g1_pilot_repair_prompt_r5.md",
+    "r5_executor_prompt_commit": "b5e7b46013a3b4c5fbdb44d15d45929dcd3c82da",
+    "remote_head_at_r5_review_start": "c80d90d4d8901c2e110680751ddb2b02c4eed09f",
+    "planner_head_before_r5_status_update": "b5e7b46013a3b4c5fbdb44d15d45929dcd3c82da",
+    "r4_status_only_commit": "c80d90d4d8901c2e110680751ddb2b02c4eed09f"
   }
 }
