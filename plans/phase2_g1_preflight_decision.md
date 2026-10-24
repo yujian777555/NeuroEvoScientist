@@ -1,49 +1,71 @@
-# Phase-2 G1 Preflight Decision v4 — Executor Report (2026-10-21)
+# Phase-2 G1 Preflight Decision v5 — Executor Report (2026-10-24)
 
-Authority: `plans/phase2_planner_review_r3.md`,
-`plans/phase2_g1_pilot_repair_prompt_r3.md`.
-Scope executed: document-only edits to
-`plans/phase2_g1_revised_protocol.md` (v4), this file, and
-`status.json.phase2_planning`. **0 GPU, 0 inference, 0 training, no
-controller code, no dataset access, no partition locks created, no CPU
-preflight, MATH-500 untouched, V1/V2 frozen artifacts untouched.**
+Authority: `plans/phase2_planner_review_r4.md`,
+`plans/phase2_g1_pilot_repair_prompt_r4.md`.
+Scope executed: document-only repair of
+`plans/phase2_g1_revised_protocol.md` (v5), this report, and a separate
+status-only update to `status.json.phase2_planning`.
 
-## R3 issue-by-issue resolution
+**Boundary:** 0 GPU, 0 inference, 0 training, no controller implementation,
+no dataset access, no partition/subset locks, no CPU preflight, no
+MATH-500 access, and no changes to frozen V1/V2 papers, PDFs,
+supplements, or historical F1/F2 results.
 
-| R3 item | Status | Resolution (protocol v4) |
+## R4 issue-by-issue resolution
+
+| Item | Result | Actual repair in protocol v5 |
 |---|---|---|
-| R3-A — MAJORITY/SIMPLE-FEAT pass rules undefined | DONE | §3: all five contrasts have explicit numeric rules. MAJORITY and SIMPLE-FEAT: paired per-item utility difference on LEVAL_pilot, 95% paired-bootstrap CI lower bound > 0 (item-level resampling, n=300, 10,000 resamples, seed S0=20261021). SHUFFLE/RANDOM: 1,000 shuffles/draws with locked seed streams and a mid-rank 95th-percentile rule (ties specified). Missing-value complete-pair rule predeclared; McNemar secondary; intersection–union gate: D2 PASS ⟺ all five pass |
-| R3-B — 45-min abort contradicted worst case | DONE | v3's 45-min abort withdrawn. Coherent set: worst case 45.8 min, +15% = 52.7 min; **wall-clock fail-safe abort at 55 min** (margins: 2.3 min over worst-case-plus-overhead, 5 min under the 60-min cap); single-GPU ⇒ GPU-active ≤ wall-clock, so the fail-safe bounds GPU-active ≤ 0.92 GPU·h; planned (not yet run) pynvml GPU-second metering in the manifest; wall-clock never reported as GPU-active; abort ⇒ INCOMPLETE, no partial averages |
-| R3-C — FIT/TUNE selection overlap | DONE | §2: one ordered procedure with predeclared grids. FIT_pilot 5-fold cross-fitting selects ONLY (predictor class, α) by Δu-R²; TUNE_pilot selects feature set {F0, F1} and (δ, τ) with class/α frozen; BEST-FIXED selected by FIT cross-fitted utility alone, TUNE confirmation cannot change it; deterministic complexity-first tie-breaks; all frozen before LEVAL |
-| R3-D — partition algorithm + provenance | DONE | §1.1 fully defines the future lock generation: ID normalization (NFC, whitespace collapse, empty→FAIL), namespace-separated hash ordering (`phase2-partition-v1` / `phase2-subset-v1`), exact counts 2,989/1,868/1,121/1,495 = 7,473, subset counts 500/200/300, and the complete artifact list (source revision+SHA, per-partition and per-subset ordered ID lists + SHA-256, disjointness proofs, historical-split overlap checks). Locks remain PLANNED — none created this round |
+| R4-A — inconsistent predictor contract | DONE | §3 defines one action-score/action contract for every class. Ridge and GBT regress per-action `u_i(c)-u_i(B1)`; multinomial logistic predicts best-action probabilities and scores `p_i(c)-p_i(B1)`. All classes are selected by the same held-out **realized utility of chosen actions**, not Δu-R². Independent grids: ridge alpha, logistic C, GBT n_estimators/max_depth with fixed loss/learning_rate/subsample/seed. FIT selects class/hyperparameters; TUNE selects only feature set and thresholds; final FIT-only refit follows TUNE. Deterministic tie, fit-failure, and invalid-output rules are explicit. |
+| R4-B — SIMPLE-FEAT can equal candidate | DONE | If TUNE selects F0, status is `NO-GO_IDENTICAL_TO_SIMPLE-FEAT` before any LEVAL output is generated or inspected; no doomed comparison and no baseline substitution. Only F1 proceeds. SIMPLE-FEAT uses the same class/hyperparameters/thresholds but F0 throughout, including its shift detector. |
+| R4-C — SHUFFLE retains original TUNE information | DONE | §3.4 permutes the complete per-config outcome vector independently within FIT and TUNE, recomputes both regression targets and classification labels, and replays the full adaptive pipeline (FIT CV, feature models, TUNE feature/threshold selection, final FIT refit) for all 1,000 replicates. Within-item config outcomes remain paired; LEVAL outcomes are used only for final scoring. No new LLM calls are required. Valid-replicate and `INCONCLUSIVE_NULL` rules are explicit. |
+| R4-D — contradictory endpoint hierarchy | DONE | Utility at locked lambda=0.1 is the primary D2 pass/fail endpoint. Raw accuracy, prompt tokens, completion tokens, and accuracy–token Pareto are mandatory separate secondary outcomes. Lambda remains exploratory-informed and cannot be selected from LEVAL. |
+| R4-E — complete-pair deletion bias | DONE | Any missing/invalid required output on any LEVAL item makes the run `INCOMPLETE/INVALID`; no D2 PASS, no selective retry, no item deletion. The same rule applies to candidate and baselines. Incorrect answers remain valid zero-score outcomes. |
+| R4-F — incomplete ID canonicalization | DONE | One contract covers source and fallback IDs: canonical string conversion, Unicode NFC, trim/internal-whitespace collapse, empty/duplicate failure, `src:`/`q:` namespaces, exact UTF-8 hash bytes, and deterministic `(digest, norm_id)` sorting. Partition/subset/fold namespaces are distinct; counts remain 2,989/1,868/1,121/1,495 and 500/200/300. |
+| R4-G — bootstrap underspecified | DONE | Two-sided percentile 95% CI, 10,000 paired item-level resamples, seed S0=20261021, type-7 linear quantile interpolation, identical sampled indices across configurations, lower bound >0. The same rule applies to BEST-FIXED, MAJORITY, and SIMPLE-FEAT. |
+| R4-H — stale status pointers/provenance | DONE | Only `phase2_planning` is updated in the separate status commit. Current R4 review/prompt and document list are retained; next gate is Planner R5. Observed HEAD at repair start, substantive deliverable, and status-only commit are distinguished; no final status commit is self-referenced. |
 
-## status.json provenance semantics (R3-D second half)
+## Final sample, budget, and stop rules
 
-`phase2_planning` now distinguishes explicitly:
-- `remote_head_at_r3_start`: `99a621738156b6626e1960d00652967e549fbc23`
-- `r3_deliverable_commit`: set to this round's substantive commit
-  (recorded after commit; see field);
-- status-only commits are never claimed to be deliverable commits;
-- no field claims to name the hash of the commit that contains itself.
+- Planned partitions: BANK/FIT/TUNE/LEVAL = 2,989/1,868/1,121/1,495 =
+  7,473. Planned pilot subsets: FIT=500, TUNE=200, LEVAL=300. Planned
+  evaluations: 5 × (500+200+300) = **5,000**.
+- Worst case: 5,000/100 × 55 s = 2,750 s = 45.8 min; +15% = 52.7 min.
+  Expected from per-config observed rates: approximately 24 min.
+- Wall-clock fail-safe: abort at 55 min and report INCOMPLETE. Margins:
+  2.3 min above worst-case-plus-overhead and 5 min below the 60-min cap.
+  GPU-active time is bounded by wall time on one GPU (≤0.92 GPU-hour);
+  pynvml GPU-second metering is planned, while wall time is not presented
+  as measured GPU-active time.
+- **Budget request remains ≤1.0 aggregate GPU-hour and is NOT an
+  authorization.**
 
-## Consistency checks actually run (this round)
+## Checks actually run
 
-- `status.json` parses as valid JSON (python json.load).
-- `phase2_r5_overlap_matrix.csv` parses; 18 rows (unchanged this round).
-- Arithmetic recheck: 2,989+1,868+1,121+1,495 = 7,473 ✓; 5×(500+200+300)
-  = 5,000 ✓; 5,000/100×55 = 2,750 s = 45.8 min ✓; ×1.15 = 52.7 min ✓;
-  52.7 < 55 (abort) < 60 (cap) ✓; λ×1000/10000 = 0.01 ✓.
-- Full test suite re-run: 111/111 PASS (no code changed; confirms no
-  collateral damage).
-- Forbidden-scope diff check: only the two plan documents + status.json
-  modified; no V1/V2/R5-result files touched.
-- Terminology grep: no "pre-registered" outside change-log quotes.
+- Custom document-invariant script: PASS. Verified partition and subset
+  counts, 5,000-evaluation arithmetic, 52.7 < 55 < 60, lambda algebra,
+  required D2/policy/failure terminology, and removal of the old R² and
+  complete-pair wording.
+- `status.json` parsed as valid JSON at check time: PASS.
+- R5 matrix parsed with 18 rows: PASS; it was not modified in this round.
+- `git diff --check`: PASS (no whitespace errors).
+- Forbidden-phrase scan for pre-registered wording, the withdrawn 45-min
+  abort, R² model-selection wording, and complete-pair deletion: no
+  matches in the revised protocol.
+- No model/unit test suite was rerun: this round changed documents only;
+  no such test-run is claimed.
 
-## Explicitly NOT done
+## Explicitly unresolved
 
-- No partition locks, no CPU preflight, no GPU, no inference/training, no
-  dataset access, no MATH-500 access.
-- M1/M2 novelty remains NOT CLEARED; plain TACC remains PIVOT.
-- Budget request ≤ 1.0 GPU·h is a proposal, NOT an authorization.
+- M1 DEFLECT and M2 MEMROUTE remain hypotheses; novelty is **NOT CLEARED**.
+  Plain embedding+MLP TACC remains PIVOT. A submission-time literature
+  re-audit remains mandatory.
+- Actual partition/subset lock artifacts do not exist. Their creation
+  requires a separately authorized CPU-only preflight.
+- The pilot and its ≤1.0 GPU-hour request remain **NOT AUTHORIZED / NOT
+  EXECUTED**. The four-CPU-hour permutation-null timeout is provisional
+  and must be calibrated by an authorized two-replicate smoke test.
+- Statistical power remains uncertain; NO-GO, INCONCLUSIVE_NULL,
+  INCOMPLETE/INVALID, and null outcomes are all reportable and cannot be
+  repaired after LEVAL inspection.
 
-**R3 DOCUMENT REPAIRS COMPLETE — STOP AND WAIT FOR PLANNER R4 REVIEW**
+**R4 DOCUMENT REPAIRS COMPLETE — STOP AND WAIT FOR PLANNER R5 REVIEW**
