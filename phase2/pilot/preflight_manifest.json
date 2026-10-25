@@ -1,0 +1,43 @@
+{
+  "status": "NO-GO",
+  "reason": "PREFLIGHT_NEAR_DUPLICATE_HARD_FAILURE",
+  "protocol": "phase2-g1-v6",
+  "date": "2026-10-25",
+  "source": {
+    "dataset": "openai/gsm8k",
+    "split": "train",
+    "path": "data/gsm8k/train.jsonl",
+    "sha256": "17f347dc51477c50d4efb83959dbb7c56297aba886e5544ee2aaed3024813465",
+    "test_sha256": "3730d312f6e3440559ace48831e51066acaca737f6eabec99bccb9e4b3c39d14"
+  },
+  "failure": {
+    "check": "near-duplicate guard, token-set Jaccard >= 0.9",
+    "partition_pair": "BANK / FIT",
+    "similarity_jaccard": 0.9310344827586207,
+    "sequence_ratio": 0.9644012944983819,
+    "item_a": {
+      "canonical_id": "q:4440d83a7746f8c4c956d691321caafc1c0828059911c0c68fa0246b1ede6319",
+      "question": "Josie received $50 as a gift. She plans to buy two cassette tapes that cost $9 each and a headphone set that costs $25. How much money will she have left?"
+    },
+    "item_b": {
+      "canonical_id": "q:23bf6c1fd1681078440e4a0047769da522b32e2a9b7026b42c126d0a7115a1b2",
+      "question": "Amanda received $50 as a gift. She plans to buy two cassette tapes that cost $9 each and a headphone set that costs $25. How much money will she have left?"
+    },
+    "interpretation": "The two questions differ only by the recipient's name; this is a real near-duplicate, not a false positive from generic math phrasing. It violates the pre-specified no-near-duplicate partition guarantee."
+  },
+  "enforcement": {
+    "locks_created": false,
+    "data_modified": false,
+    "duplicates_removed_or_reassigned": false,
+    "gpu_inference_started": false,
+    "leval_accessed": false,
+    "math500_accessed": false,
+    "required_action": "STOP. Any deduplication, alternate partition rule, or revised protocol requires a separate explicit Planner/owner decision before preflight is rerun."
+  },
+  "verification": {
+    "vm_port": 30939,
+    "gpu": "NVIDIA A800 80GB PCIe, cuda:0 reserved but unused",
+    "local_tests": "76 passed",
+    "vm_tests": "76 passed in 285.69s"
+  }
+}

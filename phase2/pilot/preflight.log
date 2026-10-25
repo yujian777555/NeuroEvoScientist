@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/202532803004/NeuroEvoScientist/src/scripts/phase2_run.py", line 70, in <module>
+    main()
+  File "/202532803004/NeuroEvoScientist/src/scripts/phase2_run.py", line 37, in main
+    result = runner.run_preflight(repo, out)
+  File "/202532803004/NeuroEvoScientist/src/phase2/runner.py", line 143, in run_preflight
+    checks = _near_guard_all(list(ids.PARTITION_ORDER), partitions, ptexts,
+  File "/202532803004/NeuroEvoScientist/src/phase2/runner.py", line 103, in _near_guard_all
+    preflight.near_duplicate_guard(inputs[a], inputs[b],
+  File "/202532803004/NeuroEvoScientist/src/phase2/preflight.py", line 97, in near_duplicate_guard
+    raise PreflightError(
+phase2.preflight.PreflightError: near-duplicate between BANK and FIT (Jaccard=0.931): 'Josie received $50 as a gift. She plans ' ~ 'Amanda received $50 as a gift. She plans'
