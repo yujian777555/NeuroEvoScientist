@@ -1,0 +1,15 @@
+{
+  "command": "python -m pytest tests/ -q",
+  "failed": 0,
+  "log_path": "phase2\\pilot_r1\\pytest.log",
+  "log_sha256": "cdfbcc0b9bf3ddc99bdeb0a95277251717aeb7eef9e2be5a9c1a4f01f95924c4",
+  "passed": 204,
+  "raw_tail": [
+    "  D:\\anaconda3\\lib\\site-packages\\tensorboard\\compat\\tensorflow_stub\\dtypes.py:326: DeprecationWarning: `np.bool8` is a deprecated alias for `np.bool_`.  (Deprecated NumPy 1.24)",
+    "    np.bool8: (False, True),",
+    "",
+    "-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html",
+    "204 passed, 104 warnings in 176.50s (0:02:56)"
+  ],
+  "status": "PASS"
+}

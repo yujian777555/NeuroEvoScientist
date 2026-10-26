@@ -1,0 +1,79 @@
+{
+  "bank_label_isolation": {
+    "bank_answer_label_source": "GSM8K train only",
+    "bank_contains_fit_tune_leval_or_test_labels": false,
+    "prohibited_overlap": {
+      "gsm8k_test": 0,
+      "svamp_f2_locked": 0
+    }
+  },
+  "counts": {
+    "BANK": 2989,
+    "FIT": 1868,
+    "LEVAL": 1495,
+    "TUNE": 1121
+  },
+  "cross_partition_near_duplicate_edges_after_atomic_split": 0,
+  "cross_partition_near_duplicate_edges_before_atomic_split": 1,
+  "deviation": {
+    "BANK": 0,
+    "FIT": 0,
+    "LEVAL": 0,
+    "TUNE": 0
+  },
+  "gpu_inference_started": false,
+  "group_count": 7472,
+  "group_size_distribution": {
+    "1": 7471,
+    "2": 1
+  },
+  "math500_accessed": false,
+  "old_evidence": {
+    "preflight.log": {
+      "path": "phase2/pilot/preflight.log",
+      "sha256": "84218672005bd21cf6bb7ec6b25f78b768c92e28a49a36d903d1beebec9a8896"
+    },
+    "preflight_manifest.json": {
+      "path": "phase2/pilot/preflight_manifest.json",
+      "sha256": "05b0bfe9f8e89278ac292620a5e901ff0f622a5be83fbd3acebdbd2ee18ef49f"
+    }
+  },
+  "partition_hashes": {
+    "BANK": "b26f0e1a1ff1824c59a9000a7f83d12fd1f86038bb54a7223646a3618d1244db",
+    "FIT": "b3b992ec4c4ad9473a97d4b81c1c127ff62fcf97738fdb2a21ea08dc91e14728",
+    "LEVAL": "4ec2f7c0f4567ec676fed8e27a259f1722be04d61f9358855dbc090909527400",
+    "TUNE": "d2afd774a976c9766a2a343f06af0395c6556a5af0f5058438ce288cec2dcf83"
+  },
+  "regression": {
+    "command": "python -m pytest tests/ -q",
+    "failed": 0,
+    "log_path": "phase2\\pilot_r1\\pytest.log",
+    "log_sha256": "cdfbcc0b9bf3ddc99bdeb0a95277251717aeb7eef9e2be5a9c1a4f01f95924c4",
+    "passed": 204,
+    "raw_tail": [
+      "  D:\\anaconda3\\lib\\site-packages\\tensorboard\\compat\\tensorflow_stub\\dtypes.py:326: DeprecationWarning: `np.bool8` is a deprecated alias for `np.bool_`.  (Deprecated NumPy 1.24)",
+      "    np.bool8: (False, True),",
+      "",
+      "-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html",
+      "204 passed, 104 warnings in 176.50s (0:02:56)"
+    ],
+    "status": "PASS"
+  },
+  "reproducibility": {
+    "first_lock_sha256": "ff6c703e4dce45e88b6847a144433479a1702feae5cf5afc3a466ffd8a5c5035",
+    "identical": true,
+    "second_directory": "pilot_r1_reprocheck",
+    "second_lock_sha256": "ff6c703e4dce45e88b6847a144433479a1702feae5cf5afc3a466ffd8a5c5035"
+  },
+  "source": {
+    "dataset": "openai/gsm8k",
+    "path": "data/gsm8k/train.jsonl",
+    "sha256": "17f347dc51477c50d4efb83959dbb7c56297aba886e5544ee2aaed3024813465",
+    "split": "train",
+    "test_path": "data/gsm8k/test.jsonl",
+    "test_sha256": "3730d312f6e3440559ace48831e51066acaca737f6eabec99bccb9e4b3c39d14",
+    "upstream_commit": "not present in existing metadata; immutable file content hash is authoritative"
+  },
+  "status": "CPU_PREFLIGHT_PASS_PENDING_PLANNER_REVIEW",
+  "stop": true
+}

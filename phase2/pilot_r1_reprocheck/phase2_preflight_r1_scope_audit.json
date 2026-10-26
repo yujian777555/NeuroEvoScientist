@@ -1,0 +1,24 @@
+{
+  "all_pairs_or_candidates": "All pairs are considered; only pairs with an exact Jaccard upper bound below 0.9 are skipped as provably non-matches. No random sampling.",
+  "code_sha256": {
+    "duplicates.py": "5f99af5b3442cad6ec6e55de5f1c8265617becae063bcd998b13007e63798f0f",
+    "preflight.py": "b0c8946ee1f701ba4188b4342d4470c6ae2e9527eb8dd90da95c2b1a7d621da4"
+  },
+  "jaccard": "token-set Jaccard = |A intersection B| / |A union B|, lowercase [a-z0-9]+ token sets",
+  "manifest_bypass": "Not accepted: validate_lock recomputes groups/assignments and source/partition hashes; edited manifests or mismatched locks are rejected.",
+  "normalization": "lowercase alphanumeric tokenization only; no special case/whitespace/punctuation/person-name normalization beyond that tokenizer",
+  "old_algorithm": "Original code assigned partitions before checking leakage (yes). R1 instead identifies groups first and then assigns whole groups.",
+  "old_evidence": {
+    "preflight.log": {
+      "path": "phase2/pilot/preflight.log",
+      "sha256": "84218672005bd21cf6bb7ec6b25f78b768c92e28a49a36d903d1beebec9a8896"
+    },
+    "preflight_manifest.json": {
+      "path": "phase2/pilot/preflight_manifest.json",
+      "sha256": "05b0bfe9f8e89278ac292620a5e901ff0f622a5be83fbd3acebdbd2ee18ef49f"
+    }
+  },
+  "sequence_ratio": "difflib.SequenceMatcher on original question strings",
+  "threshold_location": "src/phase2/preflight.py NEAR_DUP_THRESHOLD = 0.9; also present in old failed manifest",
+  "tolerance": "No positive tolerance was found in protocol v6; exact frozen counts are required, otherwise NO-GO."
+}
