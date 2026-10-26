@@ -1,0 +1,31 @@
+{
+  "artifact_hashes": {
+    "bank48.jsonl": "cbe861d667870dfae8cc8aac4412a62534b4959cb77f0cebaa6efc3d2beea099",
+    "inputs.json": "f6a537273b0e218e8bbf5562fbef503bd5ac4aaf1154caf4525672ea1eb05bc4",
+    "leval.jsonl": "6d75a44d11fc4326728c17bb4311beb19f1a68e54e00a00894361682bb7f6171",
+    "stage1.jsonl": "13b53a943ce0d29e3877417130b28002a5bc433ab02479ad3089da4ddf027dea"
+  },
+  "bank_first48_ids_sha256": "fb133bb82cb681823e5be1ccfb5ab802e046fb140212d62427931044248e82cc",
+  "counts": {
+    "BANK": 2989,
+    "FIT": 1868,
+    "LEVAL": 1495,
+    "TUNE": 1121
+  },
+  "gpu_inference_started_by_this_step": false,
+  "math500_accessed": false,
+  "partition_assignment_changed": false,
+  "source_lock": "phase2\\pilot_r1\\partition_lock_r1.json",
+  "source_lock_sha256": "ff6c703e4dce45e88b6847a144433479a1702feae5cf5afc3a466ffd8a5c5035",
+  "status": "DERIVED_FROM_VALIDATED_R1_LOCK",
+  "subset_counts": {
+    "FIT": 500,
+    "LEVAL": 300,
+    "TUNE": 200
+  },
+  "subset_hashes": {
+    "FIT": "5bca59f83cb65d56dc991eefb60cf42bd5e6e60257376bb5ab5189db67e46586",
+    "LEVAL": "a0211b57f744eba81d1c665edefa385bc52ceccc5fff4f8d01edbf6220241bac",
+    "TUNE": "159eafae1d52375cb9acfae93fc9ebe129809acb195ed0cff10733562be66a26"
+  }
+}
