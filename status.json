@@ -49,7 +49,7 @@
     "owner_submission_done": false
   },
   "phase2_planning": {
-    "status": "CPU_PREFLIGHT_PASS_PENDING_PLANNER_REVIEW",
+    "status": "R1 INDEPENDENT REVIEW: REQUEST CHANGES",
     "date": "2026-10-26",
     "direction": "Task-Adaptive Cognitive Configuration Controller (TACC): learn per-question cognitive configuration for a frozen LLM; original embedding+MLP TACC is PIVOT and M1/M2 novelty is not cleared",
     "documents": [
@@ -68,33 +68,56 @@
     ],
     "recommended_learning_approach": "Supervised utility-difference predictor remains a candidate only; no implementation authorization",
     "gpu_authorized": 1.0,
-    "next_gate": "STOP: Planner independently reviews phase2/pilot_r1/partition_lock_r1.json and duplicate_audit_r1.json. Do not start GPU Pilot without explicit approval.",
-    "constraints": "R1 was CPU-only: no GPU, inference, training, API calls, benchmark episodes, MATH-500 access, data deletion, or edits to frozen V1/V2 artifacts and historical F1/F2 results. Old NO-GO evidence is preserved byte-for-byte.",
+    "next_gate": "STOP: repair embedded duplicate-group integrity validation and rerun the independent audit. GPU Pilot remains unauthorized.",
+    "constraints": "The independent review was read-only except for the new report/status: no GPU, inference, training, API calls, benchmark episodes, MATH-500 access, data deletion, or edits to frozen V1/V2 artifacts and historical F1/F2 results. Old NO-GO evidence and the R1 production lock remain unchanged.",
     "planner_review": "plans/phase2_planner_review_r5.md",
     "executor_prompt": "plans/phase2_g1_pilot_repair_prompt_r5.md",
-    "decision": "CPU_PREFLIGHT_PASS_PENDING_PLANNER_REVIEW. All 7,473 samples are assigned exactly once using duplicate-group atomic partitioning; Josie/Amanda are together in BANK; after-split near-duplicate cross-partition edges = 0; exact frozen counts and lock hashes reproduce across two full audits; 204 CPU tests pass. This is not experimental clearance or novelty clearance.",
+    "decision": "REQUEST CHANGES. Independent recomputation confirms the R1 assignment, counts, group atomicity and zero cross-partition edges. However, validate_lock does not compare the embedded groups list with a recomputed duplicate-group structure; changing embedded group membership is NOT_REJECTED. This violates the required tamper-enforcement contract.",
     "blockers": [
-      "Planner must independently review the R1 duplicate audit and partition lock before any GPU decision",
-      "GPU Pilot was not executed in this round; <=1.0 aggregate GPU-hour was not consumed",
+      "validate_lock must reject embedded duplicate-group membership changes by comparing groups/member IDs/sizes and clique status with deterministic recomputation",
+      "Add a regression test for the exact deep-copy case in planner/r1_enforcement_checks.log and rerun the full suite plus independent audit",
+      "GPU Pilot was not executed; <=1.0 aggregate GPU-hour was not consumed",
       "M1/M2 novelty remains NOT CLEARED; final literature re-audit remains mandatory"
     ],
-    "authorized_now": "STOP for Planner review of the R1 lock and duplicate audit. No GPU, inference, training, benchmark episodes, or further data modification is authorized by this report.",
+    "authorized_now": "Only the minimal lock-enforcement repair and independent re-audit are required. No GPU, inference, training, benchmark episodes, or changes to the production lock/history are authorized by this review.",
     "implementation_authorized": true,
     "r5_verdict": "R4 substantially accepted; protocol v6 was implemented for the authorized pilot. Plain TACC remains PIVOT; DEFLECT and MEMROUTE novelty remain NOT CLEARED.",
     "candidate_mechanisms": [
       "M1 DEFLECT: pairwise utility-difference prediction plus shift-aware deferral to B1 cost floor; novelty not cleared",
       "M2 MEMROUTE: joint per-question reasoning strategy and static episodic-exemplar policy routing; novelty not cleared"
     ],
-    "g1_protocol": "R1 atomic-group partition lock: phase2/pilot_r1/partition_lock_r1.json; audit: phase2/pilot_r1/duplicate_audit_r1.json. Old NO-GO manifest remains at phase2/pilot/preflight_manifest.json unchanged.",
+    "g1_protocol": "Independent audit at planner/phase2_r1_independent_review.md: assignment and detector semantics verified, but embedded group-membership integrity enforcement is incomplete. R1 lock remains unchanged pending repair.",
     "gpu_requested_pending_approval": 1,
     "gpu_hours_used": 0.0,
-    "pilot_status": "PREFLIGHT PASS PENDING PLANNER REVIEW — GPU NOT STARTED",
+    "pilot_status": "R1 LOCK CHANGES REQUESTED — GPU NOT STARTED",
     "planner_review_r1": "plans/phase2_planner_review_r1.md",
     "executor_prompt_r1": "plans/phase2_g1_pilot_repair_prompt.md",
     "planner_review_commit": "558ad904ddac2ef2f6b1ffcda429d3892fa2cd03",
     "executor_prompt_commit": "0ef7914317a799526c2faa97c08e3c77b28e3dcb",
     "g1_repairs": "R1 repairs accepted for utility definition and arithmetic. R2 still requires a complete D2 gate, exact pilot sampling/selection procedure, supported precision analysis, reconciled timing overhead, terminology/formula corrections, and conformal-routing literature comparison.",
-    "open_items": "Planner independently reviews R1 lock and duplicate audit; GPU remains unauthorized. Novelty remains unconfirmed.",
+    "open_items": "Repair embedded group-list integrity validation and rerun independent audit; GPU remains unauthorized. Novelty remains unconfirmed.",
+    "independent_review": {
+      "path": "planner/phase2_r1_independent_review.md",
+      "decision": "REQUEST CHANGES",
+      "failures": [
+        "embedded_group_membership_change was NOT_REJECTED by duplicates.validate_lock"
+      ],
+      "passes": [
+        "Git HEAD and origin/main match with clean worktree",
+        "Lock/source/partition hashes and exact counts independently recomputed",
+        "7473 samples assigned once; 7472 atomic groups; Josie/Amanda in BANK",
+        "Cross-partition near-duplicate edges = 0",
+        "Jaccard-only edge criterion and valid exhaustive length upper bound",
+        "Non-clique guard and exact-count failure paths fail closed",
+        "Second lock reproduction byte-identical; old NO-GO hashes unchanged",
+        "Full CPU suite rerun: 204 passed, 0 failed"
+      ],
+      "evidence": [
+        "planner/r1_independent_recompute.log",
+        "planner/r1_enforcement_checks.log",
+        "planner/r1_full_pytest.log"
+      ]
+    },
     "duplicate_r1_evidence": {
       "execution_commit": "68a499bc1fefdb767e681bd3c7c5532954e0fb21",
       "source_train_sha256": "17f347dc51477c50d4efb83959dbb7c56297aba886e5544ee2aaed3024813465",
@@ -117,11 +140,11 @@
       "Per-item utility defined and main budget arithmetic corrected",
       "Pilot has not been run; no GPU used; MATH-500 untouched"
     ],
-    "last_commit_semantics": "last_executor_deliverable_commit is the substantive R1 duplicate-group implementation commit. remote_head_at_execution_start is the observed HEAD before this R1 round. remote_head_before_execution_status_update is the pushed deliverable immediately before this status-only commit. No field self-references the commit containing its final value.",
-    "last_executor_deliverable_commit": "68a499bc1fefdb767e681bd3c7c5532954e0fb21",
-    "execution_deliverable_commit": "68a499bc1fefdb767e681bd3c7c5532954e0fb21",
-    "remote_head_at_execution_start": "9837bf05509fdf1fcfd207407e0299139db50f52",
-    "remote_head_before_execution_status_update": "68a499bc1fefdb767e681bd3c7c5532954e0fb21",
+    "last_commit_semantics": "last_executor_deliverable_commit is the independent R1 audit commit. remote_head_at_execution_start is the observed HEAD before this independent review. remote_head_before_execution_status_update is the pushed audit commit immediately before this status-only commit. No field self-references the commit containing its final value.",
+    "last_executor_deliverable_commit": "56806de9c76a599e33cbcc80ac9a75bf2d03d8b5",
+    "execution_deliverable_commit": "56806de9c76a599e33cbcc80ac9a75bf2d03d8b5",
+    "remote_head_at_execution_start": "67bc6da9c6a7563767a74330ad5a82e586b6ca16",
+    "remote_head_before_execution_status_update": "56806de9c76a599e33cbcc80ac9a75bf2d03d8b5",
     "execution_evidence": {
       "vm_port": 30939,
       "gpu": "NVIDIA A800 80GB PCIe, cuda:0 reserved but unused",
