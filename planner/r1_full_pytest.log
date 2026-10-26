@@ -1,0 +1,526 @@
+Windows fatal exception: code 0xc0000139
+
+Thread 0x0000b768 (most recent call first):
+  File "D:\anaconda3\lib\ctypes\__init__.py", line 382 in __init__
+  File "D:\anaconda3\lib\site-packages\torch\_ops.py", line 1350 in load_library
+  File "D:\anaconda3\lib\site-packages\torchvision\extension.py", line 85 in _load_library
+  File "D:\anaconda3\lib\site-packages\torchvision\io\image.py", line 9 in <module>
+  File "<frozen importlib._bootstrap>", line 228 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 850 in exec_module
+  File "<frozen importlib._bootstrap>", line 680 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 986 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1007 in _find_and_load
+  File "D:\anaconda3\lib\site-packages\torchvision\io\__init__.py", line 20 in <module>
+  File "<frozen importlib._bootstrap>", line 228 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 850 in exec_module
+  File "<frozen importlib._bootstrap>", line 680 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 986 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1007 in _find_and_load
+  File "D:\anaconda3\lib\site-packages\torchvision\datasets\video_utils.py", line 8 in <module>
+  File "<frozen importlib._bootstrap>", line 228 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 850 in exec_module
+  File "<frozen importlib._bootstrap>", line 680 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 986 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1007 in _find_and_load
+  File "D:\anaconda3\lib\site-packages\torchvision\datasets\kinetics.py", line 15 in <module>
+  File "<frozen importlib._bootstrap>", line 228 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 850 in exec_module
+  File "<frozen importlib._bootstrap>", line 680 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 986 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1007 in _find_and_load
+  File "D:\anaconda3\lib\site-packages\torchvision\datasets\__init__.py", line 23 in <module>
+  File "<frozen importlib._bootstrap>", line 228 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 850 in exec_module
+  File "<frozen importlib._bootstrap>", line 680 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 986 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1007 in _find_and_load
+  File "<frozen importlib._bootstrap>", line 228 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap>", line 1058 in _handle_fromlist
+  File "D:\anaconda3\lib\site-packages\torchvision\__init__.py", line 7 in <module>
+  File "<frozen importlib._bootstrap>", line 228 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 850 in exec_module
+  File "<frozen importlib._bootstrap>", line 680 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 986 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1007 in _find_and_load
+  File "D:\anaconda3\lib\site-packages\transformers\image_utils.py", line 65 in <module>
+  File "<frozen importlib._bootstrap>", line 228 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 850 in exec_module
+  File "<frozen importlib._bootstrap>", line 680 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 986 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1007 in _find_and_load
+  File "D:\anaconda3\lib\site-packages\transformers\image_transforms.py", line 22 in <module>
+  File "<frozen importlib._bootstrap>", line 228 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 850 in exec_module
+  File "<frozen importlib._bootstrap>", line 680 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 986 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1007 in _find_and_load
+  File "D:\anaconda3\lib\site-packages\transformers\loss\loss_deformable_detr.py", line 4 in <module>
+  File "<frozen importlib._bootstrap>", line 228 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 850 in exec_module
+  File "<frozen importlib._bootstrap>", line 680 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 986 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1007 in _find_and_load
+  File "D:\anaconda3\lib\site-packages\transformers\loss\loss_utils.py", line 19 in <module>
+  File "<frozen importlib._bootstrap>", line 228 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 850 in exec_module
+  File "<frozen importlib._bootstrap>", line 680 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 986 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1007 in _find_and_load
+  File "D:\anaconda3\lib\site-packages\transformers\modeling_utils.py", line 53 in <module>
+  File "<frozen importlib._bootstrap>", line 228 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 850 in exec_module
+  File "<frozen importlib._bootstrap>", line 680 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 986 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1007 in _find_and_load
+  File "D:\anaconda3\lib\site-packages\transformers\models\mamba2\modeling_mamba2.py", line 28 in <module>
+  File "<frozen importlib._bootstrap>", line 228 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 850 in exec_module
+  File "<frozen importlib._bootstrap>", line 680 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 986 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1007 in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1030 in _gcd_import
+  File "D:\anaconda3\lib\importlib\__init__.py", line 127 in import_module
+  File "D:\anaconda3\lib\site-packages\transformers\utils\import_utils.py", line 1863 in _get_module
+  File "D:\anaconda3\lib\site-packages\transformers\utils\import_utils.py", line 1851 in __getattr__
+  File "D:\anaconda3\lib\site-packages\transformers\utils\import_utils.py", line 1852 in __getattr__
+  File "<frozen importlib._bootstrap>", line 1055 in _handle_fromlist
+  File "D:\Evo\NeuroEvoScientist\src\models\mamba_memory.py", line 21 in <module>
+  File "<frozen importlib._bootstrap>", line 228 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 850 in exec_module
+  File "<frozen importlib._bootstrap>", line 680 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 986 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1007 in _find_and_load
+  File "D:\Evo\NeuroEvoScientist\src\models\builder.py", line 11 in <module>
+  File "<frozen importlib._bootstrap>", line 228 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 850 in exec_module
+  File "<frozen importlib._bootstrap>", line 680 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 986 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1007 in _find_and_load
+  File "D:\Evo\NeuroEvoScientist\src\models\__init__.py", line 3 in <module>
+  File "<frozen importlib._bootstrap>", line 228 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 850 in exec_module
+  File "<frozen importlib._bootstrap>", line 680 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 986 in _find_and_load_unlocked
+  ...
+........................................................................ [ 35%]
+........................................................................ [ 70%]
+............................................................             [100%]
+============================== warnings summary ===============================
+..\..\anaconda3\lib\site-packages\torchvision\io\image.py:11
+  D:\anaconda3\lib\site-packages\torchvision\io\image.py:11: UserWarning: Failed to load image Python extension: [WinError 127] 找不到指定的程序。
+    warn(f"Failed to load image Python extension: {e}")
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_shape_pb2.py:18
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_shape_pb2.py:18: DeprecationWarning: Call to deprecated create function FileDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    DESCRIPTOR = _descriptor.FileDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_shape_pb2.py:36
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_shape_pb2.py:36: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_shape_pb2.py:43
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_shape_pb2.py:43: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_shape_pb2.py:29
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_shape_pb2.py:29: DeprecationWarning: Call to deprecated create function Descriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _TENSORSHAPEPROTO_DIM = _descriptor.Descriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_shape_pb2.py:73
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_shape_pb2.py:73: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_shape_pb2.py:80
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_shape_pb2.py:80: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_shape_pb2.py:66
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_shape_pb2.py:66: DeprecationWarning: Call to deprecated create function Descriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _TENSORSHAPEPROTO = _descriptor.Descriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:19
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:19: DeprecationWarning: Call to deprecated create function FileDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    DESCRIPTOR = _descriptor.FileDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:33
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:33: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:37
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:37: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:41
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:41: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:45
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:45: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:49
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:49: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:53
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:53: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:57
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:57: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:61
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:61: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:65
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:65: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:69
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:69: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:73
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:73: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:77
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:77: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:81
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:81: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:85
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:85: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:89
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:89: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:93
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:93: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:97
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:97: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:101
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:101: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:105
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:105: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:109
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:109: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:113
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:113: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:117
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:117: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:121
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:121: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:125
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:125: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:129
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:129: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:133
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:133: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:137
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:137: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:141
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:141: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:145
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:145: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:149
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:149: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:153
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:153: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:157
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:157: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:161
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:161: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:165
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:165: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:169
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:169: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:173
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:173: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:177
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:177: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:181
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:181: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:185
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:185: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:189
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:189: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:193
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:193: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:197
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:197: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:201
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:201: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:205
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:205: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:209
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:209: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:213
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:213: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:217
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:217: DeprecationWarning: Call to deprecated create function EnumValueDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.EnumValueDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:27
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\types_pb2.py:27: DeprecationWarning: Call to deprecated create function EnumDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _DATATYPE = _descriptor.EnumDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\resource_handle_pb2.py:20
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\resource_handle_pb2.py:20: DeprecationWarning: Call to deprecated create function FileDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    DESCRIPTOR = _descriptor.FileDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\resource_handle_pb2.py:39
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\resource_handle_pb2.py:39: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\resource_handle_pb2.py:46
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\resource_handle_pb2.py:46: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\resource_handle_pb2.py:32
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\resource_handle_pb2.py:32: DeprecationWarning: Call to deprecated create function Descriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _RESOURCEHANDLEPROTO_DTYPEANDSHAPE = _descriptor.Descriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\resource_handle_pb2.py:76
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\resource_handle_pb2.py:76: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\resource_handle_pb2.py:83
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\resource_handle_pb2.py:83: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\resource_handle_pb2.py:90
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\resource_handle_pb2.py:90: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\resource_handle_pb2.py:97
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\resource_handle_pb2.py:97: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\resource_handle_pb2.py:104
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\resource_handle_pb2.py:104: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\resource_handle_pb2.py:111
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\resource_handle_pb2.py:111: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\resource_handle_pb2.py:69
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\resource_handle_pb2.py:69: DeprecationWarning: Call to deprecated create function Descriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _RESOURCEHANDLEPROTO = _descriptor.Descriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:21
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:21: DeprecationWarning: Call to deprecated create function FileDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    DESCRIPTOR = _descriptor.FileDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:40
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:40: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:47
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:47: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:54
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:54: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:61
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:61: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:68
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:68: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:75
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:75: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:82
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:82: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:89
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:89: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:96
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:96: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:103
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:103: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:110
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:110: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:117
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:117: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:124
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:124: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:131
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:131: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:138
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:138: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:145
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:145: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:152
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:152: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:33
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:33: DeprecationWarning: Call to deprecated create function Descriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _TENSORPROTO = _descriptor.Descriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:183
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:183: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:190
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:190: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:197
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:197: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:176
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\tensor_pb2.py:176: DeprecationWarning: Call to deprecated create function Descriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _VARIANTTENSORDATAPROTO = _descriptor.Descriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\attr_value_pb2.py:21
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\attr_value_pb2.py:21: DeprecationWarning: Call to deprecated create function FileDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    DESCRIPTOR = _descriptor.FileDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\attr_value_pb2.py:40
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\attr_value_pb2.py:40: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\attr_value_pb2.py:47
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\attr_value_pb2.py:47: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\attr_value_pb2.py:54
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\attr_value_pb2.py:54: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\attr_value_pb2.py:61
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\attr_value_pb2.py:61: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\attr_value_pb2.py:68
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\attr_value_pb2.py:68: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\attr_value_pb2.py:75
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\attr_value_pb2.py:75: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\attr_value_pb2.py:82
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\attr_value_pb2.py:82: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\attr_value_pb2.py:89
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\attr_value_pb2.py:89: DeprecationWarning: Call to deprecated create function FieldDescriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _descriptor.FieldDescriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\core\framework\attr_value_pb2.py:33
+  D:\anaconda3\lib\site-packages\tensorflow\core\framework\attr_value_pb2.py:33: DeprecationWarning: Call to deprecated create function Descriptor(). Note: Create unlinked descriptors is going to go away. Please use get/find descriptors from generated code or query the descriptor_pool.
+    _ATTRVALUE_LISTVALUE = _descriptor.Descriptor(
+
+..\..\anaconda3\lib\site-packages\tensorflow\python\framework\dtypes.py:205
+  D:\anaconda3\lib\site-packages\tensorflow\python\framework\dtypes.py:205: DeprecationWarning: `np.bool8` is a deprecated alias for `np.bool_`.  (Deprecated NumPy 1.24)
+    np.bool8: (False, True),
+
+..\..\anaconda3\lib\site-packages\flatbuffers\compat.py:19
+  D:\anaconda3\lib\site-packages\flatbuffers\compat.py:19: DeprecationWarning: the imp module is deprecated in favour of importlib; see the module's documentation for alternative uses
+    import imp
+
+..\..\anaconda3\lib\site-packages\tensorboard\compat\tensorflow_stub\dtypes.py:326
+  D:\anaconda3\lib\site-packages\tensorboard\compat\tensorflow_stub\dtypes.py:326: DeprecationWarning: `np.bool8` is a deprecated alias for `np.bool_`.  (Deprecated NumPy 1.24)
+    np.bool8: (False, True),
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+204 passed, 104 warnings in 152.32s (0:02:32)

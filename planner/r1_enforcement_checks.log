@@ -1,0 +1,9 @@
+BASELINE True
+source_hash_change REJECTED source data hash mismatch
+partition_hash_change REJECTED partition hash mismatch: BANK
+partition_membership_change REJECTED partition hash mismatch: BANK
+assignment_change REJECTED group assignment does not match deterministic recomputation
+threshold_change REJECTED detector threshold mismatch
+embedded_group_membership_change NOT_REJECTED
+NON_CLIQUE_GUARD_REJECTED ambiguous duplicate groups require review: [('dg:ea7fb08b7a2dc4619ffb7c7bb38d95a2047935fa165d71b12efd3852a2e6d0cc', 3, ['CHAIN_NON_CLIQUE'])]
+EXACT_COUNT_FAILURE_REJECTED group dg:big of size 2990 cannot fit any partition
