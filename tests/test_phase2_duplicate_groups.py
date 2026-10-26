@@ -202,3 +202,72 @@ def test_old_failure_evidence_is_not_modified(tmp_path):
     second = module._old_evidence(str(tmp_path))
     assert first == second
     assert {p.name: p.read_bytes() for p in (manifest, log)} == before
+
+
+def _expect_group_tamper_rejected(lock, corpus, groups, mutate):
+    bad = json.loads(json.dumps(lock))
+    mutate(bad)
+    with pytest.raises(duplicates.LockValidationError):
+        duplicates.validate_lock(bad, corpus, groups, "a" * 64)
+
+
+def test_embedded_group_membership_change_is_now_rejected(corpus, groups, lock):
+    def mutate(b):
+        for g in b["groups"]:
+            if len(g["member_ids"]) == 2:
+                g["member_ids"] = g["member_ids"][:1]
+                g["size"] = 1
+                return
+    _expect_group_tamper_rejected(lock, corpus, groups, mutate)
+
+
+@pytest.mark.parametrize("field,value", [
+    ("group_id", "dg:tampered"),
+    ("size", 99),
+    ("internal_edge_count", 99),
+    ("min_internal_jaccard", 0.123),
+    ("max_internal_jaccard", 0.456),
+    ("is_clique", False),
+    ("missing_clique_edges", [["a", "b"]]),
+    ("ambiguities", ["CHAIN_NON_CLIQUE"]),
+])
+def test_each_embedded_group_field_tamper_is_rejected(corpus, groups, lock, field, value):
+    def mutate(b):
+        b["groups"][0][field] = value
+    _expect_group_tamper_rejected(lock, corpus, groups, mutate)
+
+
+def test_embedded_group_member_ids_tamper_is_rejected(corpus, groups, lock):
+    def mutate(b):
+        b["groups"][0]["member_ids"] = ["q:not-the-original-member"]
+    _expect_group_tamper_rejected(lock, corpus, groups, mutate)
+
+
+def test_missing_group_entry_is_rejected(corpus, groups, lock):
+    def mutate(b):
+        b["groups"].pop(0)
+    _expect_group_tamper_rejected(lock, corpus, groups, mutate)
+
+
+def test_extra_group_entry_is_rejected(corpus, groups, lock):
+    def mutate(b):
+        b["groups"].append(dict(b["groups"][0]))
+    _expect_group_tamper_rejected(lock, corpus, groups, mutate)
+
+
+def test_reordered_group_entries_are_rejected(corpus, groups, lock):
+    def mutate(b):
+        b["groups"].reverse()
+    _expect_group_tamper_rejected(lock, corpus, groups, mutate)
+
+
+def test_extra_group_entry_field_is_rejected(corpus, groups, lock):
+    def mutate(b):
+        b["groups"][0]["unexpected"] = 1
+    _expect_group_tamper_rejected(lock, corpus, groups, mutate)
+
+
+def test_non_list_embedded_groups_is_rejected(corpus, groups, lock):
+    def mutate(b):
+        b["groups"] = None
+    _expect_group_tamper_rejected(lock, corpus, groups, mutate)

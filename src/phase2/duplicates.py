@@ -271,6 +271,64 @@ def partition_groups(rows, groups, counts=None):
     }
 
 
+def canonical_group_entry(group):
+    """Canonical serialization of one duplicate-group entry.
+
+    Group-list order is contractual (``build_groups`` is deterministic), while
+    member IDs and missing clique edges are sorted here so their content can be
+    compared independently of their original serialization order. Every field
+    used by the duplicate-group audit is checked, not just the assignment.
+    """
+    if not isinstance(group, dict):
+        raise LockValidationError("group entry is not an object")
+    required = {"group_id", "member_ids", "size", "internal_edge_count",
+                "min_internal_jaccard", "max_internal_jaccard", "is_clique",
+                "missing_clique_edges", "ambiguities"}
+    if set(group) != required:
+        raise LockValidationError("group entry fields mismatch")
+    member_ids = group["member_ids"]
+    if (not isinstance(member_ids, list)
+            or any(not isinstance(nid, str) or not nid for nid in member_ids)):
+        raise LockValidationError("invalid group member IDs")
+    if len(member_ids) != group["size"] or len(set(member_ids)) != len(member_ids):
+        raise LockValidationError("group size/member mismatch")
+    if not isinstance(group["group_id"], str) or not group["group_id"]:
+        raise LockValidationError("invalid group ID")
+    if not isinstance(group["internal_edge_count"], int):
+        raise LockValidationError("invalid internal edge count")
+    if not isinstance(group["is_clique"], bool):
+        raise LockValidationError("invalid clique flag")
+    if not isinstance(group["ambiguities"], list):
+        raise LockValidationError("invalid ambiguity flags")
+    missing = []
+    for pair in group["missing_clique_edges"]:
+        if not isinstance(pair, (list, tuple)) or len(pair) != 2:
+            raise LockValidationError("invalid missing clique edge")
+        missing.append(sorted(pair))
+    return {
+        "group_id": group["group_id"],
+        "member_ids": sorted(member_ids),
+        "size": group["size"],
+        "internal_edge_count": group["internal_edge_count"],
+        "min_internal_jaccard": group["min_internal_jaccard"],
+        "max_internal_jaccard": group["max_internal_jaccard"],
+        "is_clique": group["is_clique"],
+        "missing_clique_edges": sorted(missing),
+        "ambiguities": list(group["ambiguities"]),
+    }
+
+
+def canonical_group_list(groups):
+    """Canonicalize the contractual group list and reject duplicate group IDs."""
+    if not isinstance(groups, list):
+        raise LockValidationError("embedded groups is not a list")
+    canonical = [canonical_group_entry(g) for g in groups]
+    group_ids = [g["group_id"] for g in canonical]
+    if len(set(group_ids)) != len(group_ids):
+        raise LockValidationError("duplicate group ID in embedded groups")
+    return canonical
+
+
 def validate_lock(lock, rows, groups, source_sha256):
     """Recompute and validate a lock; reject tampering/hash or lock mismatch."""
     if not isinstance(source_sha256, str) or len(source_sha256) != 64:
@@ -279,6 +337,8 @@ def validate_lock(lock, rows, groups, source_sha256):
         raise LockValidationError("source data hash mismatch")
     if lock.get("detector", {}).get("jaccard_threshold") != detector_contract()["jaccard_threshold"]:
         raise LockValidationError("detector threshold mismatch")
+    if canonical_group_list(lock.get("groups")) != canonical_group_list(groups):
+        raise LockValidationError("embedded duplicate-group structure mismatch")
     expected = partition_groups(rows, groups)
     if lock.get("group_assignment") != expected["group_assignment"]:
         raise LockValidationError("group assignment does not match deterministic recomputation")
