@@ -390,6 +390,7 @@ def select_frozen(repo, out):
         result.error = str(exc)
     payload = _selection_payload(result) if result.selection is not None else {
         "status": result.status, "error": getattr(result, "error", "selection failed")}
+    _mkdir(os.path.join(out, "analysis"))
     preflight.write_json(payload, os.path.join(out, "analysis",
                                                 "frozen_selection.json"))
     return result
@@ -408,11 +409,15 @@ def run_inference(repo, out, stage):
     _mkdir(os.path.dirname(manifest_path))
     try:
         if stage == "stage1":
+            def collect(cfg, ids_):
+                # The second call uses the LEVAL file, not stage1.jsonl.
+                stage_name = "leval" if ids_ is inputs["leval_ids"] else "stage1"
+                return _collect_config(cfg, ids_, stage_name, repo, out,
+                                       backend, genomes)
             result = pilot.run_two_stage(
                 CONFIG_ORDER, item_ids, inputs["leval_ids"],
                 select_fn=lambda _records: select_frozen(repo, out),
-                collect_fn=lambda cfg, ids_:
-                    _collect_config(cfg, ids_, stage, repo, out, backend, genomes),
+                collect_fn=collect,
                 meter=meter, manifest_path=manifest_path)
         else:
             selection = _load_selection(out)
@@ -683,6 +688,49 @@ def _null_checkpoint(out, start, end, null_utils, f0_nogo, errors, times, t0,
     name = "null_smoke.json" if smoke else "null_%04d_%04d.json" % (start, end)
     _mkdir(os.path.join(out, "analysis"))
     preflight.write_json(payload, os.path.join(out, "analysis", name))
+    return payload
+
+
+def merge_null_shards(out, shard_size=25, shards=None):
+    """Merge deterministic null shards into the canonical 1..1000 artifact."""
+    null_utilities, errors = [], []
+    counts = {"total": 0, "f0_nogo": 0, "invalid": 0, "valid": 0}
+    cpu_seconds = 0.0
+    wall_seconds = 0.0
+    weighted_rate = 0.0
+    complete = True
+    if shards is None:
+        shards = [(s, min(1000, s + shard_size - 1))
+                  for s in range(1, 1001, shard_size)]
+    for start, end in shards:
+        path = os.path.join(out, "analysis", "null_%04d_%04d.json" % (start, end))
+        if not os.path.exists(path):
+            raise FileNotFoundError("missing null shard: " + path)
+        with open(path, encoding="utf-8") as f:
+            shard = json.load(f)
+        null_utilities.extend(shard["null_utilities"])
+        errors.extend(shard.get("errors", []))
+        for key in counts:
+            counts[key] += shard["counts"][key]
+        cpu_seconds += shard["cpu_seconds"]
+        wall_seconds = max(wall_seconds, shard["wall_seconds"])
+        weighted_rate += shard["mean_replicate_seconds"] * shard["replicates_done"]
+        complete = complete and bool(shard.get("complete", False))
+    payload = {
+        "status": "COMPLETE" if complete else "INCOMPLETE",
+        "start": 1, "end": 1000, "replicates_done": counts["total"],
+        "counts": counts,
+        "null_utilities": null_utilities,
+        "errors": errors,
+        "cpu_seconds": cpu_seconds,
+        "wall_seconds": wall_seconds,
+        "mean_replicate_seconds": weighted_rate / counts["total"],
+        "smoke": False,
+        "complete": complete,
+        "s0": S0,
+    }
+    preflight.write_json(payload, os.path.join(out, "analysis",
+                                                "null_0001_1000.json"))
     return payload
 
 

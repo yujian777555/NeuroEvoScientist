@@ -116,3 +116,40 @@ def test_combine_final_incomplete_null_cannot_pass(tmp_path):
     _preliminary(tmp_path)
     _null(tmp_path, [0.0] * 950, complete=False)
     assert runner.combine_final(str(tmp_path))["status"] == "INCOMPLETE"
+
+
+def test_select_frozen_creates_analysis_directory(tmp_path, monkeypatch):
+    monkeypatch.setattr(runner, "_selection_arrays", lambda out: (
+        {}, np.zeros((1, 2)), np.zeros((1, 2)),
+        np.ones((1, 5)), np.ones((1, 5)),
+        np.ones((1, 5)), np.ones((1, 5)), np.array([0]), {}))
+    spec = policy.CandidateSpec("ridge", {"alpha": 1.0}, "ridge|alpha=1")
+    result = policy.CandidateResult(
+        status=stats.STATUS_NO_GO_SIMPLE_FEAT, feature_set="F0",
+        selection=policy.Selection(selected=spec, score=0.0))
+    monkeypatch.setattr(runner.policy, "run_candidate_selection", lambda *a: result)
+    runner.select_frozen("", str(tmp_path))
+    assert (tmp_path / "analysis" / "frozen_selection.json").exists()
+
+
+def test_merge_null_shards_combines_counts_and_status(tmp_path):
+    for r, util in ((1, 0.1), (2, 0.2)):
+        payload = {"status": "COMPLETE", "start": r, "end": r,
+                   "replicates_done": 1,
+                   "counts": {"total": 1, "f0_nogo": 0,
+                              "invalid": 0, "valid": 1},
+                   "null_utilities": [util], "errors": [],
+                   "cpu_seconds": 2.0, "wall_seconds": 3.0 + r,
+                   "mean_replicate_seconds": 0.5, "smoke": False,
+                   "complete": True, "s0": 20261021}
+        (tmp_path / "analysis").mkdir(exist_ok=True)
+        with open(tmp_path / "analysis" / ("null_%04d_%04d.json" % (r, r)),
+                  "w", encoding="utf-8") as f:
+            json.dump(payload, f)
+    merged = runner.merge_null_shards(str(tmp_path), shards=[(1, 1), (2, 2)])
+    assert merged["counts"] == {"total": 2, "f0_nogo": 0,
+                                "invalid": 0, "valid": 2}
+    assert merged["null_utilities"] == [0.1, 0.2]
+    assert merged["status"] == "COMPLETE"
+    assert merged["wall_seconds"] == 5.0
+    assert merged["mean_replicate_seconds"] == 0.5

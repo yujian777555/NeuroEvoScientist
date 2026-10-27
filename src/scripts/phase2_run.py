@@ -23,7 +23,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("command", choices=[
         "preflight", "infer-stage1", "select", "infer-stage2", "analyze",
-        "null-smoke", "null-full", "combine"])
+        "null-smoke", "null-full", "null-merge", "combine"])
     parser.add_argument("--repo", required=True)
     parser.add_argument("--out", required=True)
     parser.add_argument("--start", type=int, default=1)
@@ -59,6 +59,9 @@ def main():
     elif args.command == "null-full":
         result = runner.run_null(repo, out, start=args.start, end=args.end,
                                  smoke=False, timeout_sec=args.timeout_sec)
+    elif args.command == "null-merge":
+        result = runner.merge_null_shards(out)
+        result = {"status": result.get("status"), "counts": result.get("counts")}
     else:
         result = runner.combine_final(out)
         result = {"status": result.get("status")}
