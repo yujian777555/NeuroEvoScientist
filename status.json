@@ -49,7 +49,7 @@
     "owner_submission_done": false
   },
   "phase2_planning": {
-    "status": "PILOT COMPLETE — INCONCLUSIVE_NULL",
+    "status": "PILOT R1 REVIEWED — NO-GO FOR CURRENT TACC CONTROLLER",
     "date": "2026-10-27",
     "direction": "Task-Adaptive Cognitive Configuration Controller (TACC): learn per-question cognitive configuration for a frozen LLM; original embedding+MLP TACC is PIVOT and M1/M2 novelty is not cleared",
     "documents": [
@@ -67,35 +67,37 @@
       "plans/phase2_g1_pilot_repair_prompt_r5.md"
     ],
     "recommended_learning_approach": "Supervised utility-difference predictor remains a candidate only; no implementation authorization",
-    "gpu_authorized": 1.0,
-    "next_gate": "STOP at the Pilot boundary. Planner decides whether any follow-up is justified; no full-scale experiment is authorized by this result.",
+    "gpu_authorized": 0,
+    "next_gate": "Freeze Pilot R1. No further CPU/GPU work or reuse of LEVAL is authorized. Any materially different method requires a new novelty audit, fresh untouched confirmation set, pre-specified protocol, and separate Planner authorization.",
     "constraints": "Only the already specified Pilot was executed: 5,000 generations on one A800 (cuda:0) and 1,000 CPU permutation replicates in 40 deterministic shards. No source data, production lock, historical NO-GO evidence, frozen thresholds, or historical experimental results were modified. MATH-500 was not accessed.",
-    "planner_review": "plans/phase2_planner_review_r5.md",
+    "planner_review": "planner/phase2_pilot_planner_decision_r6.md",
     "executor_prompt": "plans/phase2_g1_pilot_repair_prompt_r5.md",
-    "decision": "INCONCLUSIVE_NULL. All 5,000 generations completed with 0 failures; NVML active time 329.041s = 0.0914003 aggregate GPU-hours. D2 is not passed: valid F1 replicates = 251/1000 (<950), and BEST-FIXED/MAJORITY/SIMPLE-FEAT paired utility contrasts all failed; only RANDOM passed. No controller superiority or validated learnability is claimed.",
+    "decision": "NO-GO for further experiments on the current TACC/GBT-F1 controller and current hypothesis. Candidate utility was below BEST-FIXED, MAJORITY, and SIMPLE-FEAT; all three paired 95% bootstrap CIs span zero. Candidate was strictly dominated by B1/MAJORITY in observed accuracy and total tokens. SHUFFLE remains INCONCLUSIVE_NULL (251/1000 valid F1 replicates <950).",
     "blockers": [
-      "Conditional SHUFFLE null is inconclusive because valid F1 replicates were only 251/1000; 749 replicates selected F0 and were unscored",
-      "All three paired fixed/simple-feature contrasts have 95% CIs spanning zero; there is no detectable advantage over B2, B1-majority, or SIMPLE-FEAT",
-      "M1/M2 novelty remains NOT CLEARED; final literature re-audit remains mandatory",
-      "No full-scale experiment or new hypothesis/configuration is authorized by this result"
+      "Current candidate has no demonstrated positive utility advantage over BEST-FIXED, MAJORITY, or SIMPLE-FEAT",
+      "Candidate is dominated by B1/MAJORITY on observed accuracy (63.33% vs 64.00%) and total tokens (161,341 vs 86,968)",
+      "SHUFFLE conditional null is inconclusive because only 251/1000 replicates selected F1 and were scored; required minimum is 950",
+      "LogisticRegression candidates emitted convergence warnings during model-selection grid; disclose, do not rerun selection on the same LEVAL",
+      "Initial inference attempts failed and were resumed; preserve logs and describe recovery honestly",
+      "M1 DEFLECT and M2 MEMROUTE novelty remain NOT CLEARED"
     ],
-    "authorized_now": "Stop at the Pilot boundary. Any follow-up requires a separate Planner decision addressing the low valid-F1-replicate rate and the absence of a detectable advantage over fixed controls.",
-    "implementation_authorized": true,
+    "authorized_now": "Freeze Pilot R1 and preserve all logs/artifacts. No further CPU permutation, GPU inference, threshold/model-grid changes, or reuse of the opened LEVAL set. A new materially different method requires a new novelty audit, fresh untouched confirmation set, pre-specified protocol, and separate Planner authorization.",
+    "implementation_authorized": false,
     "r5_verdict": "R4 substantially accepted; protocol v6 was implemented for the authorized pilot. Plain TACC remains PIVOT; DEFLECT and MEMROUTE novelty remain NOT CLEARED.",
     "candidate_mechanisms": [
       "M1 DEFLECT: pairwise utility-difference prediction plus shift-aware deferral to B1 cost floor; novelty not cleared",
       "M2 MEMROUTE: joint per-question reasoning strategy and static episodic-exemplar policy routing; novelty not cleared"
     ],
     "g1_protocol": "Pilot completed at phase2/pilot_r1/analysis/final_stats.json with status INCONCLUSIVE_NULL; result report at planner/phase2_pilot_result_report.md; independent recomputation log at planner/pilot_result_verification.log.",
-    "gpu_requested_pending_approval": 1,
+    "gpu_requested_pending_approval": 0,
     "gpu_hours_used": 0.09140026720783984,
-    "pilot_status": "COMPLETED — INCONCLUSIVE_NULL",
+    "pilot_status": "COMPLETED — INCONCLUSIVE_NULL — FROZEN",
     "planner_review_r1": "plans/phase2_planner_review_r1.md",
     "executor_prompt_r1": "plans/phase2_g1_pilot_repair_prompt.md",
     "planner_review_commit": "558ad904ddac2ef2f6b1ffcda429d3892fa2cd03",
     "executor_prompt_commit": "0ef7914317a799526c2faa97c08e3c77b28e3dcb",
     "g1_repairs": "R1 repairs accepted for utility definition and arithmetic. R2 still requires a complete D2 gate, exact pilot sampling/selection procedure, supported precision analysis, reconciled timing overhead, terminology/formula corrections, and conformal-routing literature comparison.",
-    "open_items": "Stop at Pilot boundary. Await Planner decision on the low valid-F1-replicate rate and absence of detectable advantage; no full-scale expansion is authorized.",
+    "open_items": "Freeze current results. No additional experiment is authorized. If pursuing a different method, start a separate proposal with novelty review and a fresh untouched confirmation set.",
     "lock_repair": {
       "report": "planner/phase2_r1_lock_repair_report.md",
       "validator": "src/phase2/duplicates.py",
@@ -133,9 +135,17 @@
       "source_train_sha256": "17f347dc51477c50d4efb83959dbb7c56297aba886e5544ee2aaed3024813465",
       "source_test_sha256": "3730d312f6e3440559ace48831e51066acaca737f6eabec99bccb9e4b3c39d14",
       "partition_lock_sha256": "ff6c703e4dce45e88b6847a144433479a1702feae5cf5afc3a466ffd8a5c5035",
-      "counts": {"BANK": 2989, "FIT": 1868, "TUNE": 1121, "LEVAL": 1495},
+      "counts": {
+        "BANK": 2989,
+        "FIT": 1868,
+        "TUNE": 1121,
+        "LEVAL": 1495
+      },
       "duplicate_groups": 7472,
-      "group_size_distribution": {"1": 7471, "2": 1},
+      "group_size_distribution": {
+        "1": 7471,
+        "2": 1
+      },
       "candidate_near_duplicate_edges": 1,
       "cross_partition_edges_after_atomic_split": 0,
       "josie_amanda_partition": "BANK",
@@ -232,6 +242,26 @@
     "r5_executor_prompt_commit": "b5e7b46013a3b4c5fbdb44d15d45929dcd3c82da",
     "remote_head_at_r5_review_start": "c80d90d4d8901c2e110680751ddb2b02c4eed09f",
     "planner_head_before_r5_status_update": "b5e7b46013a3b4c5fbdb44d15d45929dcd3c82da",
-    "r4_status_only_commit": "c80d90d4d8901c2e110680751ddb2b02c4eed09f"
+    "r4_status_only_commit": "c80d90d4d8901c2e110680751ddb2b02c4eed09f",
+    "planner_decision_commit": "fa92ccc7a05771e5e70a0bb5544973285ec833cb",
+    "pilot_result_report": "planner/phase2_pilot_result_report.md",
+    "pilot_result_commit": "6150532d0b7be5a4172e452699d45071128b96ea",
+    "pilot_status_commit": "c2aeea5fb2132043c96b8b9f9f688eeac647f10e",
+    "shuffle_counts": {
+      "total": 1000,
+      "f0_nogo": 749,
+      "invalid": 0,
+      "valid_f1_scored": 251,
+      "required_valid": 950,
+      "conditional_midrank": 0.3784860557768924
+    },
+    "d2_gates": {
+      "best_fixed": false,
+      "majority": false,
+      "simple_feat": false,
+      "random": true,
+      "shuffle": "INCONCLUSIVE_NULL"
+    },
+    "final_review_scope": "Static review of GitHub result report, final_stats.json, frozen_selection.json, manifests, raw-result inventory, inference logs and independent recomputation log. Planner did not rerun VM tests or independently recompute every raw row."
   }
 }
