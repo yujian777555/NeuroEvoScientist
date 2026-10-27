@@ -1,0 +1,24 @@
+{
+  "best_fixed": "B2",
+  "cv_score": 0.5979860699999999,
+  "delta": 0.01,
+  "feature_set": "F1",
+  "lambda": 0.1,
+  "majority": "B1",
+  "s0": 20261021,
+  "selected_model": {
+    "cls": "gbt",
+    "grid_key": "gbt|n=100|d=1",
+    "params": {
+      "max_depth": 1,
+      "n_estimators": 100
+    }
+  },
+  "simple_feat": {
+    "delta": 0.005,
+    "feature_set": "F0",
+    "tau": 0.6259149964516657
+  },
+  "status": "PASS",
+  "tau": 27.166463291500232
+}

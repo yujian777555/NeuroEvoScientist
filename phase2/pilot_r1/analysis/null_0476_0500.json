@@ -1,0 +1,27 @@
+{
+  "complete": true,
+  "counts": {
+    "f0_nogo": 19,
+    "invalid": 0,
+    "total": 25,
+    "valid": 6
+  },
+  "cpu_seconds": 13556.303729036823,
+  "end": 500,
+  "errors": [],
+  "mean_replicate_seconds": 542.252149161473,
+  "null_utilities": [
+    0.6206717666666667,
+    0.6474972333333333,
+    0.6207008999999999,
+    0.6379688,
+    0.6183274333333334,
+    0.6576056000000001
+  ],
+  "replicates_done": 25,
+  "s0": 20261021,
+  "smoke": false,
+  "start": 476,
+  "status": "COMPLETE",
+  "wall_seconds": 13556.306807461195
+}

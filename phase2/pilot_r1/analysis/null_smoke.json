@@ -1,0 +1,22 @@
+{
+  "complete": true,
+  "counts": {
+    "f0_nogo": 1,
+    "invalid": 0,
+    "total": 2,
+    "valid": 1
+  },
+  "cpu_seconds": 866.1969517590478,
+  "end": 2,
+  "errors": [],
+  "mean_replicate_seconds": 433.0984758795239,
+  "null_utilities": [
+    0.6371146666666667
+  ],
+  "replicates_done": 2,
+  "s0": 20261021,
+  "smoke": true,
+  "start": 1,
+  "status": "SMOKE",
+  "wall_seconds": 866.196977599524
+}

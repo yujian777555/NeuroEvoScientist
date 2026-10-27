@@ -1,0 +1,66 @@
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights:   0%|          | 1/338 [00:00<02:13,  2.52it/s]Loading weights:  11%|█         | 37/338 [00:00<00:03, 96.92it/s]Loading weights:  17%|█▋        | 59/338 [00:00<00:02, 102.92it/s]Loading weights:  22%|██▏       | 76/338 [00:00<00:02, 117.90it/s]Loading weights:  28%|██▊       | 95/338 [00:00<00:01, 135.83it/s]Loading weights:  33%|███▎      | 113/338 [00:01<00:01, 117.69it/s]Loading weights:  38%|███▊      | 129/338 [00:01<00:01, 127.20it/s]Loading weights:  43%|████▎     | 145/338 [00:01<00:01, 134.15it/s]Loading weights:  48%|████▊     | 161/338 [00:01<00:01, 111.72it/s]Loading weights:  54%|█████▎    | 181/338 [00:01<00:01, 131.54it/s]Loading weights:  58%|█████▊    | 197/338 [00:01<00:01, 111.71it/s]Loading weights:  64%|██████▍   | 217/338 [00:01<00:00, 130.24it/s]Loading weights:  69%|██████▊   | 232/338 [00:02<00:00, 131.56it/s]Loading weights:  73%|███████▎  | 247/338 [00:02<00:00, 93.49it/s] Loading weights:  78%|███████▊  | 263/338 [00:02<00:00, 106.32it/s]Loading weights:  82%|████████▏ | 276/338 [00:02<00:00, 111.42it/s]Loading weights:  86%|████████▌ | 289/338 [00:02<00:00, 115.68it/s]Loading weights:  89%|████████▉ | 302/338 [00:02<00:00, 112.89it/s]Loading weights:  93%|█████████▎| 315/338 [00:02<00:00, 99.14it/s] Loading weights:  97%|█████████▋| 328/338 [00:02<00:00, 105.97it/s]Loading weights: 100%|██████████| 338/338 [00:02<00:00, 112.81it/s]
+/202532803004/conda_envs/amber/lib/python3.10/site-packages/sklearn/linear_model/_logistic.py:473: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=1000).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+/202532803004/conda_envs/amber/lib/python3.10/site-packages/sklearn/linear_model/_logistic.py:473: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=1000).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+/202532803004/conda_envs/amber/lib/python3.10/site-packages/sklearn/linear_model/_logistic.py:473: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=1000).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+/202532803004/conda_envs/amber/lib/python3.10/site-packages/sklearn/linear_model/_logistic.py:473: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=1000).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+/202532803004/conda_envs/amber/lib/python3.10/site-packages/sklearn/linear_model/_logistic.py:473: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=1000).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+/202532803004/conda_envs/amber/lib/python3.10/site-packages/sklearn/linear_model/_logistic.py:473: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=1000).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+/202532803004/conda_envs/amber/lib/python3.10/site-packages/sklearn/linear_model/_logistic.py:473: ConvergenceWarning: lbfgs failed to converge after 1000 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=1000).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+PHASE2_RESULT COMPLETE
+OUT /202532803004/NeuroEvoScientist/phase2/pilot_r1
