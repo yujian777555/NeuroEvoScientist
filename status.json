@@ -49,8 +49,8 @@
     "owner_submission_done": false
   },
   "phase2_planning": {
-    "status": "PILOT R1 REVIEWED — NO-GO FOR CURRENT TACC CONTROLLER",
-    "date": "2026-10-27",
+    "status": "R7_RESEARCH_PROPOSAL_READY_FOR_PLANNER_REVIEW",
+    "date": "2026-10-28",
     "direction": "Task-Adaptive Cognitive Configuration Controller (TACC): learn per-question cognitive configuration for a frozen LLM; original embedding+MLP TACC is PIVOT and M1/M2 novelty is not cleared",
     "documents": [
       "plans/phase2_r5_related_work_gap.md",
@@ -68,36 +68,49 @@
     ],
     "recommended_learning_approach": "Supervised utility-difference predictor remains a candidate only; no implementation authorization",
     "gpu_authorized": 0,
-    "next_gate": "Freeze Pilot R1. No further CPU/GPU work or reuse of LEVAL is authorized. Any materially different method requires a new novelty audit, fresh untouched confirmation set, pre-specified protocol, and separate Planner authorization.",
-    "constraints": "Only the already specified Pilot was executed: 5,000 generations on one A800 (cuda:0) and 1,000 CPU permutation replicates in 40 deterministic shards. No source data, production lock, historical NO-GO evidence, frozen thresholds, or historical experimental results were modified. MATH-500 was not accessed.",
+    "next_gate": "Planner independently reviews planner/phase2_r7_method_research.md. No experiment, preflight, GPU inference, model training, or new confirmation-data access is authorized by this proposal.",
+    "constraints": "R7 was read-only research and proposal writing: no GPU, inference, API calls, CPU preflight, model fitting, or new experiments. Pilot R1 and R6 freeze decisions remain unchanged; no source data, production lock, historical NO-GO evidence, frozen thresholds, or historical experimental results were modified. MATH-500 was not accessed.",
     "planner_review": "planner/phase2_pilot_planner_decision_r6.md",
     "executor_prompt": "plans/phase2_g1_pilot_repair_prompt_r5.md",
-    "decision": "NO-GO for further experiments on the current TACC/GBT-F1 controller and current hypothesis. Candidate utility was below BEST-FIXED, MAJORITY, and SIMPLE-FEAT; all three paired 95% bootstrap CIs span zero. Candidate was strictly dominated by B1/MAJORITY in observed accuracy and total tokens. SHUFFLE remains INCONCLUSIVE_NULL (251/1000 valid F1 replicates <950).",
+    "decision": "R7 method research is ready for Planner review. The supported diagnosis is an action-value identifiability problem: large hindsight headroom exists, but near-tie utility differences and action misallocation prevent the current GBT/HashingVectorizer controller from showing a detectable advantage. SHUFFLE remains INCONCLUSIVE_NULL. Candidates are hypotheses only: RCDR (residual-corrected doubly robust router with LCB abstention), SCC (shift-calibrated conformal abstention), and EC-RuleSearch with mandatory no-evolution controls. EC is not justified unless a combinatorial landscape and heredity benefit are demonstrated.",
     "blockers": [
-      "Current candidate has no demonstrated positive utility advantage over BEST-FIXED, MAJORITY, or SIMPLE-FEAT",
-      "Candidate is dominated by B1/MAJORITY on observed accuracy (63.33% vs 64.00%) and total tokens (161,341 vs 86,968)",
+      "No fresh untouched confirmation set is approved or accessed; LEVAL cannot select a new method",
+      "Novelty is unresolved for RCDR, SCC, and EC-RuleSearch; closest prior art includes DR/safe policy improvement, conformal deferral, and agent/workflow search",
       "SHUFFLE conditional null is inconclusive because only 251/1000 replicates selected F1 and were scored; required minimum is 950",
-      "LogisticRegression candidates emitted convergence warnings during model-selection grid; disclose, do not rerun selection on the same LEVAL",
-      "Initial inference attempts failed and were resumed; preserve logs and describe recovery honestly",
+      "LogisticRegression convergence warnings remain a model-selection limitation, and initial inference failures must remain disclosed",
       "M1 DEFLECT and M2 MEMROUTE novelty remain NOT CLEARED"
     ],
-    "authorized_now": "Freeze Pilot R1 and preserve all logs/artifacts. No further CPU permutation, GPU inference, threshold/model-grid changes, or reuse of the opened LEVAL set. A new materially different method requires a new novelty audit, fresh untouched confirmation set, pre-specified protocol, and separate Planner authorization.",
+    "authorized_now": "Stop for Planner review of the R7 proposal and its RCDR pre-registration draft. No new experiment or implementation is authorized.",
     "implementation_authorized": false,
     "r5_verdict": "R4 substantially accepted; protocol v6 was implemented for the authorized pilot. Plain TACC remains PIVOT; DEFLECT and MEMROUTE novelty remain NOT CLEARED.",
     "candidate_mechanisms": [
       "M1 DEFLECT: pairwise utility-difference prediction plus shift-aware deferral to B1 cost floor; novelty not cleared",
       "M2 MEMROUTE: joint per-question reasoning strategy and static episodic-exemplar policy routing; novelty not cleared"
     ],
-    "g1_protocol": "Pilot completed at phase2/pilot_r1/analysis/final_stats.json with status INCONCLUSIVE_NULL; result report at planner/phase2_pilot_result_report.md; independent recomputation log at planner/pilot_result_verification.log.",
+    "g1_protocol": "R7 proposal at planner/phase2_r7_method_research.md with RCDR pre-registration draft; diagnostic evidence at planner/r7_evidence_summary.json. Pilot R1 final stats remain unchanged.",
     "gpu_requested_pending_approval": 0,
     "gpu_hours_used": 0.09140026720783984,
-    "pilot_status": "COMPLETED — INCONCLUSIVE_NULL — FROZEN",
+    "pilot_status": "R7 PROPOSAL PENDING REVIEW — NO EXPERIMENT AUTHORIZED",
     "planner_review_r1": "plans/phase2_planner_review_r1.md",
     "executor_prompt_r1": "plans/phase2_g1_pilot_repair_prompt.md",
     "planner_review_commit": "558ad904ddac2ef2f6b1ffcda429d3892fa2cd03",
     "executor_prompt_commit": "0ef7914317a799526c2faa97c08e3c77b28e3dcb",
     "g1_repairs": "R1 repairs accepted for utility definition and arithmetic. R2 still requires a complete D2 gate, exact pilot sampling/selection procedure, supported precision analysis, reconciled timing overhead, terminology/formula corrections, and conformal-routing literature comparison.",
-    "open_items": "Freeze current results. No additional experiment is authorized. If pursuing a different method, start a separate proposal with novelty review and a fresh untouched confirmation set.",
+    "open_items": "Planner independently reviews R7 proposal, RCDR preflight/data authorization, novelty distinctions, and whether EC is justified. No new experiment is authorized.",
+    "r7_method_research": {
+      "document": "planner/phase2_r7_method_research.md",
+      "evidence_summary": "planner/r7_evidence_summary.json",
+      "diagnosis": "Action-value identifiability failure: 89% of LEVAL best-vs-second utility gaps <0.05 and hindsight oracle utility upper bound 0.8207188, while candidate utility is 0.6279553. Candidate selects B0 in only 2 of 96 B0-best items and B2 in only 3 of 9 B2-best items.",
+      "candidates_ranked": [
+        "RCDR: residual-corrected doubly robust router with baseline-relative LCB abstention",
+        "SCC: shift-calibrated conformal abstention for utility gain",
+        "EC-RuleSearch: optional typed rule search with no-evolution controls"
+      ],
+      "novelty_status": "NOVELTY_UNRESOLVED for all candidates",
+      "ec_status": "Not justified unless combinatorial landscape and heredity benefit are shown at equal evaluation budget",
+      "actual_resource_use": "0 GPU-hours, 0 inferences, 0 API calls, 0 new experiments",
+      "next_decision": "Planner independent review; no implementation or preflight"
+    },
     "lock_repair": {
       "report": "planner/phase2_r1_lock_repair_report.md",
       "validator": "src/phase2/duplicates.py",
@@ -160,12 +173,12 @@
       "Per-item utility defined and main budget arithmetic corrected",
       "Pilot has not been run; no GPU used; MATH-500 untouched"
     ],
-    "last_commit_semantics": "last_executor_deliverable_commit is the actual Pilot result commit. remote_head_at_execution_start is the observed HEAD before the repair round. remote_head_at_pilot_start is the validated-input commit. remote_head_before_execution_status_update is the result commit immediately before this status-only commit. No field self-references the commit containing its final value.",
-    "last_executor_deliverable_commit": "6150532d0b7be5a4172e452699d45071128b96ea",
-    "execution_deliverable_commit": "6150532d0b7be5a4172e452699d45071128b96ea",
+    "last_commit_semantics": "last_executor_deliverable_commit is the R7 method-research commit. remote_head_at_execution_start is the observed HEAD before the repair round. remote_head_at_pilot_start is the validated-input commit. remote_head_before_execution_status_update is the research commit immediately before this status-only commit. No field self-references the commit containing its final value.",
+    "last_executor_deliverable_commit": "400b5a2295bc1fd85b8fb14cfbeaa5ea03298b10",
+    "execution_deliverable_commit": "400b5a2295bc1fd85b8fb14cfbeaa5ea03298b10",
     "remote_head_at_execution_start": "5c6efe10c3e78d4e41ae88c5967b33a640f9616f",
     "remote_head_at_pilot_start": "5fc338b585ac09719ba51035845d0d7bda9c7dbf",
-    "remote_head_before_execution_status_update": "6150532d0b7be5a4172e452699d45071128b96ea",
+    "remote_head_before_execution_status_update": "400b5a2295bc1fd85b8fb14cfbeaa5ea03298b10",
     "execution_evidence": {
       "vm_port": 30939,
       "gpu": "NVIDIA A800 80GB PCIe, cuda:0",
