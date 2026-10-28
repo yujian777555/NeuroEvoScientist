@@ -49,7 +49,7 @@
     "owner_submission_done": false
   },
   "phase2_planning": {
-    "status": "R7 DIAGNOSTIC ACCEPTED — RCDR FORMULATION REQUEST CHANGES — WAITING FOR R8 DOCUMENT REPAIR",
+    "status": "R8_DOCUMENT_REPAIR_COMPLETE — WAITING FOR PLANNER R9 REVIEW",
     "date": "2026-10-28",
     "direction": "Task-Adaptive Cognitive Configuration Controller (TACC): learn per-question cognitive configuration for a frozen LLM; original embedding+MLP TACC is PIVOT and M1/M2 novelty is not cleared",
     "documents": [
@@ -66,30 +66,29 @@
       "plans/phase2_g1_pilot_repair_prompt_r4.md",
       "plans/phase2_g1_pilot_repair_prompt_r5.md"
     ],
-    "recommended_learning_approach": "Supervised utility-difference predictor remains a candidate only; no implementation authorization",
+    "recommended_learning_approach": "Full-information baseline-relative utility-difference learning with conservative selection remains a candidate only; no implementation authorization",
     "gpu_authorized": 0,
-    "next_gate": "Executor performs document-only R8 correction: current Pilot R1 is full-information (all five configurations evaluated per item), so the proposed inverse-propensity doubly robust estimator is mismatched. Revise the method/statistical plan, do not run experiments, then stop for Planner R9 review.",
-    "constraints": "R7 was read-only research and proposal writing: no GPU, inference, API calls, CPU preflight, model fitting, or new experiments. Pilot R1 and R6 freeze decisions remain unchanged; no source data, production lock, historical NO-GO evidence, frozen thresholds, or historical experimental results were modified. MATH-500 was not accessed.",
+    "next_gate": "Planner independently reviews the R8 v2 document and FIDL pre-registration draft. No implementation, CPU preflight, dataset access, new confirmation-set access, or experiment is authorized.",
+    "constraints": "R8 was document-only: no GPU, inference, training, model fitting, API calls, CPU preflight, dataset access, permutation analysis, or new experiments. Pilot R1 and R6 freeze decisions remain unchanged; no source data, production lock, historical NO-GO evidence, frozen thresholds, papers, or historical experimental results were modified. LEVAL was not reused and MATH-500 was not accessed.",
     "planner_review": "planner/phase2_planner_review_r8.md",
     "executor_prompt": "planner/phase2_r7_repair_prompt_r8.md",
-    "decision": "R7 method research is ready for Planner review. The supported diagnosis is an action-value identifiability problem: large hindsight headroom exists, but near-tie utility differences and action misallocation prevent the current GBT/HashingVectorizer controller from showing a detectable advantage. SHUFFLE remains INCONCLUSIVE_NULL. Candidates are hypotheses only: RCDR (residual-corrected doubly robust router with LCB abstention), SCC (shift-calibrated conformal abstention), and EC-RuleSearch with mandatory no-evolution controls. EC is not justified unless a combinatorial landscape and heredity benefit are demonstrated.",
+    "decision": "R8 replaced the mismatched inverse-propensity/DR proposal with direct full-information paired policy evaluation. FIDL, FCC, and RRC are ranked research hypotheses only; all remain NOVELTY_UNRESOLVED. EC is excluded from the primary method unless a combinatorial bottleneck and equal-budget advantage are later demonstrated. The R1 SHUFFLE result remains INCONCLUSIVE_NULL.",
     "blockers": [
-      "RCDR inverse-propensity doubly robust estimator does not match the existing full-information per-item outcomes; reformulate as full-information policy learning or propose a separate partial-feedback design without executing it",
-      "Hindsight oracle 0.8207188 is an optimistic in-sample upper bound, not a statistically significant or feature-predictable gain",
-      "Must distinguish action heterogeneity, feature predictability, and fresh out-of-sample policy superiority",
-      "SHUFFLE conditional mid-rank and F0-NO-GO handling need a statistically explicit plan; no post-hoc additions or silent exclusions",
-      "Novelty of all candidate methods remains NOVELTY_UNRESOLVED",
+      "FIDL novelty relative to full-information direct policy learning and safe policy improvement is unresolved",
+      "FCC has only marginal exchangeability-based calibration and no established distribution-shift validity",
+      "RRC may overlap Adaptive-Solver too closely to support an independent algorithmic contribution",
+      "H2 feature predictability and H3 fresh-set superiority remain unproven; the 0.8207188 hindsight value is only an optimistic upper bound",
       "No fresh untouched confirmation set is approved; LEVAL cannot be reused and MATH-500 must not be accessed",
       "Evolutionary Computation is not justified absent evidence of a combinatorial search bottleneck and equal-budget advantage"
     ],
-    "authorized_now": "Only document-only R8 repair as specified in planner/phase2_r7_repair_prompt_r8.md. No CPU preflight, dataset access, model fitting, inference, API, GPU, permutation analysis, lock generation, LEVAL reuse, or MATH-500 access.",
+    "authorized_now": "Stop and wait for Planner R9 review. No CPU preflight, dataset access, model fitting, training, inference, API, GPU, permutation analysis, lock generation, LEVAL reuse, or MATH-500 access is authorized.",
     "implementation_authorized": false,
     "r5_verdict": "R4 substantially accepted; protocol v6 was implemented for the authorized pilot. Plain TACC remains PIVOT; DEFLECT and MEMROUTE novelty remain NOT CLEARED.",
     "candidate_mechanisms": [
       "M1 DEFLECT: pairwise utility-difference prediction plus shift-aware deferral to B1 cost floor; novelty not cleared",
       "M2 MEMROUTE: joint per-question reasoning strategy and static episodic-exemplar policy routing; novelty not cleared"
     ],
-    "g1_protocol": "R7 proposal at planner/phase2_r7_method_research.md with RCDR pre-registration draft; diagnostic evidence at planner/r7_evidence_summary.json. Pilot R1 final stats remain unchanged.",
+    "g1_protocol": "R8 proposal at planner/phase2_r7_method_research_v2.md with FIDL pre-registration draft. The original R7 document and planner/r7_evidence_summary.json remain historical evidence; Pilot R1 final stats remain frozen.",
     "gpu_requested_pending_approval": 0,
     "gpu_hours_used": 0.09140026720783984,
     "pilot_status": "COMPLETED — INCONCLUSIVE_NULL — FROZEN",
@@ -98,7 +97,7 @@
     "planner_review_commit": "558ad904ddac2ef2f6b1ffcda429d3892fa2cd03",
     "executor_prompt_commit": "0ef7914317a799526c2faa97c08e3c77b28e3dcb",
     "g1_repairs": "R1 repairs accepted for utility definition and arithmetic. R2 still requires a complete D2 gate, exact pilot sampling/selection procedure, supported precision analysis, reconciled timing overhead, terminology/formula corrections, and conformal-routing literature comparison.",
-    "open_items": "Complete R8 document-only revision and submit for Planner R9 review. No experiments are authorized.",
+    "open_items": "Planner R9 must decide whether FIDL differs enough from safe policy improvement to merit a separately authorized preflight, whether FCC/RRC should be stopped, whether EC is explicitly abandoned, and which fresh confirmation set may be reviewed. No experiment is authorized.",
     "r7_method_research": {
       "document": "planner/phase2_r7_method_research.md",
       "evidence_summary": "planner/r7_evidence_summary.json",
@@ -112,6 +111,23 @@
       "ec_status": "Not justified unless combinatorial landscape and heredity benefit are shown at equal evaluation budget",
       "actual_resource_use": "0 GPU-hours, 0 inferences, 0 API calls, 0 new experiments",
       "next_decision": "Planner independent review; no implementation or preflight"
+    },
+    "r8_document_repair": {
+      "document": "planner/phase2_r7_method_research_v2.md",
+      "document_commit": "a16f5ab707160d02fdb9e2e1c03a3cbb202a0a72",
+      "method_correction": "Replaced RCDR inverse-propensity residuals with direct full-information paired utility evaluation; no candidate is called doubly robust",
+      "candidates_ranked": [
+        "FIDL: full-information baseline-relative difference learning with TUNE-only LCB selection and B1 fallback",
+        "FCC: split-conformal utility-gain abstention with explicit exchangeability and shift limitations",
+        "RRC: residual-recovery cascade with cumulative token accounting and unresolved Adaptive-Solver overlap"
+      ],
+      "primary_endpoint": "FIDL minus FIT-selected BEST-FIXED on a separately approved untouched confirmation set; paired 95% CI lower bound >0; secondary mechanism family uses Holm adjustment",
+      "shuffle_status": "Secondary diagnostic only; unconditional accounting retained and fewer than 950 valid F1 replicates means INCONCLUSIVE, not PASS",
+      "novelty_status": "NOVELTY_UNRESOLVED for FIDL, FCC, and RRC",
+      "ec_status": "Excluded from the primary method; necessity unproven",
+      "tests": "Full unit test suite not run in this document-only round",
+      "actual_resource_use": "0 GPU-hours, 0 inferences, 0 training/model-fitting runs, 0 API calls, 0 dataset accesses, 0 CPU preflight, 0 new experiments",
+      "next_decision": "Planner R9 independent review; no implementation, data access, or experiment authorization"
     },
     "lock_repair": {
       "report": "planner/phase2_r1_lock_repair_report.md",
@@ -175,12 +191,12 @@
       "Per-item utility defined and main budget arithmetic corrected",
       "Pilot has not been run; no GPU used; MATH-500 untouched"
     ],
-    "last_commit_semantics": "R8 review and prompt are Planner commits. The next status-only update must not self-reference its own commit.",
-    "last_executor_deliverable_commit": "400b5a2295bc1fd85b8fb14cfbeaa5ea03298b10",
-    "execution_deliverable_commit": "400b5a2295bc1fd85b8fb14cfbeaa5ea03298b10",
+    "last_commit_semantics": "R8 document repair was committed and pushed as a16f5ab707160d02fdb9e2e1c03a3cbb202a0a72. This status-only update records that deliverable and does not self-reference its own commit.",
+    "last_executor_deliverable_commit": "a16f5ab707160d02fdb9e2e1c03a3cbb202a0a72",
+    "execution_deliverable_commit": "a16f5ab707160d02fdb9e2e1c03a3cbb202a0a72",
     "remote_head_at_execution_start": "5c6efe10c3e78d4e41ae88c5967b33a640f9616f",
     "remote_head_at_pilot_start": "5fc338b585ac09719ba51035845d0d7bda9c7dbf",
-    "remote_head_before_execution_status_update": "400b5a2295bc1fd85b8fb14cfbeaa5ea03298b10",
+    "remote_head_before_execution_status_update": "a16f5ab707160d02fdb9e2e1c03a3cbb202a0a72",
     "execution_evidence": {
       "vm_port": 30939,
       "gpu": "NVIDIA A800 80GB PCIe, cuda:0",
