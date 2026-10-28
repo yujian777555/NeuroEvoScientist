@@ -1,0 +1,118 @@
+{
+  "stage1": {
+    "n_items": 700,
+    "best_action_counts": {
+      "B1": 355,
+      "B0": 222,
+      "B3": 59,
+      "REF": 42,
+      "B2": 22
+    },
+    "top1_top2_gap_mean": 0.11854442857142856,
+    "top1_top2_gap_median": 0.0021700000000000053,
+    "top1_top2_gap_p25": 0.0016075000000000113,
+    "top1_top2_gap_p75": 0.0026700000000000005,
+    "top1_top2_gap_p90": 0.991581,
+    "top1_top2_gap_max": 1.0020799999999999,
+    "exact_top2_tie_rate": 0.0014285714285714286,
+    "gap_lt_0.001": 0.10571428571428572,
+    "gap_lt_0.005": 0.8428571428571429,
+    "gap_lt_0.01": 0.8828571428571429,
+    "gap_lt_0.02": 0.8828571428571429,
+    "gap_lt_0.05": 0.8828571428571429,
+    "hindsight_oracle_utility_upper_bound": 0.8044732285714286,
+    "fixed_B2_utility": 0.6296168142857143,
+    "fixed_B1_utility": 0.6057004571428571,
+    "candidate_utility": null,
+    "candidate_minus_oracle_upper_bound": null
+  },
+  "leval": {
+    "n_items": 300,
+    "best_action_counts": {
+      "B1": 160,
+      "B0": 96,
+      "B3": 17,
+      "REF": 18,
+      "B2": 9
+    },
+    "top1_top2_gap_mean": 0.11149450000000001,
+    "top1_top2_gap_median": 0.002134999999999998,
+    "top1_top2_gap_p25": 0.001579999999999998,
+    "top1_top2_gap_p75": 0.0026699999999999996,
+    "top1_top2_gap_p90": 0.991301,
+    "top1_top2_gap_max": 1.00265,
+    "exact_top2_tie_rate": 0.0,
+    "gap_lt_0.001": 0.09666666666666666,
+    "gap_lt_0.005": 0.85,
+    "gap_lt_0.01": 0.89,
+    "gap_lt_0.02": 0.89,
+    "gap_lt_0.05": 0.89,
+    "hindsight_oracle_utility_upper_bound": 0.8207188333333334,
+    "fixed_B2_utility": 0.6410255333333333,
+    "fixed_B1_utility": 0.6371010666666667,
+    "candidate_utility": 0.6279553,
+    "candidate_minus_oracle_upper_bound": -0.1927635333333334
+  },
+  "candidate_action_counts": {
+    "B3": 30,
+    "B1": 135,
+    "B2": 106,
+    "REF": 25,
+    "B0": 4
+  },
+  "simple_action_counts": {
+    "B2": 110,
+    "B1": 150,
+    "REF": 38,
+    "B3": 2
+  },
+  "candidate_true_best_counts": {
+    "B1": {
+      "n": 160,
+      "choices": {
+        "B3": 12,
+        "B1": 73,
+        "B2": 61,
+        "REF": 12,
+        "B0": 2
+      }
+    },
+    "B0": {
+      "n": 96,
+      "choices": {
+        "B2": 32,
+        "B1": 43,
+        "REF": 8,
+        "B3": 11,
+        "B0": 2
+      }
+    },
+    "B3": {
+      "n": 17,
+      "choices": {
+        "B3": 4,
+        "B2": 6,
+        "REF": 3,
+        "B1": 4
+      }
+    },
+    "REF": {
+      "n": 18,
+      "choices": {
+        "B1": 11,
+        "B2": 4,
+        "REF": 1,
+        "B3": 2
+      }
+    },
+    "B2": {
+      "n": 9,
+      "choices": {
+        "B2": 3,
+        "B1": 4,
+        "REF": 1,
+        "B3": 1
+      }
+    }
+  }
+}
