@@ -49,7 +49,7 @@
     "owner_submission_done": false
   },
   "phase2_planning": {
-    "status": "R8_DOCUMENT_REPAIR_COMPLETE — WAITING FOR PLANNER R9 REVIEW",
+    "status": "R8 STATISTICAL REPAIR ACCEPTED — METHOD SPECIFICATION REQUEST CHANGES — WAITING FOR R9 DOCUMENT REPAIR",
     "date": "2026-10-28",
     "direction": "Task-Adaptive Cognitive Configuration Controller (TACC): learn per-question cognitive configuration for a frozen LLM; original embedding+MLP TACC is PIVOT and M1/M2 novelty is not cleared",
     "documents": [
@@ -68,20 +68,24 @@
     ],
     "recommended_learning_approach": "Full-information baseline-relative utility-difference learning with conservative selection remains a candidate only; no implementation authorization",
     "gpu_authorized": 0,
-    "next_gate": "Planner independently reviews the R8 v2 document and FIDL pre-registration draft. No implementation, CPU preflight, dataset access, new confirmation-set access, or experiment is authorized.",
+    "next_gate": "Executor performs document-only R9 repair of FIDL/FCC/RRC specification. No implementation, CPU preflight, dataset access, model fitting, inference, API, GPU, permutation analysis, lock generation, LEVAL reuse, or MATH-500 access. After repair, stop for Planner R10 review.",
     "constraints": "R8 was document-only: no GPU, inference, training, model fitting, API calls, CPU preflight, dataset access, permutation analysis, or new experiments. Pilot R1 and R6 freeze decisions remain unchanged; no source data, production lock, historical NO-GO evidence, frozen thresholds, papers, or historical experimental results were modified. LEVAL was not reused and MATH-500 was not accessed.",
-    "planner_review": "planner/phase2_planner_review_r8.md",
-    "executor_prompt": "planner/phase2_r7_repair_prompt_r8.md",
-    "decision": "R8 replaced the mismatched inverse-propensity/DR proposal with direct full-information paired policy evaluation. FIDL, FCC, and RRC are ranked research hypotheses only; all remain NOVELTY_UNRESOLVED. EC is excluded from the primary method unless a combinatorial bottleneck and equal-budget advantage are later demonstrated. The R1 SHUFFLE result remains INCONCLUSIVE_NULL.",
+    "planner_review": "planner/phase2_planner_review_r9.md",
+    "executor_prompt": "planner/phase2_r8_repair_prompt_r9.md",
+    "decision": "Statistical setting correction accepted; method specification requires revision. No candidate has cleared novelty. R6 Pilot R1 freeze remains authoritative.",
     "blockers": [
-      "FIDL novelty relative to full-information direct policy learning and safe policy improvement is unresolved",
-      "FCC has only marginal exchangeability-based calibration and no established distribution-shift validity",
-      "RRC may overlap Adaptive-Solver too closely to support an independent algorithmic contribution",
-      "H2 feature predictability and H3 fresh-set superiority remain unproven; the 0.8207188 hindsight value is only an optimistic upper bound",
-      "No fresh untouched confirmation set is approved; LEVAL cannot be reused and MATH-500 must not be accessed",
-      "Evolutionary Computation is not justified absent evidence of a combinatorial search bottleneck and equal-budget advantage"
+      "FIDL uses TUNE both to select features/thresholds and to calculate the LCB that gates policy activation; clarify post-selection semantics or separate selection and gate data",
+      "TUNE selection margin delta=0.01 and confirmation criterion CI lower bound >0 are inconsistent/underspecified; define practical margin and exact confidence quantile",
+      "Full-information unweighted paired evaluation does not automatically need off-policy action support or importance-weighted ESS; remove or correctly redefine these terms",
+      "FCC raw gain quantiles are marginal and do not provide per-question conditional conformal routing; derive a valid residual-based construction or drop FCC",
+      "B1 is not the minimum-token configuration; describe it as utility fallback/baseline and distinguish B0's lower-token trade-off",
+      "RRC lacks a defined inference-time signal for identifying current answer failures and may overlap Adaptive-Solver; define a valid signal or drop RRC",
+      "BANK/FIT/TUNE/LEVAL roles, bootstrap resampling unit, H2 near-tie definition, and secondary comparison family need unambiguous specification",
+      "FIDL/FCC/RRC novelty remains NOVELTY_UNRESOLVED; no implementation or experiment is approved",
+      "No fresh confirmation set is approved; LEVAL cannot be reused and MATH-500 must not be accessed",
+      "Evolutionary Computation remains unjustified without a demonstrated combinatorial bottleneck and equal-budget advantage"
     ],
-    "authorized_now": "Stop and wait for Planner R9 review. No CPU preflight, dataset access, model fitting, training, inference, API, GPU, permutation analysis, lock generation, LEVAL reuse, or MATH-500 access is authorized.",
+    "authorized_now": "Only document-only R9 repair per planner/phase2_r8_repair_prompt_r9.md. No implementation, fitting, CPU preflight, benchmark, data access, lock generation, API, inference, GPU, permutation analysis, LEVAL reuse, or MATH-500 access.",
     "implementation_authorized": false,
     "r5_verdict": "R4 substantially accepted; protocol v6 was implemented for the authorized pilot. Plain TACC remains PIVOT; DEFLECT and MEMROUTE novelty remain NOT CLEARED.",
     "candidate_mechanisms": [
@@ -97,7 +101,7 @@
     "planner_review_commit": "558ad904ddac2ef2f6b1ffcda429d3892fa2cd03",
     "executor_prompt_commit": "0ef7914317a799526c2faa97c08e3c77b28e3dcb",
     "g1_repairs": "R1 repairs accepted for utility definition and arithmetic. R2 still requires a complete D2 gate, exact pilot sampling/selection procedure, supported precision analysis, reconciled timing overhead, terminology/formula corrections, and conformal-routing literature comparison.",
-    "open_items": "Planner R9 must decide whether FIDL differs enough from safe policy improvement to merit a separately authorized preflight, whether FCC/RRC should be stopped, whether EC is explicitly abandoned, and which fresh confirmation set may be reviewed. No experiment is authorized.",
+    "open_items": "Complete R9 document-only correction; retain only candidates whose statistical and runtime definitions are coherent. Stop for Planner R10 review. No experiments are authorized.",
     "r7_method_research": {
       "document": "planner/phase2_r7_method_research.md",
       "evidence_summary": "planner/r7_evidence_summary.json",
@@ -191,7 +195,7 @@
       "Per-item utility defined and main budget arithmetic corrected",
       "Pilot has not been run; no GPU used; MATH-500 untouched"
     ],
-    "last_commit_semantics": "R8 document repair was committed and pushed as a16f5ab707160d02fdb9e2e1c03a3cbb202a0a72. This status-only update records that deliverable and does not self-reference its own commit.",
+    "last_commit_semantics": "Planner R9 review and prompt are separate commits; this status commit records them but does not self-reference its own commit.",
     "last_executor_deliverable_commit": "a16f5ab707160d02fdb9e2e1c03a3cbb202a0a72",
     "execution_deliverable_commit": "a16f5ab707160d02fdb9e2e1c03a3cbb202a0a72",
     "remote_head_at_execution_start": "5c6efe10c3e78d4e41ae88c5967b33a640f9616f",
@@ -305,6 +309,12 @@
     "dataset_access_authorized": false,
     "inference_authorized": false,
     "remote_head_at_r8_review_start": "bc37d161261b7f1d2c6e1699daf372dbf8e0655c",
-    "planner_head_before_r8_status_update": "1d4346158072116f0e799dd6434f48f3ef75e85a"
+    "planner_head_before_r8_status_update": "1d4346158072116f0e799dd6434f48f3ef75e85a",
+    "r8_document": "planner/phase2_r7_method_research_v2.md",
+    "r8_document_commit": "a16f5ab707160d02fdb9e2e1c03a3cbb202a0a72",
+    "r8_status_commit": "40532946c522f8f97716743013b6b7c922b04eb3",
+    "r9_review_commit": "d5f7c21de11cf036e876751a55a6537772b5928e",
+    "r9_prompt_commit": "2909b6bf4107959b6e4485c2470ea4ff47ac8176",
+    "r9_verdict": "R8 correctly repairs the full-information versus inverse-propensity/DR mismatch. FIDL remains a research hypothesis, not an approved algorithm. Request document-only changes for TUNE post-selection confidence semantics, margin/confidence-level consistency, unsupported action-support/ESS language, FCC marginal-versus-conditional conformal formulation, B1 cost-floor terminology, RRC runtime failure observability, and data/resampling roles."
   }
 }
