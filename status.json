@@ -49,7 +49,7 @@
     "owner_submission_done": false
   },
   "phase2_planning": {
-    "status": "R7_RESEARCH_PROPOSAL_READY_FOR_PLANNER_REVIEW",
+    "status": "R7 DIAGNOSTIC ACCEPTED — RCDR FORMULATION REQUEST CHANGES — WAITING FOR R8 DOCUMENT REPAIR",
     "date": "2026-10-28",
     "direction": "Task-Adaptive Cognitive Configuration Controller (TACC): learn per-question cognitive configuration for a frozen LLM; original embedding+MLP TACC is PIVOT and M1/M2 novelty is not cleared",
     "documents": [
@@ -68,19 +68,21 @@
     ],
     "recommended_learning_approach": "Supervised utility-difference predictor remains a candidate only; no implementation authorization",
     "gpu_authorized": 0,
-    "next_gate": "Planner independently reviews planner/phase2_r7_method_research.md. No experiment, preflight, GPU inference, model training, or new confirmation-data access is authorized by this proposal.",
+    "next_gate": "Executor performs document-only R8 correction: current Pilot R1 is full-information (all five configurations evaluated per item), so the proposed inverse-propensity doubly robust estimator is mismatched. Revise the method/statistical plan, do not run experiments, then stop for Planner R9 review.",
     "constraints": "R7 was read-only research and proposal writing: no GPU, inference, API calls, CPU preflight, model fitting, or new experiments. Pilot R1 and R6 freeze decisions remain unchanged; no source data, production lock, historical NO-GO evidence, frozen thresholds, or historical experimental results were modified. MATH-500 was not accessed.",
-    "planner_review": "planner/phase2_pilot_planner_decision_r6.md",
-    "executor_prompt": "plans/phase2_g1_pilot_repair_prompt_r5.md",
+    "planner_review": "planner/phase2_planner_review_r8.md",
+    "executor_prompt": "planner/phase2_r7_repair_prompt_r8.md",
     "decision": "R7 method research is ready for Planner review. The supported diagnosis is an action-value identifiability problem: large hindsight headroom exists, but near-tie utility differences and action misallocation prevent the current GBT/HashingVectorizer controller from showing a detectable advantage. SHUFFLE remains INCONCLUSIVE_NULL. Candidates are hypotheses only: RCDR (residual-corrected doubly robust router with LCB abstention), SCC (shift-calibrated conformal abstention), and EC-RuleSearch with mandatory no-evolution controls. EC is not justified unless a combinatorial landscape and heredity benefit are demonstrated.",
     "blockers": [
-      "No fresh untouched confirmation set is approved or accessed; LEVAL cannot select a new method",
-      "Novelty is unresolved for RCDR, SCC, and EC-RuleSearch; closest prior art includes DR/safe policy improvement, conformal deferral, and agent/workflow search",
-      "SHUFFLE conditional null is inconclusive because only 251/1000 replicates selected F1 and were scored; required minimum is 950",
-      "LogisticRegression convergence warnings remain a model-selection limitation, and initial inference failures must remain disclosed",
-      "M1 DEFLECT and M2 MEMROUTE novelty remain NOT CLEARED"
+      "RCDR inverse-propensity doubly robust estimator does not match the existing full-information per-item outcomes; reformulate as full-information policy learning or propose a separate partial-feedback design without executing it",
+      "Hindsight oracle 0.8207188 is an optimistic in-sample upper bound, not a statistically significant or feature-predictable gain",
+      "Must distinguish action heterogeneity, feature predictability, and fresh out-of-sample policy superiority",
+      "SHUFFLE conditional mid-rank and F0-NO-GO handling need a statistically explicit plan; no post-hoc additions or silent exclusions",
+      "Novelty of all candidate methods remains NOVELTY_UNRESOLVED",
+      "No fresh untouched confirmation set is approved; LEVAL cannot be reused and MATH-500 must not be accessed",
+      "Evolutionary Computation is not justified absent evidence of a combinatorial search bottleneck and equal-budget advantage"
     ],
-    "authorized_now": "Stop for Planner review of the R7 proposal and its RCDR pre-registration draft. No new experiment or implementation is authorized.",
+    "authorized_now": "Only document-only R8 repair as specified in planner/phase2_r7_repair_prompt_r8.md. No CPU preflight, dataset access, model fitting, inference, API, GPU, permutation analysis, lock generation, LEVAL reuse, or MATH-500 access.",
     "implementation_authorized": false,
     "r5_verdict": "R4 substantially accepted; protocol v6 was implemented for the authorized pilot. Plain TACC remains PIVOT; DEFLECT and MEMROUTE novelty remain NOT CLEARED.",
     "candidate_mechanisms": [
@@ -90,13 +92,13 @@
     "g1_protocol": "R7 proposal at planner/phase2_r7_method_research.md with RCDR pre-registration draft; diagnostic evidence at planner/r7_evidence_summary.json. Pilot R1 final stats remain unchanged.",
     "gpu_requested_pending_approval": 0,
     "gpu_hours_used": 0.09140026720783984,
-    "pilot_status": "R7 PROPOSAL PENDING REVIEW — NO EXPERIMENT AUTHORIZED",
+    "pilot_status": "COMPLETED — INCONCLUSIVE_NULL — FROZEN",
     "planner_review_r1": "plans/phase2_planner_review_r1.md",
     "executor_prompt_r1": "plans/phase2_g1_pilot_repair_prompt.md",
     "planner_review_commit": "558ad904ddac2ef2f6b1ffcda429d3892fa2cd03",
     "executor_prompt_commit": "0ef7914317a799526c2faa97c08e3c77b28e3dcb",
     "g1_repairs": "R1 repairs accepted for utility definition and arithmetic. R2 still requires a complete D2 gate, exact pilot sampling/selection procedure, supported precision analysis, reconciled timing overhead, terminology/formula corrections, and conformal-routing literature comparison.",
-    "open_items": "Planner independently reviews R7 proposal, RCDR preflight/data authorization, novelty distinctions, and whether EC is justified. No new experiment is authorized.",
+    "open_items": "Complete R8 document-only revision and submit for Planner R9 review. No experiments are authorized.",
     "r7_method_research": {
       "document": "planner/phase2_r7_method_research.md",
       "evidence_summary": "planner/r7_evidence_summary.json",
@@ -173,7 +175,7 @@
       "Per-item utility defined and main budget arithmetic corrected",
       "Pilot has not been run; no GPU used; MATH-500 untouched"
     ],
-    "last_commit_semantics": "last_executor_deliverable_commit is the R7 method-research commit. remote_head_at_execution_start is the observed HEAD before the repair round. remote_head_at_pilot_start is the validated-input commit. remote_head_before_execution_status_update is the research commit immediately before this status-only commit. No field self-references the commit containing its final value.",
+    "last_commit_semantics": "R8 review and prompt are Planner commits. The next status-only update must not self-reference its own commit.",
     "last_executor_deliverable_commit": "400b5a2295bc1fd85b8fb14cfbeaa5ea03298b10",
     "execution_deliverable_commit": "400b5a2295bc1fd85b8fb14cfbeaa5ea03298b10",
     "remote_head_at_execution_start": "5c6efe10c3e78d4e41ae88c5967b33a640f9616f",
@@ -275,6 +277,18 @@
       "random": true,
       "shuffle": "INCONCLUSIVE_NULL"
     },
-    "final_review_scope": "Static review of GitHub result report, final_stats.json, frozen_selection.json, manifests, raw-result inventory, inference logs and independent recomputation log. Planner did not rerun VM tests or independently recompute every raw row."
+    "final_review_scope": "Static review of GitHub result report, final_stats.json, frozen_selection.json, manifests, raw-result inventory, inference logs and independent recomputation log. Planner did not rerun VM tests or independently recompute every raw row.",
+    "r7_research": "planner/phase2_r7_method_research.md",
+    "r7_evidence": "planner/r7_evidence_summary.json",
+    "r7_research_commit": "400b5a2295bc1fd85b8fb14cfbeaa5ea03298b10",
+    "r7_status_commit": "bc37d161261b7f1d2c6e1699daf372dbf8e0655c",
+    "r8_review_commit": "a0e2525f5361e1d5727aef0f877886234e615b21",
+    "r8_prompt_commit": "1d4346158072116f0e799dd6434f48f3ef75e85a",
+    "r8_verdict": "R7 failure diagnosis accepted as useful. RCDR is not approved as specified because its inverse-propensity DR formula assumes partial-feedback logged actions, whereas Pilot R1 evaluates all five configurations per item. A full-information policy-learning formulation is required; novelty remains unresolved.",
+    "cpu_preflight_authorized": false,
+    "dataset_access_authorized": false,
+    "inference_authorized": false,
+    "remote_head_at_r8_review_start": "bc37d161261b7f1d2c6e1699daf372dbf8e0655c",
+    "planner_head_before_r8_status_update": "1d4346158072116f0e799dd6434f48f3ef75e85a"
   }
 }
